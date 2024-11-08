@@ -25,7 +25,7 @@ def t_COMMENT(t):
 
 # Expression régulière pour les identifiants
 def t_ID(t):
-    r'[A-Z_][a-zA-Z_0-9]*'
+    r'\b[A-Z][a-z0-9]{0,7}\b'
      # Vérifier si l'identifiant est un mot-clé
     if t.value == 'VAR_GLOBAL':
         t.type = 'VAR_GLOBAL'
