@@ -1,7 +1,7 @@
 import ply.lex as lex
 
 # Token definitions
-tokens = [
+tokens = (
     'IDF',
     'NUMBER',
     'PLUS',
@@ -19,24 +19,9 @@ tokens = [
     'AND',
     'OR',
     'NOT'
-]
+)
 
-# Arithmetic , Comparison  and logical operators rules
-t_PLUS = r'\+'
-t_MINUS = r'-'
-t_MULTIPLY = r'\*'
-t_DIVIDE = r'/'
-t_LPAREN = r'\('
-t_RPAREN = r'\)'
-t_EQ = r'=='
-t_NEQ = r'!='
-t_LT = r'<'
-t_LTE = r'<='
-t_GT = r'>'
-t_GTE = r'>='
-t_AND = r'&&'
-t_OR = r'\|\|'
-t_NOT = r'!'
+
 
 # Structure: [Name, Type, Scope, Memory Address, Value, Additional Info]
 symbol_table = []
@@ -82,6 +67,74 @@ def t_NUMBER(t):
         value=t.value
     )
     return t
+
+
+# Rules for operators, adding each to the symbol table
+def t_PLUS(t):
+    r'\+'
+    add_symbol(name='+', symbol_type='Arithmetic Operator', scope='global', memory_address=hex(id(t.value)), additional_info='Addition')
+    return t
+
+def t_MINUS(t):
+    r'-'
+    add_symbol(name='-', symbol_type='Arithmetic Operator', scope='global', memory_address=hex(id(t.value)), additional_info='Subtraction')
+    return t
+
+def t_MULTIPLY(t):
+    r'\*'
+    add_symbol(name='*', symbol_type='Arithmetic Operator', scope='global', memory_address=hex(id(t.value)), additional_info='Multiplication')
+    return t
+
+def t_DIVIDE(t):
+    r'/'
+    add_symbol(name='/', symbol_type='Arithmetic Operator', scope='global', memory_address=hex(id(t.value)), additional_info='Division')
+    return t
+
+def t_EQ(t):
+    r'=='
+    add_symbol(name='==', symbol_type='Comparison Operator', scope='global', memory_address=hex(id(t.value)), additional_info='Equal To')
+    return t
+
+def t_NEQ(t):
+    r'!='
+    add_symbol(name='!=', symbol_type='Comparison Operator', scope='global', memory_address=hex(id(t.value)), additional_info='Not Equal To')
+    return t
+
+def t_LT(t):
+    r'<'
+    add_symbol(name='<', symbol_type='Comparison Operator', scope='global', memory_address=hex(id(t.value)), additional_info='Less Than')
+    return t
+
+def t_LTE(t):
+    r'<='
+    add_symbol(name='<=', symbol_type='Comparison Operator', scope='global', memory_address=hex(id(t.value)), additional_info='Less Than or Equal To')
+    return t
+
+def t_GT(t):
+    r'>'
+    add_symbol(name='>', symbol_type='Comparison Operator', scope='global', memory_address=hex(id(t.value)), additional_info='Greater Than')
+    return t
+
+def t_GTE(t):
+    r'>='
+    add_symbol(name='>=', symbol_type='Comparison Operator', scope='global', memory_address=hex(id(t.value)), additional_info='Greater Than or Equal To')
+    return t
+
+def t_AND(t):
+    r'&&'
+    add_symbol(name='&&', symbol_type='Logical Operator', scope='global', memory_address=hex(id(t.value)), additional_info='Logical AND')
+    return t
+
+def t_OR(t):
+    r'\|\|'
+    add_symbol(name='||', symbol_type='Logical Operator', scope='global', memory_address=hex(id(t.value)), additional_info='Logical OR')
+    return t
+
+def t_NOT(t):
+    r'!'
+    add_symbol(name='!', symbol_type='Logical Operator', scope='global', memory_address=hex(id(t.value)), additional_info='Logical NOT')
+    return t
+
 
 # Ignored characters (spaces and tabs)
 t_ignore = ' \t'
