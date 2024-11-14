@@ -1,0 +1,1917 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    COLON
+    COMMENT
+    DECLARATION
+    ELSE
+    FOR
+    IF
+    INSTRUCTION
+    LBRACE
+    RBRACE
+    VAR_GLOBAL
+
+Grammar
+
+Rule 0     S' -> statement
+Rule 1     statement -> type declaration_list SEMICOLON
+Rule 2     statement -> CONST type ID EQUALS expression SEMICOLON
+Rule 3     declaration_list -> declaration
+Rule 4     declaration_list -> declaration COMMA declaration_list
+Rule 5     declaration -> ID
+Rule 6     declaration -> ID EQUALS expression
+Rule 7     statement -> ID EQUALS expression SEMICOLON
+Rule 8     type -> INT_TYPE
+Rule 9     type -> FLOAT_TYPE
+Rule 10    type -> BOOL_TYPE
+Rule 11    type -> CHAR_TYPE
+Rule 12    factor -> INT
+Rule 13    factor -> FLOAT
+Rule 14    factor -> CHAR
+Rule 15    factor -> BOOL
+Rule 16    expression -> expression PLUS term
+Rule 17    expression -> expression MINUS term
+Rule 18    term -> term MULTIPLY factor
+Rule 19    term -> term DIVIDE factor
+Rule 20    expression -> term
+Rule 21    term -> factor
+Rule 22    factor -> NUMBER
+Rule 23    expression -> expression OR expression
+Rule 24    expression -> expression AND expression
+Rule 25    expression -> expression EQ expression
+Rule 26    expression -> expression NEQ expression
+Rule 27    expression -> expression LT expression
+Rule 28    expression -> expression GT expression
+Rule 29    expression -> expression LTE expression
+Rule 30    expression -> expression GTE expression
+Rule 31    expression -> NOT expression
+Rule 32    comparison -> LPAREN expression RPAREN
+Rule 33    comparison -> NUMBER
+Rule 34    factor -> comparison
+Rule 35    factor -> ID
+
+Terminals, with rules where they appear
+
+AND                  : 24
+BOOL                 : 15
+BOOL_TYPE            : 10
+CHAR                 : 14
+CHAR_TYPE            : 11
+COLON                : 
+COMMA                : 4
+COMMENT              : 
+CONST                : 2
+DECLARATION          : 
+DIVIDE               : 19
+ELSE                 : 
+EQ                   : 25
+EQUALS               : 2 6 7
+FLOAT                : 13
+FLOAT_TYPE           : 9
+FOR                  : 
+GT                   : 28
+GTE                  : 30
+ID                   : 2 5 6 7 35
+IF                   : 
+INSTRUCTION          : 
+INT                  : 12
+INT_TYPE             : 8
+LBRACE               : 
+LPAREN               : 32
+LT                   : 27
+LTE                  : 29
+MINUS                : 17
+MULTIPLY             : 18
+NEQ                  : 26
+NOT                  : 31
+NUMBER               : 22 33
+OR                   : 23
+PLUS                 : 16
+RBRACE               : 
+RPAREN               : 32
+SEMICOLON            : 1 2 7
+VAR_GLOBAL           : 
+error                : 
+
+Nonterminals, with rules where they appear
+
+comparison           : 34
+declaration          : 3 4
+declaration_list     : 1 4
+expression           : 2 6 7 16 17 23 23 24 24 25 25 26 26 27 27 28 28 29 29 30 30 31 32
+factor               : 18 19 21
+statement            : 0
+term                 : 16 17 18 19 20
+type                 : 1 2
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . statement
+    (1) statement -> . type declaration_list SEMICOLON
+    (2) statement -> . CONST type ID EQUALS expression SEMICOLON
+    (7) statement -> . ID EQUALS expression SEMICOLON
+    (8) type -> . INT_TYPE
+    (9) type -> . FLOAT_TYPE
+    (10) type -> . BOOL_TYPE
+    (11) type -> . CHAR_TYPE
+
+    CONST           shift and go to state 3
+    ID              shift and go to state 4
+    INT_TYPE        shift and go to state 5
+    FLOAT_TYPE      shift and go to state 6
+    BOOL_TYPE       shift and go to state 7
+    CHAR_TYPE       shift and go to state 8
+
+    statement                      shift and go to state 1
+    type                           shift and go to state 2
+
+state 1
+
+    (0) S' -> statement .
+
+
+
+state 2
+
+    (1) statement -> type . declaration_list SEMICOLON
+    (3) declaration_list -> . declaration
+    (4) declaration_list -> . declaration COMMA declaration_list
+    (5) declaration -> . ID
+    (6) declaration -> . ID EQUALS expression
+
+    ID              shift and go to state 11
+
+    declaration_list               shift and go to state 9
+    declaration                    shift and go to state 10
+
+state 3
+
+    (2) statement -> CONST . type ID EQUALS expression SEMICOLON
+    (8) type -> . INT_TYPE
+    (9) type -> . FLOAT_TYPE
+    (10) type -> . BOOL_TYPE
+    (11) type -> . CHAR_TYPE
+
+    INT_TYPE        shift and go to state 5
+    FLOAT_TYPE      shift and go to state 6
+    BOOL_TYPE       shift and go to state 7
+    CHAR_TYPE       shift and go to state 8
+
+    type                           shift and go to state 12
+
+state 4
+
+    (7) statement -> ID . EQUALS expression SEMICOLON
+
+    EQUALS          shift and go to state 13
+
+
+state 5
+
+    (8) type -> INT_TYPE .
+
+    ID              reduce using rule 8 (type -> INT_TYPE .)
+
+
+state 6
+
+    (9) type -> FLOAT_TYPE .
+
+    ID              reduce using rule 9 (type -> FLOAT_TYPE .)
+
+
+state 7
+
+    (10) type -> BOOL_TYPE .
+
+    ID              reduce using rule 10 (type -> BOOL_TYPE .)
+
+
+state 8
+
+    (11) type -> CHAR_TYPE .
+
+    ID              reduce using rule 11 (type -> CHAR_TYPE .)
+
+
+state 9
+
+    (1) statement -> type declaration_list . SEMICOLON
+
+    SEMICOLON       shift and go to state 14
+
+
+state 10
+
+    (3) declaration_list -> declaration .
+    (4) declaration_list -> declaration . COMMA declaration_list
+
+    SEMICOLON       reduce using rule 3 (declaration_list -> declaration .)
+    COMMA           shift and go to state 15
+
+
+state 11
+
+    (5) declaration -> ID .
+    (6) declaration -> ID . EQUALS expression
+
+    COMMA           reduce using rule 5 (declaration -> ID .)
+    SEMICOLON       reduce using rule 5 (declaration -> ID .)
+    EQUALS          shift and go to state 16
+
+
+state 12
+
+    (2) statement -> CONST type . ID EQUALS expression SEMICOLON
+
+    ID              shift and go to state 17
+
+
+state 13
+
+    (7) statement -> ID EQUALS . expression SEMICOLON
+    (16) expression -> . expression PLUS term
+    (17) expression -> . expression MINUS term
+    (20) expression -> . term
+    (23) expression -> . expression OR expression
+    (24) expression -> . expression AND expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NEQ expression
+    (27) expression -> . expression LT expression
+    (28) expression -> . expression GT expression
+    (29) expression -> . expression LTE expression
+    (30) expression -> . expression GTE expression
+    (31) expression -> . NOT expression
+    (18) term -> . term MULTIPLY factor
+    (19) term -> . term DIVIDE factor
+    (21) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (22) factor -> . NUMBER
+    (34) factor -> . comparison
+    (35) factor -> . ID
+    (32) comparison -> . LPAREN expression RPAREN
+    (33) comparison -> . NUMBER
+
+    NOT             shift and go to state 21
+    INT             shift and go to state 23
+    FLOAT           shift and go to state 24
+    CHAR            shift and go to state 25
+    BOOL            shift and go to state 26
+    NUMBER          shift and go to state 27
+    ID              shift and go to state 18
+    LPAREN          shift and go to state 29
+
+    expression                     shift and go to state 19
+    term                           shift and go to state 20
+    factor                         shift and go to state 22
+    comparison                     shift and go to state 28
+
+state 14
+
+    (1) statement -> type declaration_list SEMICOLON .
+
+    $end            reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
+
+
+state 15
+
+    (4) declaration_list -> declaration COMMA . declaration_list
+    (3) declaration_list -> . declaration
+    (4) declaration_list -> . declaration COMMA declaration_list
+    (5) declaration -> . ID
+    (6) declaration -> . ID EQUALS expression
+
+    ID              shift and go to state 11
+
+    declaration                    shift and go to state 10
+    declaration_list               shift and go to state 30
+
+state 16
+
+    (6) declaration -> ID EQUALS . expression
+    (16) expression -> . expression PLUS term
+    (17) expression -> . expression MINUS term
+    (20) expression -> . term
+    (23) expression -> . expression OR expression
+    (24) expression -> . expression AND expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NEQ expression
+    (27) expression -> . expression LT expression
+    (28) expression -> . expression GT expression
+    (29) expression -> . expression LTE expression
+    (30) expression -> . expression GTE expression
+    (31) expression -> . NOT expression
+    (18) term -> . term MULTIPLY factor
+    (19) term -> . term DIVIDE factor
+    (21) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (22) factor -> . NUMBER
+    (34) factor -> . comparison
+    (35) factor -> . ID
+    (32) comparison -> . LPAREN expression RPAREN
+    (33) comparison -> . NUMBER
+
+    NOT             shift and go to state 21
+    INT             shift and go to state 23
+    FLOAT           shift and go to state 24
+    CHAR            shift and go to state 25
+    BOOL            shift and go to state 26
+    NUMBER          shift and go to state 27
+    ID              shift and go to state 18
+    LPAREN          shift and go to state 29
+
+    expression                     shift and go to state 31
+    term                           shift and go to state 20
+    factor                         shift and go to state 22
+    comparison                     shift and go to state 28
+
+state 17
+
+    (2) statement -> CONST type ID . EQUALS expression SEMICOLON
+
+    EQUALS          shift and go to state 32
+
+
+state 18
+
+    (35) factor -> ID .
+
+    MULTIPLY        reduce using rule 35 (factor -> ID .)
+    DIVIDE          reduce using rule 35 (factor -> ID .)
+    SEMICOLON       reduce using rule 35 (factor -> ID .)
+    PLUS            reduce using rule 35 (factor -> ID .)
+    MINUS           reduce using rule 35 (factor -> ID .)
+    OR              reduce using rule 35 (factor -> ID .)
+    AND             reduce using rule 35 (factor -> ID .)
+    EQ              reduce using rule 35 (factor -> ID .)
+    NEQ             reduce using rule 35 (factor -> ID .)
+    LT              reduce using rule 35 (factor -> ID .)
+    GT              reduce using rule 35 (factor -> ID .)
+    LTE             reduce using rule 35 (factor -> ID .)
+    GTE             reduce using rule 35 (factor -> ID .)
+    COMMA           reduce using rule 35 (factor -> ID .)
+    RPAREN          reduce using rule 35 (factor -> ID .)
+
+
+state 19
+
+    (7) statement -> ID EQUALS expression . SEMICOLON
+    (16) expression -> expression . PLUS term
+    (17) expression -> expression . MINUS term
+    (23) expression -> expression . OR expression
+    (24) expression -> expression . AND expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NEQ expression
+    (27) expression -> expression . LT expression
+    (28) expression -> expression . GT expression
+    (29) expression -> expression . LTE expression
+    (30) expression -> expression . GTE expression
+
+    SEMICOLON       shift and go to state 33
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    OR              shift and go to state 36
+    AND             shift and go to state 37
+    EQ              shift and go to state 38
+    NEQ             shift and go to state 39
+    LT              shift and go to state 40
+    GT              shift and go to state 41
+    LTE             shift and go to state 42
+    GTE             shift and go to state 43
+
+
+state 20
+
+    (20) expression -> term .
+    (18) term -> term . MULTIPLY factor
+    (19) term -> term . DIVIDE factor
+
+    SEMICOLON       reduce using rule 20 (expression -> term .)
+    PLUS            reduce using rule 20 (expression -> term .)
+    MINUS           reduce using rule 20 (expression -> term .)
+    OR              reduce using rule 20 (expression -> term .)
+    AND             reduce using rule 20 (expression -> term .)
+    EQ              reduce using rule 20 (expression -> term .)
+    NEQ             reduce using rule 20 (expression -> term .)
+    LT              reduce using rule 20 (expression -> term .)
+    GT              reduce using rule 20 (expression -> term .)
+    LTE             reduce using rule 20 (expression -> term .)
+    GTE             reduce using rule 20 (expression -> term .)
+    COMMA           reduce using rule 20 (expression -> term .)
+    RPAREN          reduce using rule 20 (expression -> term .)
+    MULTIPLY        shift and go to state 44
+    DIVIDE          shift and go to state 45
+
+
+state 21
+
+    (31) expression -> NOT . expression
+    (16) expression -> . expression PLUS term
+    (17) expression -> . expression MINUS term
+    (20) expression -> . term
+    (23) expression -> . expression OR expression
+    (24) expression -> . expression AND expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NEQ expression
+    (27) expression -> . expression LT expression
+    (28) expression -> . expression GT expression
+    (29) expression -> . expression LTE expression
+    (30) expression -> . expression GTE expression
+    (31) expression -> . NOT expression
+    (18) term -> . term MULTIPLY factor
+    (19) term -> . term DIVIDE factor
+    (21) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (22) factor -> . NUMBER
+    (34) factor -> . comparison
+    (35) factor -> . ID
+    (32) comparison -> . LPAREN expression RPAREN
+    (33) comparison -> . NUMBER
+
+    NOT             shift and go to state 21
+    INT             shift and go to state 23
+    FLOAT           shift and go to state 24
+    CHAR            shift and go to state 25
+    BOOL            shift and go to state 26
+    NUMBER          shift and go to state 27
+    ID              shift and go to state 18
+    LPAREN          shift and go to state 29
+
+    expression                     shift and go to state 46
+    term                           shift and go to state 20
+    factor                         shift and go to state 22
+    comparison                     shift and go to state 28
+
+state 22
+
+    (21) term -> factor .
+
+    MULTIPLY        reduce using rule 21 (term -> factor .)
+    DIVIDE          reduce using rule 21 (term -> factor .)
+    SEMICOLON       reduce using rule 21 (term -> factor .)
+    PLUS            reduce using rule 21 (term -> factor .)
+    MINUS           reduce using rule 21 (term -> factor .)
+    OR              reduce using rule 21 (term -> factor .)
+    AND             reduce using rule 21 (term -> factor .)
+    EQ              reduce using rule 21 (term -> factor .)
+    NEQ             reduce using rule 21 (term -> factor .)
+    LT              reduce using rule 21 (term -> factor .)
+    GT              reduce using rule 21 (term -> factor .)
+    LTE             reduce using rule 21 (term -> factor .)
+    GTE             reduce using rule 21 (term -> factor .)
+    COMMA           reduce using rule 21 (term -> factor .)
+    RPAREN          reduce using rule 21 (term -> factor .)
+
+
+state 23
+
+    (12) factor -> INT .
+
+    MULTIPLY        reduce using rule 12 (factor -> INT .)
+    DIVIDE          reduce using rule 12 (factor -> INT .)
+    SEMICOLON       reduce using rule 12 (factor -> INT .)
+    PLUS            reduce using rule 12 (factor -> INT .)
+    MINUS           reduce using rule 12 (factor -> INT .)
+    OR              reduce using rule 12 (factor -> INT .)
+    AND             reduce using rule 12 (factor -> INT .)
+    EQ              reduce using rule 12 (factor -> INT .)
+    NEQ             reduce using rule 12 (factor -> INT .)
+    LT              reduce using rule 12 (factor -> INT .)
+    GT              reduce using rule 12 (factor -> INT .)
+    LTE             reduce using rule 12 (factor -> INT .)
+    GTE             reduce using rule 12 (factor -> INT .)
+    COMMA           reduce using rule 12 (factor -> INT .)
+    RPAREN          reduce using rule 12 (factor -> INT .)
+
+
+state 24
+
+    (13) factor -> FLOAT .
+
+    MULTIPLY        reduce using rule 13 (factor -> FLOAT .)
+    DIVIDE          reduce using rule 13 (factor -> FLOAT .)
+    SEMICOLON       reduce using rule 13 (factor -> FLOAT .)
+    PLUS            reduce using rule 13 (factor -> FLOAT .)
+    MINUS           reduce using rule 13 (factor -> FLOAT .)
+    OR              reduce using rule 13 (factor -> FLOAT .)
+    AND             reduce using rule 13 (factor -> FLOAT .)
+    EQ              reduce using rule 13 (factor -> FLOAT .)
+    NEQ             reduce using rule 13 (factor -> FLOAT .)
+    LT              reduce using rule 13 (factor -> FLOAT .)
+    GT              reduce using rule 13 (factor -> FLOAT .)
+    LTE             reduce using rule 13 (factor -> FLOAT .)
+    GTE             reduce using rule 13 (factor -> FLOAT .)
+    COMMA           reduce using rule 13 (factor -> FLOAT .)
+    RPAREN          reduce using rule 13 (factor -> FLOAT .)
+
+
+state 25
+
+    (14) factor -> CHAR .
+
+    MULTIPLY        reduce using rule 14 (factor -> CHAR .)
+    DIVIDE          reduce using rule 14 (factor -> CHAR .)
+    SEMICOLON       reduce using rule 14 (factor -> CHAR .)
+    PLUS            reduce using rule 14 (factor -> CHAR .)
+    MINUS           reduce using rule 14 (factor -> CHAR .)
+    OR              reduce using rule 14 (factor -> CHAR .)
+    AND             reduce using rule 14 (factor -> CHAR .)
+    EQ              reduce using rule 14 (factor -> CHAR .)
+    NEQ             reduce using rule 14 (factor -> CHAR .)
+    LT              reduce using rule 14 (factor -> CHAR .)
+    GT              reduce using rule 14 (factor -> CHAR .)
+    LTE             reduce using rule 14 (factor -> CHAR .)
+    GTE             reduce using rule 14 (factor -> CHAR .)
+    COMMA           reduce using rule 14 (factor -> CHAR .)
+    RPAREN          reduce using rule 14 (factor -> CHAR .)
+
+
+state 26
+
+    (15) factor -> BOOL .
+
+    MULTIPLY        reduce using rule 15 (factor -> BOOL .)
+    DIVIDE          reduce using rule 15 (factor -> BOOL .)
+    SEMICOLON       reduce using rule 15 (factor -> BOOL .)
+    PLUS            reduce using rule 15 (factor -> BOOL .)
+    MINUS           reduce using rule 15 (factor -> BOOL .)
+    OR              reduce using rule 15 (factor -> BOOL .)
+    AND             reduce using rule 15 (factor -> BOOL .)
+    EQ              reduce using rule 15 (factor -> BOOL .)
+    NEQ             reduce using rule 15 (factor -> BOOL .)
+    LT              reduce using rule 15 (factor -> BOOL .)
+    GT              reduce using rule 15 (factor -> BOOL .)
+    LTE             reduce using rule 15 (factor -> BOOL .)
+    GTE             reduce using rule 15 (factor -> BOOL .)
+    COMMA           reduce using rule 15 (factor -> BOOL .)
+    RPAREN          reduce using rule 15 (factor -> BOOL .)
+
+
+state 27
+
+    (22) factor -> NUMBER .
+    (33) comparison -> NUMBER .
+
+  ! reduce/reduce conflict for MULTIPLY resolved using rule 22 (factor -> NUMBER .)
+  ! reduce/reduce conflict for DIVIDE resolved using rule 22 (factor -> NUMBER .)
+  ! reduce/reduce conflict for SEMICOLON resolved using rule 22 (factor -> NUMBER .)
+  ! reduce/reduce conflict for PLUS resolved using rule 22 (factor -> NUMBER .)
+  ! reduce/reduce conflict for MINUS resolved using rule 22 (factor -> NUMBER .)
+  ! reduce/reduce conflict for OR resolved using rule 22 (factor -> NUMBER .)
+  ! reduce/reduce conflict for AND resolved using rule 22 (factor -> NUMBER .)
+  ! reduce/reduce conflict for EQ resolved using rule 22 (factor -> NUMBER .)
+  ! reduce/reduce conflict for NEQ resolved using rule 22 (factor -> NUMBER .)
+  ! reduce/reduce conflict for LT resolved using rule 22 (factor -> NUMBER .)
+  ! reduce/reduce conflict for GT resolved using rule 22 (factor -> NUMBER .)
+  ! reduce/reduce conflict for LTE resolved using rule 22 (factor -> NUMBER .)
+  ! reduce/reduce conflict for GTE resolved using rule 22 (factor -> NUMBER .)
+  ! reduce/reduce conflict for COMMA resolved using rule 22 (factor -> NUMBER .)
+  ! reduce/reduce conflict for RPAREN resolved using rule 22 (factor -> NUMBER .)
+    MULTIPLY        reduce using rule 22 (factor -> NUMBER .)
+    DIVIDE          reduce using rule 22 (factor -> NUMBER .)
+    SEMICOLON       reduce using rule 22 (factor -> NUMBER .)
+    PLUS            reduce using rule 22 (factor -> NUMBER .)
+    MINUS           reduce using rule 22 (factor -> NUMBER .)
+    OR              reduce using rule 22 (factor -> NUMBER .)
+    AND             reduce using rule 22 (factor -> NUMBER .)
+    EQ              reduce using rule 22 (factor -> NUMBER .)
+    NEQ             reduce using rule 22 (factor -> NUMBER .)
+    LT              reduce using rule 22 (factor -> NUMBER .)
+    GT              reduce using rule 22 (factor -> NUMBER .)
+    LTE             reduce using rule 22 (factor -> NUMBER .)
+    GTE             reduce using rule 22 (factor -> NUMBER .)
+    COMMA           reduce using rule 22 (factor -> NUMBER .)
+    RPAREN          reduce using rule 22 (factor -> NUMBER .)
+
+  ! MULTIPLY        [ reduce using rule 33 (comparison -> NUMBER .) ]
+  ! DIVIDE          [ reduce using rule 33 (comparison -> NUMBER .) ]
+  ! SEMICOLON       [ reduce using rule 33 (comparison -> NUMBER .) ]
+  ! PLUS            [ reduce using rule 33 (comparison -> NUMBER .) ]
+  ! MINUS           [ reduce using rule 33 (comparison -> NUMBER .) ]
+  ! OR              [ reduce using rule 33 (comparison -> NUMBER .) ]
+  ! AND             [ reduce using rule 33 (comparison -> NUMBER .) ]
+  ! EQ              [ reduce using rule 33 (comparison -> NUMBER .) ]
+  ! NEQ             [ reduce using rule 33 (comparison -> NUMBER .) ]
+  ! LT              [ reduce using rule 33 (comparison -> NUMBER .) ]
+  ! GT              [ reduce using rule 33 (comparison -> NUMBER .) ]
+  ! LTE             [ reduce using rule 33 (comparison -> NUMBER .) ]
+  ! GTE             [ reduce using rule 33 (comparison -> NUMBER .) ]
+  ! COMMA           [ reduce using rule 33 (comparison -> NUMBER .) ]
+  ! RPAREN          [ reduce using rule 33 (comparison -> NUMBER .) ]
+
+
+state 28
+
+    (34) factor -> comparison .
+
+    MULTIPLY        reduce using rule 34 (factor -> comparison .)
+    DIVIDE          reduce using rule 34 (factor -> comparison .)
+    SEMICOLON       reduce using rule 34 (factor -> comparison .)
+    PLUS            reduce using rule 34 (factor -> comparison .)
+    MINUS           reduce using rule 34 (factor -> comparison .)
+    OR              reduce using rule 34 (factor -> comparison .)
+    AND             reduce using rule 34 (factor -> comparison .)
+    EQ              reduce using rule 34 (factor -> comparison .)
+    NEQ             reduce using rule 34 (factor -> comparison .)
+    LT              reduce using rule 34 (factor -> comparison .)
+    GT              reduce using rule 34 (factor -> comparison .)
+    LTE             reduce using rule 34 (factor -> comparison .)
+    GTE             reduce using rule 34 (factor -> comparison .)
+    COMMA           reduce using rule 34 (factor -> comparison .)
+    RPAREN          reduce using rule 34 (factor -> comparison .)
+
+
+state 29
+
+    (32) comparison -> LPAREN . expression RPAREN
+    (16) expression -> . expression PLUS term
+    (17) expression -> . expression MINUS term
+    (20) expression -> . term
+    (23) expression -> . expression OR expression
+    (24) expression -> . expression AND expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NEQ expression
+    (27) expression -> . expression LT expression
+    (28) expression -> . expression GT expression
+    (29) expression -> . expression LTE expression
+    (30) expression -> . expression GTE expression
+    (31) expression -> . NOT expression
+    (18) term -> . term MULTIPLY factor
+    (19) term -> . term DIVIDE factor
+    (21) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (22) factor -> . NUMBER
+    (34) factor -> . comparison
+    (35) factor -> . ID
+    (32) comparison -> . LPAREN expression RPAREN
+    (33) comparison -> . NUMBER
+
+    NOT             shift and go to state 21
+    INT             shift and go to state 23
+    FLOAT           shift and go to state 24
+    CHAR            shift and go to state 25
+    BOOL            shift and go to state 26
+    NUMBER          shift and go to state 27
+    ID              shift and go to state 18
+    LPAREN          shift and go to state 29
+
+    expression                     shift and go to state 47
+    term                           shift and go to state 20
+    factor                         shift and go to state 22
+    comparison                     shift and go to state 28
+
+state 30
+
+    (4) declaration_list -> declaration COMMA declaration_list .
+
+    SEMICOLON       reduce using rule 4 (declaration_list -> declaration COMMA declaration_list .)
+
+
+state 31
+
+    (6) declaration -> ID EQUALS expression .
+    (16) expression -> expression . PLUS term
+    (17) expression -> expression . MINUS term
+    (23) expression -> expression . OR expression
+    (24) expression -> expression . AND expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NEQ expression
+    (27) expression -> expression . LT expression
+    (28) expression -> expression . GT expression
+    (29) expression -> expression . LTE expression
+    (30) expression -> expression . GTE expression
+
+    COMMA           reduce using rule 6 (declaration -> ID EQUALS expression .)
+    SEMICOLON       reduce using rule 6 (declaration -> ID EQUALS expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    OR              shift and go to state 36
+    AND             shift and go to state 37
+    EQ              shift and go to state 38
+    NEQ             shift and go to state 39
+    LT              shift and go to state 40
+    GT              shift and go to state 41
+    LTE             shift and go to state 42
+    GTE             shift and go to state 43
+
+
+state 32
+
+    (2) statement -> CONST type ID EQUALS . expression SEMICOLON
+    (16) expression -> . expression PLUS term
+    (17) expression -> . expression MINUS term
+    (20) expression -> . term
+    (23) expression -> . expression OR expression
+    (24) expression -> . expression AND expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NEQ expression
+    (27) expression -> . expression LT expression
+    (28) expression -> . expression GT expression
+    (29) expression -> . expression LTE expression
+    (30) expression -> . expression GTE expression
+    (31) expression -> . NOT expression
+    (18) term -> . term MULTIPLY factor
+    (19) term -> . term DIVIDE factor
+    (21) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (22) factor -> . NUMBER
+    (34) factor -> . comparison
+    (35) factor -> . ID
+    (32) comparison -> . LPAREN expression RPAREN
+    (33) comparison -> . NUMBER
+
+    NOT             shift and go to state 21
+    INT             shift and go to state 23
+    FLOAT           shift and go to state 24
+    CHAR            shift and go to state 25
+    BOOL            shift and go to state 26
+    NUMBER          shift and go to state 27
+    ID              shift and go to state 18
+    LPAREN          shift and go to state 29
+
+    expression                     shift and go to state 48
+    term                           shift and go to state 20
+    factor                         shift and go to state 22
+    comparison                     shift and go to state 28
+
+state 33
+
+    (7) statement -> ID EQUALS expression SEMICOLON .
+
+    $end            reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+
+
+state 34
+
+    (16) expression -> expression PLUS . term
+    (18) term -> . term MULTIPLY factor
+    (19) term -> . term DIVIDE factor
+    (21) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (22) factor -> . NUMBER
+    (34) factor -> . comparison
+    (35) factor -> . ID
+    (32) comparison -> . LPAREN expression RPAREN
+    (33) comparison -> . NUMBER
+
+    INT             shift and go to state 23
+    FLOAT           shift and go to state 24
+    CHAR            shift and go to state 25
+    BOOL            shift and go to state 26
+    NUMBER          shift and go to state 27
+    ID              shift and go to state 18
+    LPAREN          shift and go to state 29
+
+    term                           shift and go to state 49
+    factor                         shift and go to state 22
+    comparison                     shift and go to state 28
+
+state 35
+
+    (17) expression -> expression MINUS . term
+    (18) term -> . term MULTIPLY factor
+    (19) term -> . term DIVIDE factor
+    (21) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (22) factor -> . NUMBER
+    (34) factor -> . comparison
+    (35) factor -> . ID
+    (32) comparison -> . LPAREN expression RPAREN
+    (33) comparison -> . NUMBER
+
+    INT             shift and go to state 23
+    FLOAT           shift and go to state 24
+    CHAR            shift and go to state 25
+    BOOL            shift and go to state 26
+    NUMBER          shift and go to state 27
+    ID              shift and go to state 18
+    LPAREN          shift and go to state 29
+
+    term                           shift and go to state 50
+    factor                         shift and go to state 22
+    comparison                     shift and go to state 28
+
+state 36
+
+    (23) expression -> expression OR . expression
+    (16) expression -> . expression PLUS term
+    (17) expression -> . expression MINUS term
+    (20) expression -> . term
+    (23) expression -> . expression OR expression
+    (24) expression -> . expression AND expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NEQ expression
+    (27) expression -> . expression LT expression
+    (28) expression -> . expression GT expression
+    (29) expression -> . expression LTE expression
+    (30) expression -> . expression GTE expression
+    (31) expression -> . NOT expression
+    (18) term -> . term MULTIPLY factor
+    (19) term -> . term DIVIDE factor
+    (21) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (22) factor -> . NUMBER
+    (34) factor -> . comparison
+    (35) factor -> . ID
+    (32) comparison -> . LPAREN expression RPAREN
+    (33) comparison -> . NUMBER
+
+    NOT             shift and go to state 21
+    INT             shift and go to state 23
+    FLOAT           shift and go to state 24
+    CHAR            shift and go to state 25
+    BOOL            shift and go to state 26
+    NUMBER          shift and go to state 27
+    ID              shift and go to state 18
+    LPAREN          shift and go to state 29
+
+    expression                     shift and go to state 51
+    term                           shift and go to state 20
+    factor                         shift and go to state 22
+    comparison                     shift and go to state 28
+
+state 37
+
+    (24) expression -> expression AND . expression
+    (16) expression -> . expression PLUS term
+    (17) expression -> . expression MINUS term
+    (20) expression -> . term
+    (23) expression -> . expression OR expression
+    (24) expression -> . expression AND expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NEQ expression
+    (27) expression -> . expression LT expression
+    (28) expression -> . expression GT expression
+    (29) expression -> . expression LTE expression
+    (30) expression -> . expression GTE expression
+    (31) expression -> . NOT expression
+    (18) term -> . term MULTIPLY factor
+    (19) term -> . term DIVIDE factor
+    (21) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (22) factor -> . NUMBER
+    (34) factor -> . comparison
+    (35) factor -> . ID
+    (32) comparison -> . LPAREN expression RPAREN
+    (33) comparison -> . NUMBER
+
+    NOT             shift and go to state 21
+    INT             shift and go to state 23
+    FLOAT           shift and go to state 24
+    CHAR            shift and go to state 25
+    BOOL            shift and go to state 26
+    NUMBER          shift and go to state 27
+    ID              shift and go to state 18
+    LPAREN          shift and go to state 29
+
+    expression                     shift and go to state 52
+    term                           shift and go to state 20
+    factor                         shift and go to state 22
+    comparison                     shift and go to state 28
+
+state 38
+
+    (25) expression -> expression EQ . expression
+    (16) expression -> . expression PLUS term
+    (17) expression -> . expression MINUS term
+    (20) expression -> . term
+    (23) expression -> . expression OR expression
+    (24) expression -> . expression AND expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NEQ expression
+    (27) expression -> . expression LT expression
+    (28) expression -> . expression GT expression
+    (29) expression -> . expression LTE expression
+    (30) expression -> . expression GTE expression
+    (31) expression -> . NOT expression
+    (18) term -> . term MULTIPLY factor
+    (19) term -> . term DIVIDE factor
+    (21) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (22) factor -> . NUMBER
+    (34) factor -> . comparison
+    (35) factor -> . ID
+    (32) comparison -> . LPAREN expression RPAREN
+    (33) comparison -> . NUMBER
+
+    NOT             shift and go to state 21
+    INT             shift and go to state 23
+    FLOAT           shift and go to state 24
+    CHAR            shift and go to state 25
+    BOOL            shift and go to state 26
+    NUMBER          shift and go to state 27
+    ID              shift and go to state 18
+    LPAREN          shift and go to state 29
+
+    expression                     shift and go to state 53
+    term                           shift and go to state 20
+    factor                         shift and go to state 22
+    comparison                     shift and go to state 28
+
+state 39
+
+    (26) expression -> expression NEQ . expression
+    (16) expression -> . expression PLUS term
+    (17) expression -> . expression MINUS term
+    (20) expression -> . term
+    (23) expression -> . expression OR expression
+    (24) expression -> . expression AND expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NEQ expression
+    (27) expression -> . expression LT expression
+    (28) expression -> . expression GT expression
+    (29) expression -> . expression LTE expression
+    (30) expression -> . expression GTE expression
+    (31) expression -> . NOT expression
+    (18) term -> . term MULTIPLY factor
+    (19) term -> . term DIVIDE factor
+    (21) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (22) factor -> . NUMBER
+    (34) factor -> . comparison
+    (35) factor -> . ID
+    (32) comparison -> . LPAREN expression RPAREN
+    (33) comparison -> . NUMBER
+
+    NOT             shift and go to state 21
+    INT             shift and go to state 23
+    FLOAT           shift and go to state 24
+    CHAR            shift and go to state 25
+    BOOL            shift and go to state 26
+    NUMBER          shift and go to state 27
+    ID              shift and go to state 18
+    LPAREN          shift and go to state 29
+
+    expression                     shift and go to state 54
+    term                           shift and go to state 20
+    factor                         shift and go to state 22
+    comparison                     shift and go to state 28
+
+state 40
+
+    (27) expression -> expression LT . expression
+    (16) expression -> . expression PLUS term
+    (17) expression -> . expression MINUS term
+    (20) expression -> . term
+    (23) expression -> . expression OR expression
+    (24) expression -> . expression AND expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NEQ expression
+    (27) expression -> . expression LT expression
+    (28) expression -> . expression GT expression
+    (29) expression -> . expression LTE expression
+    (30) expression -> . expression GTE expression
+    (31) expression -> . NOT expression
+    (18) term -> . term MULTIPLY factor
+    (19) term -> . term DIVIDE factor
+    (21) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (22) factor -> . NUMBER
+    (34) factor -> . comparison
+    (35) factor -> . ID
+    (32) comparison -> . LPAREN expression RPAREN
+    (33) comparison -> . NUMBER
+
+    NOT             shift and go to state 21
+    INT             shift and go to state 23
+    FLOAT           shift and go to state 24
+    CHAR            shift and go to state 25
+    BOOL            shift and go to state 26
+    NUMBER          shift and go to state 27
+    ID              shift and go to state 18
+    LPAREN          shift and go to state 29
+
+    expression                     shift and go to state 55
+    term                           shift and go to state 20
+    factor                         shift and go to state 22
+    comparison                     shift and go to state 28
+
+state 41
+
+    (28) expression -> expression GT . expression
+    (16) expression -> . expression PLUS term
+    (17) expression -> . expression MINUS term
+    (20) expression -> . term
+    (23) expression -> . expression OR expression
+    (24) expression -> . expression AND expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NEQ expression
+    (27) expression -> . expression LT expression
+    (28) expression -> . expression GT expression
+    (29) expression -> . expression LTE expression
+    (30) expression -> . expression GTE expression
+    (31) expression -> . NOT expression
+    (18) term -> . term MULTIPLY factor
+    (19) term -> . term DIVIDE factor
+    (21) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (22) factor -> . NUMBER
+    (34) factor -> . comparison
+    (35) factor -> . ID
+    (32) comparison -> . LPAREN expression RPAREN
+    (33) comparison -> . NUMBER
+
+    NOT             shift and go to state 21
+    INT             shift and go to state 23
+    FLOAT           shift and go to state 24
+    CHAR            shift and go to state 25
+    BOOL            shift and go to state 26
+    NUMBER          shift and go to state 27
+    ID              shift and go to state 18
+    LPAREN          shift and go to state 29
+
+    expression                     shift and go to state 56
+    term                           shift and go to state 20
+    factor                         shift and go to state 22
+    comparison                     shift and go to state 28
+
+state 42
+
+    (29) expression -> expression LTE . expression
+    (16) expression -> . expression PLUS term
+    (17) expression -> . expression MINUS term
+    (20) expression -> . term
+    (23) expression -> . expression OR expression
+    (24) expression -> . expression AND expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NEQ expression
+    (27) expression -> . expression LT expression
+    (28) expression -> . expression GT expression
+    (29) expression -> . expression LTE expression
+    (30) expression -> . expression GTE expression
+    (31) expression -> . NOT expression
+    (18) term -> . term MULTIPLY factor
+    (19) term -> . term DIVIDE factor
+    (21) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (22) factor -> . NUMBER
+    (34) factor -> . comparison
+    (35) factor -> . ID
+    (32) comparison -> . LPAREN expression RPAREN
+    (33) comparison -> . NUMBER
+
+    NOT             shift and go to state 21
+    INT             shift and go to state 23
+    FLOAT           shift and go to state 24
+    CHAR            shift and go to state 25
+    BOOL            shift and go to state 26
+    NUMBER          shift and go to state 27
+    ID              shift and go to state 18
+    LPAREN          shift and go to state 29
+
+    expression                     shift and go to state 57
+    term                           shift and go to state 20
+    factor                         shift and go to state 22
+    comparison                     shift and go to state 28
+
+state 43
+
+    (30) expression -> expression GTE . expression
+    (16) expression -> . expression PLUS term
+    (17) expression -> . expression MINUS term
+    (20) expression -> . term
+    (23) expression -> . expression OR expression
+    (24) expression -> . expression AND expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NEQ expression
+    (27) expression -> . expression LT expression
+    (28) expression -> . expression GT expression
+    (29) expression -> . expression LTE expression
+    (30) expression -> . expression GTE expression
+    (31) expression -> . NOT expression
+    (18) term -> . term MULTIPLY factor
+    (19) term -> . term DIVIDE factor
+    (21) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (22) factor -> . NUMBER
+    (34) factor -> . comparison
+    (35) factor -> . ID
+    (32) comparison -> . LPAREN expression RPAREN
+    (33) comparison -> . NUMBER
+
+    NOT             shift and go to state 21
+    INT             shift and go to state 23
+    FLOAT           shift and go to state 24
+    CHAR            shift and go to state 25
+    BOOL            shift and go to state 26
+    NUMBER          shift and go to state 27
+    ID              shift and go to state 18
+    LPAREN          shift and go to state 29
+
+    expression                     shift and go to state 58
+    term                           shift and go to state 20
+    factor                         shift and go to state 22
+    comparison                     shift and go to state 28
+
+state 44
+
+    (18) term -> term MULTIPLY . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (22) factor -> . NUMBER
+    (34) factor -> . comparison
+    (35) factor -> . ID
+    (32) comparison -> . LPAREN expression RPAREN
+    (33) comparison -> . NUMBER
+
+    INT             shift and go to state 23
+    FLOAT           shift and go to state 24
+    CHAR            shift and go to state 25
+    BOOL            shift and go to state 26
+    NUMBER          shift and go to state 27
+    ID              shift and go to state 18
+    LPAREN          shift and go to state 29
+
+    factor                         shift and go to state 59
+    comparison                     shift and go to state 28
+
+state 45
+
+    (19) term -> term DIVIDE . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (22) factor -> . NUMBER
+    (34) factor -> . comparison
+    (35) factor -> . ID
+    (32) comparison -> . LPAREN expression RPAREN
+    (33) comparison -> . NUMBER
+
+    INT             shift and go to state 23
+    FLOAT           shift and go to state 24
+    CHAR            shift and go to state 25
+    BOOL            shift and go to state 26
+    NUMBER          shift and go to state 27
+    ID              shift and go to state 18
+    LPAREN          shift and go to state 29
+
+    factor                         shift and go to state 60
+    comparison                     shift and go to state 28
+
+state 46
+
+    (31) expression -> NOT expression .
+    (16) expression -> expression . PLUS term
+    (17) expression -> expression . MINUS term
+    (23) expression -> expression . OR expression
+    (24) expression -> expression . AND expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NEQ expression
+    (27) expression -> expression . LT expression
+    (28) expression -> expression . GT expression
+    (29) expression -> expression . LTE expression
+    (30) expression -> expression . GTE expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for NEQ resolved as shift
+  ! shift/reduce conflict for LT resolved as shift
+  ! shift/reduce conflict for GT resolved as shift
+  ! shift/reduce conflict for LTE resolved as shift
+  ! shift/reduce conflict for GTE resolved as shift
+    SEMICOLON       reduce using rule 31 (expression -> NOT expression .)
+    COMMA           reduce using rule 31 (expression -> NOT expression .)
+    RPAREN          reduce using rule 31 (expression -> NOT expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    OR              shift and go to state 36
+    AND             shift and go to state 37
+    EQ              shift and go to state 38
+    NEQ             shift and go to state 39
+    LT              shift and go to state 40
+    GT              shift and go to state 41
+    LTE             shift and go to state 42
+    GTE             shift and go to state 43
+
+  ! PLUS            [ reduce using rule 31 (expression -> NOT expression .) ]
+  ! MINUS           [ reduce using rule 31 (expression -> NOT expression .) ]
+  ! OR              [ reduce using rule 31 (expression -> NOT expression .) ]
+  ! AND             [ reduce using rule 31 (expression -> NOT expression .) ]
+  ! EQ              [ reduce using rule 31 (expression -> NOT expression .) ]
+  ! NEQ             [ reduce using rule 31 (expression -> NOT expression .) ]
+  ! LT              [ reduce using rule 31 (expression -> NOT expression .) ]
+  ! GT              [ reduce using rule 31 (expression -> NOT expression .) ]
+  ! LTE             [ reduce using rule 31 (expression -> NOT expression .) ]
+  ! GTE             [ reduce using rule 31 (expression -> NOT expression .) ]
+
+
+state 47
+
+    (32) comparison -> LPAREN expression . RPAREN
+    (16) expression -> expression . PLUS term
+    (17) expression -> expression . MINUS term
+    (23) expression -> expression . OR expression
+    (24) expression -> expression . AND expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NEQ expression
+    (27) expression -> expression . LT expression
+    (28) expression -> expression . GT expression
+    (29) expression -> expression . LTE expression
+    (30) expression -> expression . GTE expression
+
+    RPAREN          shift and go to state 61
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    OR              shift and go to state 36
+    AND             shift and go to state 37
+    EQ              shift and go to state 38
+    NEQ             shift and go to state 39
+    LT              shift and go to state 40
+    GT              shift and go to state 41
+    LTE             shift and go to state 42
+    GTE             shift and go to state 43
+
+
+state 48
+
+    (2) statement -> CONST type ID EQUALS expression . SEMICOLON
+    (16) expression -> expression . PLUS term
+    (17) expression -> expression . MINUS term
+    (23) expression -> expression . OR expression
+    (24) expression -> expression . AND expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NEQ expression
+    (27) expression -> expression . LT expression
+    (28) expression -> expression . GT expression
+    (29) expression -> expression . LTE expression
+    (30) expression -> expression . GTE expression
+
+    SEMICOLON       shift and go to state 62
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    OR              shift and go to state 36
+    AND             shift and go to state 37
+    EQ              shift and go to state 38
+    NEQ             shift and go to state 39
+    LT              shift and go to state 40
+    GT              shift and go to state 41
+    LTE             shift and go to state 42
+    GTE             shift and go to state 43
+
+
+state 49
+
+    (16) expression -> expression PLUS term .
+    (18) term -> term . MULTIPLY factor
+    (19) term -> term . DIVIDE factor
+
+    SEMICOLON       reduce using rule 16 (expression -> expression PLUS term .)
+    PLUS            reduce using rule 16 (expression -> expression PLUS term .)
+    MINUS           reduce using rule 16 (expression -> expression PLUS term .)
+    OR              reduce using rule 16 (expression -> expression PLUS term .)
+    AND             reduce using rule 16 (expression -> expression PLUS term .)
+    EQ              reduce using rule 16 (expression -> expression PLUS term .)
+    NEQ             reduce using rule 16 (expression -> expression PLUS term .)
+    LT              reduce using rule 16 (expression -> expression PLUS term .)
+    GT              reduce using rule 16 (expression -> expression PLUS term .)
+    LTE             reduce using rule 16 (expression -> expression PLUS term .)
+    GTE             reduce using rule 16 (expression -> expression PLUS term .)
+    COMMA           reduce using rule 16 (expression -> expression PLUS term .)
+    RPAREN          reduce using rule 16 (expression -> expression PLUS term .)
+    MULTIPLY        shift and go to state 44
+    DIVIDE          shift and go to state 45
+
+
+state 50
+
+    (17) expression -> expression MINUS term .
+    (18) term -> term . MULTIPLY factor
+    (19) term -> term . DIVIDE factor
+
+    SEMICOLON       reduce using rule 17 (expression -> expression MINUS term .)
+    PLUS            reduce using rule 17 (expression -> expression MINUS term .)
+    MINUS           reduce using rule 17 (expression -> expression MINUS term .)
+    OR              reduce using rule 17 (expression -> expression MINUS term .)
+    AND             reduce using rule 17 (expression -> expression MINUS term .)
+    EQ              reduce using rule 17 (expression -> expression MINUS term .)
+    NEQ             reduce using rule 17 (expression -> expression MINUS term .)
+    LT              reduce using rule 17 (expression -> expression MINUS term .)
+    GT              reduce using rule 17 (expression -> expression MINUS term .)
+    LTE             reduce using rule 17 (expression -> expression MINUS term .)
+    GTE             reduce using rule 17 (expression -> expression MINUS term .)
+    COMMA           reduce using rule 17 (expression -> expression MINUS term .)
+    RPAREN          reduce using rule 17 (expression -> expression MINUS term .)
+    MULTIPLY        shift and go to state 44
+    DIVIDE          shift and go to state 45
+
+
+state 51
+
+    (23) expression -> expression OR expression .
+    (16) expression -> expression . PLUS term
+    (17) expression -> expression . MINUS term
+    (23) expression -> expression . OR expression
+    (24) expression -> expression . AND expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NEQ expression
+    (27) expression -> expression . LT expression
+    (28) expression -> expression . GT expression
+    (29) expression -> expression . LTE expression
+    (30) expression -> expression . GTE expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for NEQ resolved as shift
+  ! shift/reduce conflict for LT resolved as shift
+  ! shift/reduce conflict for GT resolved as shift
+  ! shift/reduce conflict for LTE resolved as shift
+  ! shift/reduce conflict for GTE resolved as shift
+    SEMICOLON       reduce using rule 23 (expression -> expression OR expression .)
+    COMMA           reduce using rule 23 (expression -> expression OR expression .)
+    RPAREN          reduce using rule 23 (expression -> expression OR expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    OR              shift and go to state 36
+    AND             shift and go to state 37
+    EQ              shift and go to state 38
+    NEQ             shift and go to state 39
+    LT              shift and go to state 40
+    GT              shift and go to state 41
+    LTE             shift and go to state 42
+    GTE             shift and go to state 43
+
+  ! PLUS            [ reduce using rule 23 (expression -> expression OR expression .) ]
+  ! MINUS           [ reduce using rule 23 (expression -> expression OR expression .) ]
+  ! OR              [ reduce using rule 23 (expression -> expression OR expression .) ]
+  ! AND             [ reduce using rule 23 (expression -> expression OR expression .) ]
+  ! EQ              [ reduce using rule 23 (expression -> expression OR expression .) ]
+  ! NEQ             [ reduce using rule 23 (expression -> expression OR expression .) ]
+  ! LT              [ reduce using rule 23 (expression -> expression OR expression .) ]
+  ! GT              [ reduce using rule 23 (expression -> expression OR expression .) ]
+  ! LTE             [ reduce using rule 23 (expression -> expression OR expression .) ]
+  ! GTE             [ reduce using rule 23 (expression -> expression OR expression .) ]
+
+
+state 52
+
+    (24) expression -> expression AND expression .
+    (16) expression -> expression . PLUS term
+    (17) expression -> expression . MINUS term
+    (23) expression -> expression . OR expression
+    (24) expression -> expression . AND expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NEQ expression
+    (27) expression -> expression . LT expression
+    (28) expression -> expression . GT expression
+    (29) expression -> expression . LTE expression
+    (30) expression -> expression . GTE expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for NEQ resolved as shift
+  ! shift/reduce conflict for LT resolved as shift
+  ! shift/reduce conflict for GT resolved as shift
+  ! shift/reduce conflict for LTE resolved as shift
+  ! shift/reduce conflict for GTE resolved as shift
+    SEMICOLON       reduce using rule 24 (expression -> expression AND expression .)
+    COMMA           reduce using rule 24 (expression -> expression AND expression .)
+    RPAREN          reduce using rule 24 (expression -> expression AND expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    OR              shift and go to state 36
+    AND             shift and go to state 37
+    EQ              shift and go to state 38
+    NEQ             shift and go to state 39
+    LT              shift and go to state 40
+    GT              shift and go to state 41
+    LTE             shift and go to state 42
+    GTE             shift and go to state 43
+
+  ! PLUS            [ reduce using rule 24 (expression -> expression AND expression .) ]
+  ! MINUS           [ reduce using rule 24 (expression -> expression AND expression .) ]
+  ! OR              [ reduce using rule 24 (expression -> expression AND expression .) ]
+  ! AND             [ reduce using rule 24 (expression -> expression AND expression .) ]
+  ! EQ              [ reduce using rule 24 (expression -> expression AND expression .) ]
+  ! NEQ             [ reduce using rule 24 (expression -> expression AND expression .) ]
+  ! LT              [ reduce using rule 24 (expression -> expression AND expression .) ]
+  ! GT              [ reduce using rule 24 (expression -> expression AND expression .) ]
+  ! LTE             [ reduce using rule 24 (expression -> expression AND expression .) ]
+  ! GTE             [ reduce using rule 24 (expression -> expression AND expression .) ]
+
+
+state 53
+
+    (25) expression -> expression EQ expression .
+    (16) expression -> expression . PLUS term
+    (17) expression -> expression . MINUS term
+    (23) expression -> expression . OR expression
+    (24) expression -> expression . AND expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NEQ expression
+    (27) expression -> expression . LT expression
+    (28) expression -> expression . GT expression
+    (29) expression -> expression . LTE expression
+    (30) expression -> expression . GTE expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for NEQ resolved as shift
+  ! shift/reduce conflict for LT resolved as shift
+  ! shift/reduce conflict for GT resolved as shift
+  ! shift/reduce conflict for LTE resolved as shift
+  ! shift/reduce conflict for GTE resolved as shift
+    SEMICOLON       reduce using rule 25 (expression -> expression EQ expression .)
+    COMMA           reduce using rule 25 (expression -> expression EQ expression .)
+    RPAREN          reduce using rule 25 (expression -> expression EQ expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    OR              shift and go to state 36
+    AND             shift and go to state 37
+    EQ              shift and go to state 38
+    NEQ             shift and go to state 39
+    LT              shift and go to state 40
+    GT              shift and go to state 41
+    LTE             shift and go to state 42
+    GTE             shift and go to state 43
+
+  ! PLUS            [ reduce using rule 25 (expression -> expression EQ expression .) ]
+  ! MINUS           [ reduce using rule 25 (expression -> expression EQ expression .) ]
+  ! OR              [ reduce using rule 25 (expression -> expression EQ expression .) ]
+  ! AND             [ reduce using rule 25 (expression -> expression EQ expression .) ]
+  ! EQ              [ reduce using rule 25 (expression -> expression EQ expression .) ]
+  ! NEQ             [ reduce using rule 25 (expression -> expression EQ expression .) ]
+  ! LT              [ reduce using rule 25 (expression -> expression EQ expression .) ]
+  ! GT              [ reduce using rule 25 (expression -> expression EQ expression .) ]
+  ! LTE             [ reduce using rule 25 (expression -> expression EQ expression .) ]
+  ! GTE             [ reduce using rule 25 (expression -> expression EQ expression .) ]
+
+
+state 54
+
+    (26) expression -> expression NEQ expression .
+    (16) expression -> expression . PLUS term
+    (17) expression -> expression . MINUS term
+    (23) expression -> expression . OR expression
+    (24) expression -> expression . AND expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NEQ expression
+    (27) expression -> expression . LT expression
+    (28) expression -> expression . GT expression
+    (29) expression -> expression . LTE expression
+    (30) expression -> expression . GTE expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for NEQ resolved as shift
+  ! shift/reduce conflict for LT resolved as shift
+  ! shift/reduce conflict for GT resolved as shift
+  ! shift/reduce conflict for LTE resolved as shift
+  ! shift/reduce conflict for GTE resolved as shift
+    SEMICOLON       reduce using rule 26 (expression -> expression NEQ expression .)
+    COMMA           reduce using rule 26 (expression -> expression NEQ expression .)
+    RPAREN          reduce using rule 26 (expression -> expression NEQ expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    OR              shift and go to state 36
+    AND             shift and go to state 37
+    EQ              shift and go to state 38
+    NEQ             shift and go to state 39
+    LT              shift and go to state 40
+    GT              shift and go to state 41
+    LTE             shift and go to state 42
+    GTE             shift and go to state 43
+
+  ! PLUS            [ reduce using rule 26 (expression -> expression NEQ expression .) ]
+  ! MINUS           [ reduce using rule 26 (expression -> expression NEQ expression .) ]
+  ! OR              [ reduce using rule 26 (expression -> expression NEQ expression .) ]
+  ! AND             [ reduce using rule 26 (expression -> expression NEQ expression .) ]
+  ! EQ              [ reduce using rule 26 (expression -> expression NEQ expression .) ]
+  ! NEQ             [ reduce using rule 26 (expression -> expression NEQ expression .) ]
+  ! LT              [ reduce using rule 26 (expression -> expression NEQ expression .) ]
+  ! GT              [ reduce using rule 26 (expression -> expression NEQ expression .) ]
+  ! LTE             [ reduce using rule 26 (expression -> expression NEQ expression .) ]
+  ! GTE             [ reduce using rule 26 (expression -> expression NEQ expression .) ]
+
+
+state 55
+
+    (27) expression -> expression LT expression .
+    (16) expression -> expression . PLUS term
+    (17) expression -> expression . MINUS term
+    (23) expression -> expression . OR expression
+    (24) expression -> expression . AND expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NEQ expression
+    (27) expression -> expression . LT expression
+    (28) expression -> expression . GT expression
+    (29) expression -> expression . LTE expression
+    (30) expression -> expression . GTE expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for NEQ resolved as shift
+  ! shift/reduce conflict for LT resolved as shift
+  ! shift/reduce conflict for GT resolved as shift
+  ! shift/reduce conflict for LTE resolved as shift
+  ! shift/reduce conflict for GTE resolved as shift
+    SEMICOLON       reduce using rule 27 (expression -> expression LT expression .)
+    COMMA           reduce using rule 27 (expression -> expression LT expression .)
+    RPAREN          reduce using rule 27 (expression -> expression LT expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    OR              shift and go to state 36
+    AND             shift and go to state 37
+    EQ              shift and go to state 38
+    NEQ             shift and go to state 39
+    LT              shift and go to state 40
+    GT              shift and go to state 41
+    LTE             shift and go to state 42
+    GTE             shift and go to state 43
+
+  ! PLUS            [ reduce using rule 27 (expression -> expression LT expression .) ]
+  ! MINUS           [ reduce using rule 27 (expression -> expression LT expression .) ]
+  ! OR              [ reduce using rule 27 (expression -> expression LT expression .) ]
+  ! AND             [ reduce using rule 27 (expression -> expression LT expression .) ]
+  ! EQ              [ reduce using rule 27 (expression -> expression LT expression .) ]
+  ! NEQ             [ reduce using rule 27 (expression -> expression LT expression .) ]
+  ! LT              [ reduce using rule 27 (expression -> expression LT expression .) ]
+  ! GT              [ reduce using rule 27 (expression -> expression LT expression .) ]
+  ! LTE             [ reduce using rule 27 (expression -> expression LT expression .) ]
+  ! GTE             [ reduce using rule 27 (expression -> expression LT expression .) ]
+
+
+state 56
+
+    (28) expression -> expression GT expression .
+    (16) expression -> expression . PLUS term
+    (17) expression -> expression . MINUS term
+    (23) expression -> expression . OR expression
+    (24) expression -> expression . AND expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NEQ expression
+    (27) expression -> expression . LT expression
+    (28) expression -> expression . GT expression
+    (29) expression -> expression . LTE expression
+    (30) expression -> expression . GTE expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for NEQ resolved as shift
+  ! shift/reduce conflict for LT resolved as shift
+  ! shift/reduce conflict for GT resolved as shift
+  ! shift/reduce conflict for LTE resolved as shift
+  ! shift/reduce conflict for GTE resolved as shift
+    SEMICOLON       reduce using rule 28 (expression -> expression GT expression .)
+    COMMA           reduce using rule 28 (expression -> expression GT expression .)
+    RPAREN          reduce using rule 28 (expression -> expression GT expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    OR              shift and go to state 36
+    AND             shift and go to state 37
+    EQ              shift and go to state 38
+    NEQ             shift and go to state 39
+    LT              shift and go to state 40
+    GT              shift and go to state 41
+    LTE             shift and go to state 42
+    GTE             shift and go to state 43
+
+  ! PLUS            [ reduce using rule 28 (expression -> expression GT expression .) ]
+  ! MINUS           [ reduce using rule 28 (expression -> expression GT expression .) ]
+  ! OR              [ reduce using rule 28 (expression -> expression GT expression .) ]
+  ! AND             [ reduce using rule 28 (expression -> expression GT expression .) ]
+  ! EQ              [ reduce using rule 28 (expression -> expression GT expression .) ]
+  ! NEQ             [ reduce using rule 28 (expression -> expression GT expression .) ]
+  ! LT              [ reduce using rule 28 (expression -> expression GT expression .) ]
+  ! GT              [ reduce using rule 28 (expression -> expression GT expression .) ]
+  ! LTE             [ reduce using rule 28 (expression -> expression GT expression .) ]
+  ! GTE             [ reduce using rule 28 (expression -> expression GT expression .) ]
+
+
+state 57
+
+    (29) expression -> expression LTE expression .
+    (16) expression -> expression . PLUS term
+    (17) expression -> expression . MINUS term
+    (23) expression -> expression . OR expression
+    (24) expression -> expression . AND expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NEQ expression
+    (27) expression -> expression . LT expression
+    (28) expression -> expression . GT expression
+    (29) expression -> expression . LTE expression
+    (30) expression -> expression . GTE expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for NEQ resolved as shift
+  ! shift/reduce conflict for LT resolved as shift
+  ! shift/reduce conflict for GT resolved as shift
+  ! shift/reduce conflict for LTE resolved as shift
+  ! shift/reduce conflict for GTE resolved as shift
+    SEMICOLON       reduce using rule 29 (expression -> expression LTE expression .)
+    COMMA           reduce using rule 29 (expression -> expression LTE expression .)
+    RPAREN          reduce using rule 29 (expression -> expression LTE expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    OR              shift and go to state 36
+    AND             shift and go to state 37
+    EQ              shift and go to state 38
+    NEQ             shift and go to state 39
+    LT              shift and go to state 40
+    GT              shift and go to state 41
+    LTE             shift and go to state 42
+    GTE             shift and go to state 43
+
+  ! PLUS            [ reduce using rule 29 (expression -> expression LTE expression .) ]
+  ! MINUS           [ reduce using rule 29 (expression -> expression LTE expression .) ]
+  ! OR              [ reduce using rule 29 (expression -> expression LTE expression .) ]
+  ! AND             [ reduce using rule 29 (expression -> expression LTE expression .) ]
+  ! EQ              [ reduce using rule 29 (expression -> expression LTE expression .) ]
+  ! NEQ             [ reduce using rule 29 (expression -> expression LTE expression .) ]
+  ! LT              [ reduce using rule 29 (expression -> expression LTE expression .) ]
+  ! GT              [ reduce using rule 29 (expression -> expression LTE expression .) ]
+  ! LTE             [ reduce using rule 29 (expression -> expression LTE expression .) ]
+  ! GTE             [ reduce using rule 29 (expression -> expression LTE expression .) ]
+
+
+state 58
+
+    (30) expression -> expression GTE expression .
+    (16) expression -> expression . PLUS term
+    (17) expression -> expression . MINUS term
+    (23) expression -> expression . OR expression
+    (24) expression -> expression . AND expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NEQ expression
+    (27) expression -> expression . LT expression
+    (28) expression -> expression . GT expression
+    (29) expression -> expression . LTE expression
+    (30) expression -> expression . GTE expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for NEQ resolved as shift
+  ! shift/reduce conflict for LT resolved as shift
+  ! shift/reduce conflict for GT resolved as shift
+  ! shift/reduce conflict for LTE resolved as shift
+  ! shift/reduce conflict for GTE resolved as shift
+    SEMICOLON       reduce using rule 30 (expression -> expression GTE expression .)
+    COMMA           reduce using rule 30 (expression -> expression GTE expression .)
+    RPAREN          reduce using rule 30 (expression -> expression GTE expression .)
+    PLUS            shift and go to state 34
+    MINUS           shift and go to state 35
+    OR              shift and go to state 36
+    AND             shift and go to state 37
+    EQ              shift and go to state 38
+    NEQ             shift and go to state 39
+    LT              shift and go to state 40
+    GT              shift and go to state 41
+    LTE             shift and go to state 42
+    GTE             shift and go to state 43
+
+  ! PLUS            [ reduce using rule 30 (expression -> expression GTE expression .) ]
+  ! MINUS           [ reduce using rule 30 (expression -> expression GTE expression .) ]
+  ! OR              [ reduce using rule 30 (expression -> expression GTE expression .) ]
+  ! AND             [ reduce using rule 30 (expression -> expression GTE expression .) ]
+  ! EQ              [ reduce using rule 30 (expression -> expression GTE expression .) ]
+  ! NEQ             [ reduce using rule 30 (expression -> expression GTE expression .) ]
+  ! LT              [ reduce using rule 30 (expression -> expression GTE expression .) ]
+  ! GT              [ reduce using rule 30 (expression -> expression GTE expression .) ]
+  ! LTE             [ reduce using rule 30 (expression -> expression GTE expression .) ]
+  ! GTE             [ reduce using rule 30 (expression -> expression GTE expression .) ]
+
+
+state 59
+
+    (18) term -> term MULTIPLY factor .
+
+    MULTIPLY        reduce using rule 18 (term -> term MULTIPLY factor .)
+    DIVIDE          reduce using rule 18 (term -> term MULTIPLY factor .)
+    SEMICOLON       reduce using rule 18 (term -> term MULTIPLY factor .)
+    PLUS            reduce using rule 18 (term -> term MULTIPLY factor .)
+    MINUS           reduce using rule 18 (term -> term MULTIPLY factor .)
+    OR              reduce using rule 18 (term -> term MULTIPLY factor .)
+    AND             reduce using rule 18 (term -> term MULTIPLY factor .)
+    EQ              reduce using rule 18 (term -> term MULTIPLY factor .)
+    NEQ             reduce using rule 18 (term -> term MULTIPLY factor .)
+    LT              reduce using rule 18 (term -> term MULTIPLY factor .)
+    GT              reduce using rule 18 (term -> term MULTIPLY factor .)
+    LTE             reduce using rule 18 (term -> term MULTIPLY factor .)
+    GTE             reduce using rule 18 (term -> term MULTIPLY factor .)
+    COMMA           reduce using rule 18 (term -> term MULTIPLY factor .)
+    RPAREN          reduce using rule 18 (term -> term MULTIPLY factor .)
+
+
+state 60
+
+    (19) term -> term DIVIDE factor .
+
+    MULTIPLY        reduce using rule 19 (term -> term DIVIDE factor .)
+    DIVIDE          reduce using rule 19 (term -> term DIVIDE factor .)
+    SEMICOLON       reduce using rule 19 (term -> term DIVIDE factor .)
+    PLUS            reduce using rule 19 (term -> term DIVIDE factor .)
+    MINUS           reduce using rule 19 (term -> term DIVIDE factor .)
+    OR              reduce using rule 19 (term -> term DIVIDE factor .)
+    AND             reduce using rule 19 (term -> term DIVIDE factor .)
+    EQ              reduce using rule 19 (term -> term DIVIDE factor .)
+    NEQ             reduce using rule 19 (term -> term DIVIDE factor .)
+    LT              reduce using rule 19 (term -> term DIVIDE factor .)
+    GT              reduce using rule 19 (term -> term DIVIDE factor .)
+    LTE             reduce using rule 19 (term -> term DIVIDE factor .)
+    GTE             reduce using rule 19 (term -> term DIVIDE factor .)
+    COMMA           reduce using rule 19 (term -> term DIVIDE factor .)
+    RPAREN          reduce using rule 19 (term -> term DIVIDE factor .)
+
+
+state 61
+
+    (32) comparison -> LPAREN expression RPAREN .
+
+    MULTIPLY        reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
+    DIVIDE          reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
+    SEMICOLON       reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
+    PLUS            reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
+    MINUS           reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
+    OR              reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
+    AND             reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
+    EQ              reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
+    NEQ             reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
+    LT              reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
+    GT              reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
+    LTE             reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
+    GTE             reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
+    COMMA           reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
+    RPAREN          reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
+
+
+state 62
+
+    (2) statement -> CONST type ID EQUALS expression SEMICOLON .
+
+    $end            reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for PLUS in state 46 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 46 resolved as shift
+WARNING: shift/reduce conflict for OR in state 46 resolved as shift
+WARNING: shift/reduce conflict for AND in state 46 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 46 resolved as shift
+WARNING: shift/reduce conflict for NEQ in state 46 resolved as shift
+WARNING: shift/reduce conflict for LT in state 46 resolved as shift
+WARNING: shift/reduce conflict for GT in state 46 resolved as shift
+WARNING: shift/reduce conflict for LTE in state 46 resolved as shift
+WARNING: shift/reduce conflict for GTE in state 46 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 51 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 51 resolved as shift
+WARNING: shift/reduce conflict for OR in state 51 resolved as shift
+WARNING: shift/reduce conflict for AND in state 51 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 51 resolved as shift
+WARNING: shift/reduce conflict for NEQ in state 51 resolved as shift
+WARNING: shift/reduce conflict for LT in state 51 resolved as shift
+WARNING: shift/reduce conflict for GT in state 51 resolved as shift
+WARNING: shift/reduce conflict for LTE in state 51 resolved as shift
+WARNING: shift/reduce conflict for GTE in state 51 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 52 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 52 resolved as shift
+WARNING: shift/reduce conflict for OR in state 52 resolved as shift
+WARNING: shift/reduce conflict for AND in state 52 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 52 resolved as shift
+WARNING: shift/reduce conflict for NEQ in state 52 resolved as shift
+WARNING: shift/reduce conflict for LT in state 52 resolved as shift
+WARNING: shift/reduce conflict for GT in state 52 resolved as shift
+WARNING: shift/reduce conflict for LTE in state 52 resolved as shift
+WARNING: shift/reduce conflict for GTE in state 52 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 53 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 53 resolved as shift
+WARNING: shift/reduce conflict for OR in state 53 resolved as shift
+WARNING: shift/reduce conflict for AND in state 53 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 53 resolved as shift
+WARNING: shift/reduce conflict for NEQ in state 53 resolved as shift
+WARNING: shift/reduce conflict for LT in state 53 resolved as shift
+WARNING: shift/reduce conflict for GT in state 53 resolved as shift
+WARNING: shift/reduce conflict for LTE in state 53 resolved as shift
+WARNING: shift/reduce conflict for GTE in state 53 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 54 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 54 resolved as shift
+WARNING: shift/reduce conflict for OR in state 54 resolved as shift
+WARNING: shift/reduce conflict for AND in state 54 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 54 resolved as shift
+WARNING: shift/reduce conflict for NEQ in state 54 resolved as shift
+WARNING: shift/reduce conflict for LT in state 54 resolved as shift
+WARNING: shift/reduce conflict for GT in state 54 resolved as shift
+WARNING: shift/reduce conflict for LTE in state 54 resolved as shift
+WARNING: shift/reduce conflict for GTE in state 54 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 55 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 55 resolved as shift
+WARNING: shift/reduce conflict for OR in state 55 resolved as shift
+WARNING: shift/reduce conflict for AND in state 55 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 55 resolved as shift
+WARNING: shift/reduce conflict for NEQ in state 55 resolved as shift
+WARNING: shift/reduce conflict for LT in state 55 resolved as shift
+WARNING: shift/reduce conflict for GT in state 55 resolved as shift
+WARNING: shift/reduce conflict for LTE in state 55 resolved as shift
+WARNING: shift/reduce conflict for GTE in state 55 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 56 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 56 resolved as shift
+WARNING: shift/reduce conflict for OR in state 56 resolved as shift
+WARNING: shift/reduce conflict for AND in state 56 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 56 resolved as shift
+WARNING: shift/reduce conflict for NEQ in state 56 resolved as shift
+WARNING: shift/reduce conflict for LT in state 56 resolved as shift
+WARNING: shift/reduce conflict for GT in state 56 resolved as shift
+WARNING: shift/reduce conflict for LTE in state 56 resolved as shift
+WARNING: shift/reduce conflict for GTE in state 56 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 57 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 57 resolved as shift
+WARNING: shift/reduce conflict for OR in state 57 resolved as shift
+WARNING: shift/reduce conflict for AND in state 57 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 57 resolved as shift
+WARNING: shift/reduce conflict for NEQ in state 57 resolved as shift
+WARNING: shift/reduce conflict for LT in state 57 resolved as shift
+WARNING: shift/reduce conflict for GT in state 57 resolved as shift
+WARNING: shift/reduce conflict for LTE in state 57 resolved as shift
+WARNING: shift/reduce conflict for GTE in state 57 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 58 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 58 resolved as shift
+WARNING: shift/reduce conflict for OR in state 58 resolved as shift
+WARNING: shift/reduce conflict for AND in state 58 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 58 resolved as shift
+WARNING: shift/reduce conflict for NEQ in state 58 resolved as shift
+WARNING: shift/reduce conflict for LT in state 58 resolved as shift
+WARNING: shift/reduce conflict for GT in state 58 resolved as shift
+WARNING: shift/reduce conflict for LTE in state 58 resolved as shift
+WARNING: shift/reduce conflict for GTE in state 58 resolved as shift
+WARNING: reduce/reduce conflict in state 27 resolved using rule (factor -> NUMBER)
+WARNING: rejected rule (comparison -> NUMBER) in state 27
+WARNING: Rule (comparison -> NUMBER) is never reduced
