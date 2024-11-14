@@ -3,9 +3,10 @@ import ply.lex as lex
 # Liste des tokens
 tokens = (
     'VAR_GLOBAL', 'DECLARATION', 'INSTRUCTION',  # mots-clés
-    'ID', 'COMMENT',
-    'LBRACE', 'RBRACE', 'SEMICOLON', 'COMMA',    # Symboles
-    'NUMBER', 'PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'LPAREN', 'RPAREN',
+    'ID', 'COMMENT','TYPE', 'CONST',
+    'LBRACE', 'RBRACE', 'LBRACKET', 'RBRACKET',  # LBRACE and RBRACE for curly braces, LBRACKET and RBRACKET for square brackets
+    'SEMICOLON', 'COMMA',    # Symboles
+    'NUMBER' , 'FLOAT_CONST', 'CHAR_CONST', 'PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'LPAREN', 'RPAREN',
     'EQ', 'NEQ', 'LT', 'LTE', 'GT', 'GTE', 'AND', 'OR', 'NOT',  # Opérateurs
     'EQ_EQ', 'COLON',  # Autres opérateurs et symboles du premier code
     'IF', 'ELSE', 'FOR',  # Mots-clés du premier code
@@ -16,9 +17,18 @@ t_VAR_GLOBAL = r'VAR_GLOBAL'
 t_DECLARATION = r'DECLARATION'
 t_INSTRUCTION = r'INSTRUCTION'
 
+keywords = {
+    'INTEGER': 'TYPE',
+    'FLOAT': 'TYPE',
+    'CHAR': 'TYPE',
+    'CONST': 'CONST'
+}
+
 # Expressions régulières pour les symboles
 t_LBRACE = r'\{'
 t_RBRACE = r'\}'
+t_LBRACKET = r'\['   
+t_RBRACKET = r'\]'   
 t_SEMICOLON = r';'
 t_COMMA = r','
 
@@ -49,14 +59,25 @@ reserved = {
 
 # Expression régulière pour les identifiants (permet d'inclure l'underscore)
 def t_ID(t):
-    r'[A-Za-z_][a-zA-Z0-9_]*'  # Permet les lettres, chiffres et underscores
+    r'[A-Za-z_][a-zA-Z0-9_]{0,7}'  # Permet les lettres, chiffres et underscores
     t.type = reserved.get(t.value, 'ID')  # Vérifie si l'identifiant est un mot-clé
+    return t
+
+# Floating-point constant (place before NUMBER to avoid conflict)
+def t_FLOAT_CONST(t):
+    r'\d+\.\d+'
+    t.value = float(t.value)
     return t
 
 # Constantes numériques
 def t_NUMBER(t):
     r'\d+'  # Représente des nombres entiers
     t.value = int(t.value)  # Pour simplification, on ne prend que des entiers
+    return t
+
+def t_CHAR_CONST(t):
+    r'\'[a-zA-Z0-9]\''
+    t.value = t.value[1]  # Extracts the character without quotes
     return t
 
 # Gestion des commentaires
