@@ -8,11 +8,13 @@ from tabulate import tabulate
 tokens = (
     'VAR_GLOBAL', 'DECLARATION' ,  'CONST','INSTRUCTION',  # mots-clés
     'ID', 'COMMENT',
-    'LBRACE', 'RBRACE', 'SEMICOLON', 'COMMA',    # Symboles
+     'LBRACE', 'RBRACE', 'LBRACKET', 'RBRACKET',  # LBRACE and RBRACE for curly braces, LBRACKET and RBRACKET for square brackets
+    'SEMICOLON', 'COMMA',    # Symboles
     'NUMBER', 'PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'LPAREN', 'RPAREN',
     'EQ', 'NEQ', 'LT', 'LTE', 'GT', 'GTE', 'AND', 'OR', 'NOT',  # Opérateurs
     'EQUALS','INT', 'FLOAT', 'CHAR', 'BOOL','INT_TYPE', 'FLOAT_TYPE', 'BOOL_TYPE','CHAR_TYPE',  'COLON',  # Autres opérateurs et type du symbol
     'IF', 'ELSE', 'FOR',  # Mots-clés du premier code
+    'READ', 'WRITE',    # Entrées et sorties
 )
 
 # Expressions régulières pour les mots-clés
@@ -25,6 +27,8 @@ t_LBRACE = r'\{'
 t_RBRACE = r'\}'
 t_SEMICOLON = r';'
 t_COMMA = r','
+t_LBRACKET = r'\['   
+t_RBRACKET = r'\]' 
 
 # Expressions régulières pour les opérateurs
 t_PLUS = r'\+'
@@ -44,6 +48,10 @@ t_AND = r'&&'
 t_OR = r'\|\|'
 t_NOT = r'!'
 
+# Expressions régulières pour les entrées et sorties
+t_READ = r'READ'
+t_WRITE = r'WRITE'
+
 # Mots-clés réservés
 reserved = {
     'if': 'IF',
@@ -55,7 +63,9 @@ reserved = {
     'char': 'CHAR_TYPE',
     'true': 'BOOL',
     'const': 'CONST',
-    'false': 'BOOL'
+    'false': 'BOOL',
+    'read': 'READ',
+    'write': 'WRITE'
 }
 
 # Expression régulière pour les identifiants (permet d'inclure l'underscore)
@@ -114,14 +124,16 @@ def find_in_symbol_table(name, scope):
     """Search for an entry by name and scope in the symbol table."""
     return any(entry[0] == name and entry[2] == scope for entry in symbol_table)
 
+
 def add_to_symbol_table(name, var_type, scope, value=None, additional_info=None):
-    # Check for existing entry with the same name and scope
     if find_in_symbol_table(name, scope):
         print(f"Warning: Variable '{name}' already declared in scope '{scope}'.")
     else:
         memory_address = hex(id(name))  # Generate a unique "memory address" using id
-        entry = [name, var_type, scope, memory_address, value, additional_info]
+        is_array = isinstance(value, list)  # Detect if it's an array
+        entry = [name, var_type, scope, memory_address, value, additional_info, is_array]
         symbol_table.append(entry)
+
 
 # a function to update the symbol table
 def update_symbol_table(name, value):
@@ -162,12 +174,13 @@ def p_declaration_list(t):
 
 #  declare var type id=value ; or  type id = expr;
 def p_declaration(t):
-    '''declaration : ID
-                   | ID EQUALS expression'''
+    '''declaration :  ID
+                   | ID EQUALS expression
+                   | ID LBRACKET NUMBER RBRACKET'''
     if len(t) == 2:
         t[0] = (t[1], None)  # Variable without initialization
     else:
-        t[0] = (t[1], t[3])  # Variable with initialization
+        t[0] = (t[1], t[3])  # Variable with initialization and array declaration
 
 
 # updating variable , ID= exp(arth or logic or comparison);
@@ -187,9 +200,6 @@ def p_type(t):
 
 
 
-def p_term_factor(t):
-    'term : factor'
-    t[0] = t[1]
 
 def p_factor_number(t):
     '''factor : INT
@@ -318,6 +328,63 @@ def p_factor_id(t):
     print(f"Error: Variable '{var_name}' not declared.")
     t[0] = 0
 
+# READ statement
+def p_read_statement(t):
+    'statement : READ LPAREN ID RPAREN SEMICOLON'
+    # t[3] is the ID of the variable being read.
+    var_name = t[3]
+
+    # Look up the variable in the symbol table
+    for entry in symbol_table:
+        if entry[0] == var_name:  # entry[0] is the 'Name' field in the symbol table
+            # Ask the user for input and update the value in the symbol table
+            value = input(f"Enter a value for '{var_name}': ")
+            # Convert the input based on the variable type (could be int, float, etc.)
+            if entry[1] == "int":
+                entry[4] = int(value)
+            elif entry[1] == "float":
+                entry[4] = float(value)
+            elif entry[1] == "bool":
+                entry[4] = value.lower() == 'true'  # Convert input to boolean
+            elif entry[1] == "char":
+                entry[4] = value[0]  # Assume the first character is valid
+
+            print(f"Value for '{var_name}' set to {entry[4]}")
+            break
+    else:
+        print(f"Error: Variable '{var_name}' not declared.")
+
+def p_write_item_char_array(t):
+    'write_item : ID LBRACKET NUMBER RBRACKET'
+    var_name = t[1]
+    size = t[3]
+    # Find the array in the symbol table and prepare it for printing
+    for entry in symbol_table:
+        if entry[0] == var_name and entry[6]:  # entry[6] is the is_array field
+            t[0] = ("ARRAY", var_name, size)
+            return
+    print(f"Error: Array '{var_name}' not declared.")
+    t[0] = ("ARRAY", var_name, size)
+
+def p_write_item_id(t):
+    'write_item : ID'
+    t[0] = ("ID", t[1])
+
+def p_write_statement(t):
+    'statement : WRITE LPAREN write_content RPAREN SEMICOLON'
+    t[0] = ("WRITE", t[3])
+
+# Handling content inside WRITE (text, variables, commas)
+def p_write_content_multiple(t):
+    'write_content : write_content COMMA write_item'
+    t[0] = t[1] + [t[3]]
+
+def p_write_content_single(t):
+    'write_content : write_item'
+    t[0] = [t[1]]
+
+
+
 # Build the parser
 parser = yacc.yacc()
 
@@ -327,8 +394,12 @@ def parse_statement(statement):
 
 # display symbol table as matrix
 def display_symbol_table():
-    headers = ["Name", "Type", "Scope", "Memory Address", "Value", "Additional Info"]
+    headers = ["Name", "Type", "Scope", "Memory Address", "Value", "Additional Info", "Is Array"]
+    for entry in symbol_table:
+        if entry[6]:  # Check if it's an array
+            entry[4] = f"Array of {entry[4]} elements"  # Display array size or similar
     print(tabulate(symbol_table, headers=headers, tablefmt="grid"))
+
 
 # Examples of usage
 if __name__ == '__main__':
@@ -337,6 +408,7 @@ if __name__ == '__main__':
         "int a =8;",
         "int m =(9<10) && (12<15);",
         "int b =8;",
+        "char d, tc[5];",
         "float b = 5.5;",
         "bool c = true;",
         "char d = 'x';",
@@ -346,7 +418,14 @@ if __name__ == '__main__':
         "d = 'y';",
         "b = b + a * 2;" ,
         "const int g =10;",
-        "int h=10 ,  f;"
+        "int h=10 ,  f;",
+        "WRITE(tc);",  # Writing the array
+        "WRITE(d);",   # Writing a single character
+
+        # "write(\"Donner la valeur de A :\");"
+        # "read(A);"
+        # "write(\"La Valeur de A est \", A, \".\");"
+
     ]
     for stmt in expressions:
         print(f"Parsing statement: {stmt}")
