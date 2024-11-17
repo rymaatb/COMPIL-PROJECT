@@ -1,2 +1,2 @@
-    r'\n+'
-    t.lexer.lineno += len(t.value)
+
+INSTRUCTION x = 10 + 20;

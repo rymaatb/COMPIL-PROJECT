@@ -128,7 +128,7 @@ def update_symbol_table(name, value):
     for entry in symbol_table:
         if entry[0] == name:  # entry[0] is the 'Name' field
             entry[4] = value  # entry[4] is the 'Value' field
-            break
+            break   
 
 # START of var declartion
 # the expression will be TYPE multiple var; OR const id = value;
@@ -172,9 +172,15 @@ def p_declaration(t):
 
 # updating variable , ID= exp(arth or logic or comparison);
 def p_statement_assignment(t):
-    'statement : ID EQUALS expression SEMICOLON'
-    var_name = t[1]
-    update_symbol_table(var_name, t[3])
+    '''statement : ID EQUALS expression SEMICOLON'''
+    var_name = t[1]  # Le nom de la variable
+    value = t[3]     # La valeur à assigner à la variable
+    update_symbol_table(var_name, value)  # Mettre à jour la table des symboles
+
+
+
+
+
 # END of var declaration
 
 # ID type 
@@ -318,6 +324,42 @@ def p_factor_id(t):
     print(f"Error: Variable '{var_name}' not declared.")
     t[0] = 0
 
+
+# Bloc de code entre accolades
+def p_block(t):
+    'block : LBRACE statement RBRACE'
+    t[0] = t[2]  # Le bloc contient une ou plusieurs instructions
+
+# Nouvelle règle pour gérer les structures if/else avec les blocs
+def p_statement_if(t):
+    '''statement : IF LPAREN expression RPAREN block ELSE block
+                 | IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block
+                 | IF LPAREN expression RPAREN block'''
+    
+    condition = t[3]  # Expression dans le IF
+    print(f"Condition value: {condition}")  # Affiche la valeur de la condition
+
+    # Si la condition du premier IF est vraie
+    if condition == True:
+        print("Condition is true, executing IF block")
+       # t[0] = t[6]  # Exécute le bloc IF (instructions à l'intérieur)
+    
+    # Si ELSE existe
+    elif len(t) == 8:
+        print("Condition is false, executing ELSE block")
+       # t[0] = t[7]  # Exécute le bloc ELSE (instructions à l'intérieur)
+
+    # Si ELSE IF existe
+    elif len(t) == 12:
+        condition_else_if = t[9]  # Condition du ELSE IF
+        print(f"Else if condition value: {condition_else_if}")  # Affiche la valeur de la condition ELSE IF
+        if condition_else_if == True:
+            print("Else if condition is true, executing ELSE IF block")
+           # t[0] = t[11]  # Exécute le bloc ELSE IF (instructions à l'intérieur)
+        else:
+            print("Else if condition is false, executing ELSE block")
+           # t[0] = t[13]  # Exécute le bloc ELSE (instructions à l'intérieur)
+
 # Build the parser
 parser = yacc.yacc()
 
@@ -330,27 +372,22 @@ def display_symbol_table():
     headers = ["Name", "Type", "Scope", "Memory Address", "Value", "Additional Info"]
     print(tabulate(symbol_table, headers=headers, tablefmt="grid"))
 
-# Examples of usage
-if __name__ == '__main__':
-    expressions = [
-        "int n = 5 == 5 || 3 != 3;",
-        "int a =8;",
-        "int m =(9<10) && (12<15);",
-        "int b =8;",
-        "float b = 5.5;",
-        "bool c = true;",
-        "char d = 'x';",
-        "a = 10;",
-        "c = false;",
-        "c = (a > 5) && (b < 10);",
-        "d = 'y';",
-        "b = b + a * 2;" ,
-        "const int g =10;",
-        "int h=10 ,  f;"
+expressions = [
+    "int a = 5;",
+    "if (a > 3) {a = a + 2;} else {a = a - 1;}", 
+    "int b = 10;",
+    "if (b < 15) {b = b + 5;} else {b = b - 5;}",  
+    "bool isEven = true;",
+    "if (isEven) {isEven = false;} else {isEven = true;}",  
+    "bool isGreaterThanTen = false;",
+    "if (isGreaterThanTen) {isGreaterThanTen = true;} else {isGreaterThanTen = false;}", 
+    "int x = 10;",
+    "if (x > 5) {x = x + 5;} else if (x == 10) {x = x * 2;} else {x = x - 5;}",  # Si x > 5, additionne 5 ; sinon si x == 10, multiplie par 2 ; sinon, soustrait 5
+    "int y = 3;",
+    "if (y > 5) {y = y + 1;} else if (y == 3) {y = y + 10;} else {y = y - 1;}",  # Si y > 5, ajoute 1 ; sinon si y == 3, ajoute 10 ; sinon, soustrait 1
     ]
-    for stmt in expressions:
-        print(f"Parsing statement: {stmt}")
-        parse_statement(stmt)
-        print("\nSymbol Table:")
-        display_symbol_table()
-        print("-" * 40)
+
+for stmt in expressions:
+    print(f"Parsing statement: {stmt}")
+    parse_statement(stmt)
+    print("-" * 40)
