@@ -25,6 +25,7 @@ t_LBRACE = r'\{'
 t_RBRACE = r'\}'
 t_SEMICOLON = r';'
 t_COMMA = r','
+t_COLON = r':'
 
 # Expressions régulières pour les opérateurs
 t_PLUS = r'\+'
@@ -56,6 +57,8 @@ reserved = {
     'true': 'BOOL',
     'const': 'CONST',
     'false': 'BOOL'
+    #,'DECLARATION':'DECLARATION',
+    #'INSTRUCTION':'INSTRUCTION'
 }
 
 # Expression régulière pour les identifiants (permet d'inclure l'underscore)
@@ -95,7 +98,7 @@ def t_COMMENT(t):
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
-
+ 
 # Ignorer les espaces et tabulations
 t_ignore = ' \t'
 
@@ -128,7 +131,13 @@ def update_symbol_table(name, value):
     for entry in symbol_table:
         if entry[0] == name:  # entry[0] is the 'Name' field
             entry[4] = value  # entry[4] is the 'Value' field
-            break
+            break   
+
+
+#stucture globale 
+#def p_program(t):
+ #  '''program : DECLARATION block INSTRUCTION block'''
+  # t[0] = t[3]+t[7]
 
 # START of var declartion
 # the expression will be TYPE multiple var; OR const id = value;
@@ -172,9 +181,15 @@ def p_declaration(t):
 
 # updating variable , ID= exp(arth or logic or comparison);
 def p_statement_assignment(t):
-    'statement : ID EQUALS expression SEMICOLON'
-    var_name = t[1]
-    update_symbol_table(var_name, t[3])
+    '''statement : ID EQUALS expression SEMICOLON'''
+    var_name = t[1]  # Le nom de la variable
+    value = t[3]     # La valeur à assigner à la variable
+    update_symbol_table(var_name, value)  # Mettre à jour la table des symboles
+
+
+
+
+
 # END of var declaration
 
 # ID type 
@@ -318,39 +333,124 @@ def p_factor_id(t):
     print(f"Error: Variable '{var_name}' not declared.")
     t[0] = 0
 
+#INSTUCTIONS
+
+
+# Nouvelle règle pour gérer les structures if/else avec les blocs
+def p_statement_if(t):
+    '''statement : IF LPAREN expression RPAREN block ELSE block
+                 | IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block
+                 | IF LPAREN expression RPAREN block'''
+    
+    condition = t[3]  # Expression dans le IF
+    print(f"Condition value: {condition}")  # Affiche la valeur de la condition
+
+    # Si la condition du premier IF est vraie
+    if condition == True:
+        print("Condition is true, executing IF block")
+       # t[0] = t[6]  # Exécute le bloc IF (instructions à l'intérieur)
+    
+    # Si ELSE existe
+    elif len(t) == 8:
+        print("Condition is false, executing ELSE block")
+       # t[0] = t[7]  # Exécute le bloc ELSE (instructions à l'intérieur)
+
+    # Si ELSE IF existe
+    elif len(t) == 12:
+        condition_else_if = t[9]  # Condition du ELSE IF
+        print(f"Else if condition value: {condition_else_if}")  # Affiche la valeur de la condition ELSE IF
+        if condition_else_if == True:
+            print("Else if condition is true, executing ELSE IF block")
+           # t[0] = t[11]  # Exécute le bloc ELSE IF (instructions à l'intérieur)
+        else:
+            print("Else if condition is false, executing ELSE block")
+           # t[0] = t[13]  # Exécute le bloc ELSE (instructions à l'intérieur)
+
+# Bloc de code entre accolades
+def p_block(t):
+    'block : LBRACE statements RBRACE'
+    t[0] = t[2]  # Le bloc contient une ou plusieurs instructions
+
+def p_statements(t):
+    '''statements : statement
+                  | statement statements '''
+    if len(t) == 2 :
+        t[0] = [t[1]]
+    else:
+        t[0] = [t[1]] + t[2]
+
+#start of for loop
+def p_initialisation(t):
+    'initialisation : ID EQUALS INT'
+    if len(t) < 4:
+        print('syntaxic error')
+    else:
+     t[0] = (t[1], t[3])
+     var_name = t[1]
+     update_symbol_table(var_name,t[3])
+def p_step(t):
+    '''step : INT
+            | ID'''
+    if isinstance(t[1],int):
+        t[0] = t[1]
+    elif isinstance(t[1],str):
+        var_name = t[1]
+        for entry in symbol_table:
+         if entry[0] == var_name:  # entry[0] is the 'Name' field
+            if entry[4] is not None:  # entry[4] is the 'Value' field
+                t[0] = entry[4]
+            else:
+                print(f"Error: Variable '{var_name}' not initialized.")
+                t[0] = 0
+            return
+    else:
+         print(f"Error: Variable '{var_name}' not declared.")
+         t[0] = 0
+
+    
+def p_statement_FORloop(t):
+    'statement : FOR LPAREN initialisation COLON step COLON factor RPAREN block'
+    t[0] = t[3]
+
+def p_error(p):
+    if p:
+        print(f"Syntax error at token {p.type}, line {p.lineno}")
+    else:
+        print("Syntax error at EOF")
+
+
 # Build the parser
 parser = yacc.yacc()
-
+parserdebug = yacc.yacc(debug=True)
 # Test the parser
+def parse_program(program):
+    parser.parse(program)
 def parse_statement(statement):
     parser.parse(statement)
+def parser_statement_debug(statement):
+    parserdebug.parse(statement,debug=True)
 
 # display symbol table as matrix
 def display_symbol_table():
     headers = ["Name", "Type", "Scope", "Memory Address", "Value", "Additional Info"]
     print(tabulate(symbol_table, headers=headers, tablefmt="grid"))
 
-# Examples of usage
 if __name__ == '__main__':
-    expressions = [
-        "int n = 5 == 5 || 3 != 3;",
-        "int a =8;",
-        "int m =(9<10) && (12<15);",
-        "int b =8;",
-        "float b = 5.5;",
-        "bool c = true;",
-        "char d = 'x';",
-        "a = 10;",
-        "c = false;",
-        "c = (a > 5) && (b < 10);",
-        "d = 'y';",
-        "b = b + a * 2;" ,
-        "const int g =10;",
-        "int h=10 ,  f;"
+    prm = [
+    
+        "DECLARATION{int i, n = 2;} INSTRUCTION{ for(i=0 : 1 : n){ i = i + 1;} }"
+     ]
+    stm = [
+        "int i, n = 2;",
+        "for(i =0 : 1 : n){ i = i + 1;}",
+        "for(i  : 1 : n){ i = i + 1;}",
+        "for(i =0 : 1 : n){ }"
     ]
-    for stmt in expressions:
-        print(f"Parsing statement: {stmt}")
-        parse_statement(stmt)
-        print("\nSymbol Table:")
-        display_symbol_table()
-        print("-" * 40)
+    for line in stm:#prm:
+       print(f"Parsing: {line}")
+       #parse_program(line)
+       parse_statement(line)
+       #parser_statement_debug(line)
+       print("-" * 40)
+       display_symbol_table()
+    

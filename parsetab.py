@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'AND BOOL BOOL_TYPE CHAR CHAR_TYPE COLON COMMA COMMENT CONST DECLARATION DIVIDE ELSE EQ EQUALS FLOAT FLOAT_TYPE FOR GT GTE ID IF INSTRUCTION INT INT_TYPE LBRACE LPAREN LT LTE MINUS MULTIPLY NEQ NOT NUMBER OR PLUS RBRACE RPAREN SEMICOLON VAR_GLOBALstatement : type declaration_list SEMICOLON\n| CONST type ID EQUALS expression SEMICOLONdeclaration_list : declaration\n| declaration COMMA declaration_listdeclaration : ID\n| ID EQUALS expressionstatement : ID EQUALS expression SEMICOLONtype : INT_TYPE\n| FLOAT_TYPE\n| BOOL_TYPE\n| CHAR_TYPEfactor : INT\n| FLOAT\n| CHAR\n| BOOLexpression : expression PLUS term\n           | expression MINUS term\nterm       : term MULTIPLY factor\n           | term DIVIDE factorexpression : termterm : factorfactor : NUMBERexpression : expression OR expressionexpression :  expression  AND expression  expression : expression EQ expression\n| expression NEQ expression\n| expression LT expression\n| expression GT expression\n| expression LTE expression\n| expression GTE expressionexpression : NOT expressioncomparison : LPAREN expression RPARENcomparison : NUMBERfactor : comparisonfactor : ID'
+_lr_signature = 'AND BOOL BOOL_TYPE CHAR CHAR_TYPE COLON COMMA COMMENT CONST DECLARATION DIVIDE ELSE EQ EQUALS FLOAT FLOAT_TYPE FOR GT GTE ID IF INSTRUCTION INT INT_TYPE LBRACE LPAREN LT LTE MINUS MULTIPLY NEQ NOT NUMBER OR PLUS RBRACE RPAREN SEMICOLON VAR_GLOBALstatement : type declaration_list SEMICOLON\n                 | CONST type ID EQUALS expression SEMICOLONdeclaration_list : declaration\n                        | declaration COMMA declaration_listdeclaration : ID\n                   | ID EQUALS expressionstatement : ID EQUALS expression SEMICOLONtype : INT_TYPE\n            | FLOAT_TYPE\n            | BOOL_TYPE\n            | CHAR_TYPEfactor : INT\n              | FLOAT\n              | CHAR\n              | BOOLexpression : expression PLUS term\n                  | expression MINUS term\n       term       : term MULTIPLY factor\n                  | term DIVIDE factorexpression : termterm : factorfactor : NUMBERexpression : expression OR expressionexpression :  expression  AND expression  expression : expression EQ expression\n                  | expression NEQ expression\n                  | expression LT expression\n                  | expression GT expression\n                  | expression LTE expression\n                  | expression GTE expressionexpression : NOT expressioncomparison : LPAREN expression RPARENcomparison : NUMBERfactor : comparisonfactor : IDstatement : IF LPAREN expression RPAREN block ELSE block\n                 | IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block\n                 | IF LPAREN expression RPAREN blockblock : LBRACE statements RBRACEstatements : statement\n                  | statement statements initialisation : ID EQUALS INTstep : INT\n            | IDstatement : FOR LPAREN initialisation COLON step COLON factor RPAREN block'
     
-_lr_action_items = {'CONST':([0,],[3,]),'ID':([0,2,5,6,7,8,12,13,15,16,21,29,32,34,35,36,37,38,39,40,41,42,43,44,45,],[4,11,-8,-9,-10,-11,17,18,11,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,]),'INT_TYPE':([0,3,],[5,5,]),'FLOAT_TYPE':([0,3,],[6,6,]),'BOOL_TYPE':([0,3,],[7,7,]),'CHAR_TYPE':([0,3,],[8,8,]),'$end':([1,14,33,62,],[0,-1,-7,-2,]),'EQUALS':([4,11,17,],[13,16,32,]),'SEMICOLON':([9,10,11,18,19,20,22,23,24,25,26,27,28,30,31,46,48,49,50,51,52,53,54,55,56,57,58,59,60,61,],[14,-3,-5,-35,33,-20,-21,-12,-13,-14,-15,-22,-34,-4,-6,-31,62,-16,-17,-23,-24,-25,-26,-27,-28,-29,-30,-18,-19,-32,]),'COMMA':([10,11,18,20,22,23,24,25,26,27,28,31,46,49,50,51,52,53,54,55,56,57,58,59,60,61,],[15,-5,-35,-20,-21,-12,-13,-14,-15,-22,-34,-6,-31,-16,-17,-23,-24,-25,-26,-27,-28,-29,-30,-18,-19,-32,]),'NOT':([13,16,21,29,32,36,37,38,39,40,41,42,43,],[21,21,21,21,21,21,21,21,21,21,21,21,21,]),'INT':([13,16,21,29,32,34,35,36,37,38,39,40,41,42,43,44,45,],[23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,23,]),'FLOAT':([13,16,21,29,32,34,35,36,37,38,39,40,41,42,43,44,45,],[24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,]),'CHAR':([13,16,21,29,32,34,35,36,37,38,39,40,41,42,43,44,45,],[25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,]),'BOOL':([13,16,21,29,32,34,35,36,37,38,39,40,41,42,43,44,45,],[26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,]),'NUMBER':([13,16,21,29,32,34,35,36,37,38,39,40,41,42,43,44,45,],[27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,]),'LPAREN':([13,16,21,29,32,34,35,36,37,38,39,40,41,42,43,44,45,],[29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,]),'MULTIPLY':([18,20,22,23,24,25,26,27,28,49,50,59,60,61,],[-35,44,-21,-12,-13,-14,-15,-22,-34,44,44,-18,-19,-32,]),'DIVIDE':([18,20,22,23,24,25,26,27,28,49,50,59,60,61,],[-35,45,-21,-12,-13,-14,-15,-22,-34,45,45,-18,-19,-32,]),'PLUS':([18,19,20,22,23,24,25,26,27,28,31,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,],[-35,34,-20,-21,-12,-13,-14,-15,-22,-34,34,34,34,34,-16,-17,34,34,34,34,34,34,34,34,-18,-19,-32,]),'MINUS':([18,19,20,22,23,24,25,26,27,28,31,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,],[-35,35,-20,-21,-12,-13,-14,-15,-22,-34,35,35,35,35,-16,-17,35,35,35,35,35,35,35,35,-18,-19,-32,]),'OR':([18,19,20,22,23,24,25,26,27,28,31,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,],[-35,36,-20,-21,-12,-13,-14,-15,-22,-34,36,36,36,36,-16,-17,36,36,36,36,36,36,36,36,-18,-19,-32,]),'AND':([18,19,20,22,23,24,25,26,27,28,31,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,],[-35,37,-20,-21,-12,-13,-14,-15,-22,-34,37,37,37,37,-16,-17,37,37,37,37,37,37,37,37,-18,-19,-32,]),'EQ':([18,19,20,22,23,24,25,26,27,28,31,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,],[-35,38,-20,-21,-12,-13,-14,-15,-22,-34,38,38,38,38,-16,-17,38,38,38,38,38,38,38,38,-18,-19,-32,]),'NEQ':([18,19,20,22,23,24,25,26,27,28,31,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,],[-35,39,-20,-21,-12,-13,-14,-15,-22,-34,39,39,39,39,-16,-17,39,39,39,39,39,39,39,39,-18,-19,-32,]),'LT':([18,19,20,22,23,24,25,26,27,28,31,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,],[-35,40,-20,-21,-12,-13,-14,-15,-22,-34,40,40,40,40,-16,-17,40,40,40,40,40,40,40,40,-18,-19,-32,]),'GT':([18,19,20,22,23,24,25,26,27,28,31,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,],[-35,41,-20,-21,-12,-13,-14,-15,-22,-34,41,41,41,41,-16,-17,41,41,41,41,41,41,41,41,-18,-19,-32,]),'LTE':([18,19,20,22,23,24,25,26,27,28,31,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,],[-35,42,-20,-21,-12,-13,-14,-15,-22,-34,42,42,42,42,-16,-17,42,42,42,42,42,42,42,42,-18,-19,-32,]),'GTE':([18,19,20,22,23,24,25,26,27,28,31,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,],[-35,43,-20,-21,-12,-13,-14,-15,-22,-34,43,43,43,43,-16,-17,43,43,43,43,43,43,43,43,-18,-19,-32,]),'RPAREN':([18,20,22,23,24,25,26,27,28,46,47,49,50,51,52,53,54,55,56,57,58,59,60,61,],[-35,-20,-21,-12,-13,-14,-15,-22,-34,-31,61,-16,-17,-23,-24,-25,-26,-27,-28,-29,-30,-18,-19,-32,]),}
+_lr_action_items = {'CONST':([0,18,40,72,73,78,81,84,85,91,95,],[3,-1,-7,-38,3,-2,3,-36,-39,-45,-37,]),'ID':([0,2,7,8,9,10,14,15,16,17,18,19,20,25,33,39,40,41,42,43,44,45,46,47,48,49,50,51,52,56,72,73,78,81,82,84,85,88,91,95,],[4,13,-8,-9,-10,-11,21,22,22,36,-1,13,22,22,22,22,-7,22,22,22,22,22,22,22,22,22,22,22,22,76,-38,4,-2,4,22,-36,-39,22,-45,-37,]),'IF':([0,18,40,72,73,78,79,81,84,85,91,95,],[5,-1,-7,-38,5,-2,83,5,-36,-39,-45,-37,]),'FOR':([0,18,40,72,73,78,81,84,85,91,95,],[6,-1,-7,-38,6,-2,6,-36,-39,-45,-37,]),'INT_TYPE':([0,3,18,40,72,73,78,81,84,85,91,95,],[7,7,-1,-7,-38,7,-2,7,-36,-39,-45,-37,]),'FLOAT_TYPE':([0,3,18,40,72,73,78,81,84,85,91,95,],[8,8,-1,-7,-38,8,-2,8,-36,-39,-45,-37,]),'BOOL_TYPE':([0,3,18,40,72,73,78,81,84,85,91,95,],[9,9,-1,-7,-38,9,-2,9,-36,-39,-45,-37,]),'CHAR_TYPE':([0,3,18,40,72,73,78,81,84,85,91,95,],[10,10,-1,-7,-38,10,-2,10,-36,-39,-45,-37,]),'$end':([1,18,40,72,78,84,85,91,95,],[0,-1,-7,-38,-2,-36,-39,-45,-37,]),'EQUALS':([4,13,21,36,],[15,20,39,57,]),'LPAREN':([5,6,15,16,20,25,33,39,41,42,43,44,45,46,47,48,49,50,51,52,82,83,88,],[16,17,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,88,33,]),'SEMICOLON':([11,12,13,22,23,24,26,27,28,29,30,31,32,37,38,53,58,59,60,61,62,63,64,65,66,67,68,69,70,71,],[18,-3,-5,-35,40,-20,-21,-12,-13,-14,-15,-22,-34,-4,-6,-31,78,-16,-17,-23,-24,-25,-26,-27,-28,-29,-30,-18,-19,-32,]),'COMMA':([12,13,22,24,26,27,28,29,30,31,32,38,53,59,60,61,62,63,64,65,66,67,68,69,70,71,],[19,-5,-35,-20,-21,-12,-13,-14,-15,-22,-34,-6,-31,-16,-17,-23,-24,-25,-26,-27,-28,-29,-30,-18,-19,-32,]),'NOT':([15,16,20,25,33,39,43,44,45,46,47,48,49,50,88,],[25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,]),'INT':([15,16,20,25,33,39,41,42,43,44,45,46,47,48,49,50,51,52,56,57,82,88,],[27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,75,77,27,27,]),'FLOAT':([15,16,20,25,33,39,41,42,43,44,45,46,47,48,49,50,51,52,82,88,],[28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,]),'CHAR':([15,16,20,25,33,39,41,42,43,44,45,46,47,48,49,50,51,52,82,88,],[29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,]),'BOOL':([15,16,20,25,33,39,41,42,43,44,45,46,47,48,49,50,51,52,82,88,],[30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,]),'NUMBER':([15,16,20,25,33,39,41,42,43,44,45,46,47,48,49,50,51,52,82,88,],[31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,]),'RBRACE':([18,40,72,78,80,81,84,85,86,91,95,],[-1,-7,-38,-2,85,-40,-36,-39,-41,-45,-37,]),'MULTIPLY':([22,24,26,27,28,29,30,31,32,59,60,69,70,71,],[-35,51,-21,-12,-13,-14,-15,-22,-34,51,51,-18,-19,-32,]),'DIVIDE':([22,24,26,27,28,29,30,31,32,59,60,69,70,71,],[-35,52,-21,-12,-13,-14,-15,-22,-34,52,52,-18,-19,-32,]),'PLUS':([22,23,24,26,27,28,29,30,31,32,34,38,53,54,58,59,60,61,62,63,64,65,66,67,68,69,70,71,90,],[-35,41,-20,-21,-12,-13,-14,-15,-22,-34,41,41,41,41,41,-16,-17,41,41,41,41,41,41,41,41,-18,-19,-32,41,]),'MINUS':([22,23,24,26,27,28,29,30,31,32,34,38,53,54,58,59,60,61,62,63,64,65,66,67,68,69,70,71,90,],[-35,42,-20,-21,-12,-13,-14,-15,-22,-34,42,42,42,42,42,-16,-17,42,42,42,42,42,42,42,42,-18,-19,-32,42,]),'OR':([22,23,24,26,27,28,29,30,31,32,34,38,53,54,58,59,60,61,62,63,64,65,66,67,68,69,70,71,90,],[-35,43,-20,-21,-12,-13,-14,-15,-22,-34,43,43,43,43,43,-16,-17,43,43,43,43,43,43,43,43,-18,-19,-32,43,]),'AND':([22,23,24,26,27,28,29,30,31,32,34,38,53,54,58,59,60,61,62,63,64,65,66,67,68,69,70,71,90,],[-35,44,-20,-21,-12,-13,-14,-15,-22,-34,44,44,44,44,44,-16,-17,44,44,44,44,44,44,44,44,-18,-19,-32,44,]),'EQ':([22,23,24,26,27,28,29,30,31,32,34,38,53,54,58,59,60,61,62,63,64,65,66,67,68,69,70,71,90,],[-35,45,-20,-21,-12,-13,-14,-15,-22,-34,45,45,45,45,45,-16,-17,45,45,45,45,45,45,45,45,-18,-19,-32,45,]),'NEQ':([22,23,24,26,27,28,29,30,31,32,34,38,53,54,58,59,60,61,62,63,64,65,66,67,68,69,70,71,90,],[-35,46,-20,-21,-12,-13,-14,-15,-22,-34,46,46,46,46,46,-16,-17,46,46,46,46,46,46,46,46,-18,-19,-32,46,]),'LT':([22,23,24,26,27,28,29,30,31,32,34,38,53,54,58,59,60,61,62,63,64,65,66,67,68,69,70,71,90,],[-35,47,-20,-21,-12,-13,-14,-15,-22,-34,47,47,47,47,47,-16,-17,47,47,47,47,47,47,47,47,-18,-19,-32,47,]),'GT':([22,23,24,26,27,28,29,30,31,32,34,38,53,54,58,59,60,61,62,63,64,65,66,67,68,69,70,71,90,],[-35,48,-20,-21,-12,-13,-14,-15,-22,-34,48,48,48,48,48,-16,-17,48,48,48,48,48,48,48,48,-18,-19,-32,48,]),'LTE':([22,23,24,26,27,28,29,30,31,32,34,38,53,54,58,59,60,61,62,63,64,65,66,67,68,69,70,71,90,],[-35,49,-20,-21,-12,-13,-14,-15,-22,-34,49,49,49,49,49,-16,-17,49,49,49,49,49,49,49,49,-18,-19,-32,49,]),'GTE':([22,23,24,26,27,28,29,30,31,32,34,38,53,54,58,59,60,61,62,63,64,65,66,67,68,69,70,71,90,],[-35,50,-20,-21,-12,-13,-14,-15,-22,-34,50,50,50,50,50,-16,-17,50,50,50,50,50,50,50,50,-18,-19,-32,50,]),'RPAREN':([22,24,26,27,28,29,30,31,32,34,53,54,59,60,61,62,63,64,65,66,67,68,69,70,71,87,90,],[-35,-20,-21,-12,-13,-14,-15,-22,-34,55,-31,71,-16,-17,-23,-24,-25,-26,-27,-28,-29,-30,-18,-19,-32,89,92,]),'COLON':([35,74,75,76,77,],[56,82,-43,-44,-42,]),'LBRACE':([55,79,89,92,94,],[73,73,73,73,73,]),'ELSE':([72,85,93,],[79,-39,94,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'statement':([0,],[1,]),'type':([0,3,],[2,12,]),'declaration_list':([2,15,],[9,30,]),'declaration':([2,15,],[10,10,]),'expression':([13,16,21,29,32,36,37,38,39,40,41,42,43,],[19,31,46,47,48,51,52,53,54,55,56,57,58,]),'term':([13,16,21,29,32,34,35,36,37,38,39,40,41,42,43,],[20,20,20,20,20,49,50,20,20,20,20,20,20,20,20,]),'factor':([13,16,21,29,32,34,35,36,37,38,39,40,41,42,43,44,45,],[22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,59,60,]),'comparison':([13,16,21,29,32,34,35,36,37,38,39,40,41,42,43,44,45,],[28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,]),}
+_lr_goto_items = {'statement':([0,73,81,],[1,81,81,]),'type':([0,3,73,81,],[2,14,2,2,]),'declaration_list':([2,19,],[11,37,]),'declaration':([2,19,],[12,12,]),'expression':([15,16,20,25,33,39,43,44,45,46,47,48,49,50,88,],[23,34,38,53,54,58,61,62,63,64,65,66,67,68,90,]),'term':([15,16,20,25,33,39,41,42,43,44,45,46,47,48,49,50,88,],[24,24,24,24,24,24,59,60,24,24,24,24,24,24,24,24,24,]),'factor':([15,16,20,25,33,39,41,42,43,44,45,46,47,48,49,50,51,52,82,88,],[26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,69,70,87,26,]),'comparison':([15,16,20,25,33,39,41,42,43,44,45,46,47,48,49,50,51,52,82,88,],[32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,]),'initialisation':([17,],[35,]),'block':([55,79,89,92,94,],[72,84,91,93,95,]),'step':([56,],[74,]),'statements':([73,81,],[80,86,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,39 +27,49 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> statement","S'",1,None,None,None),
-  ('statement -> type declaration_list SEMICOLON','statement',3,'p_statement_declaration','compiler.py',136),
-  ('statement -> CONST type ID EQUALS expression SEMICOLON','statement',6,'p_statement_declaration','compiler.py',137),
-  ('declaration_list -> declaration','declaration_list',1,'p_declaration_list','compiler.py',154),
-  ('declaration_list -> declaration COMMA declaration_list','declaration_list',3,'p_declaration_list','compiler.py',155),
-  ('declaration -> ID','declaration',1,'p_declaration','compiler.py',165),
-  ('declaration -> ID EQUALS expression','declaration',3,'p_declaration','compiler.py',166),
-  ('statement -> ID EQUALS expression SEMICOLON','statement',4,'p_statement_assignment','compiler.py',175),
-  ('type -> INT_TYPE','type',1,'p_type','compiler.py',182),
-  ('type -> FLOAT_TYPE','type',1,'p_type','compiler.py',183),
-  ('type -> BOOL_TYPE','type',1,'p_type','compiler.py',184),
-  ('type -> CHAR_TYPE','type',1,'p_type','compiler.py',185),
-  ('factor -> INT','factor',1,'p_factor_number','compiler.py',195),
-  ('factor -> FLOAT','factor',1,'p_factor_number','compiler.py',196),
-  ('factor -> CHAR','factor',1,'p_factor_number','compiler.py',197),
-  ('factor -> BOOL','factor',1,'p_factor_number','compiler.py',198),
-  ('expression -> expression PLUS term','expression',3,'p_binary_operators','compiler.py',212),
-  ('expression -> expression MINUS term','expression',3,'p_binary_operators','compiler.py',213),
-  ('term -> term MULTIPLY factor','term',3,'p_binary_operators','compiler.py',214),
-  ('term -> term DIVIDE factor','term',3,'p_binary_operators','compiler.py',215),
-  ('expression -> term','expression',1,'p_expression_term','compiler.py',228),
-  ('term -> factor','term',1,'p_term_factor','compiler.py',233),
-  ('factor -> NUMBER','factor',1,'p_factor_num','compiler.py',238),
-  ('expression -> expression OR expression','expression',3,'p_expression_or','compiler.py',255),
-  ('expression -> expression AND expression','expression',3,'p_expression_and','compiler.py',260),
-  ('expression -> expression EQ expression','expression',3,'p_expression_comparison','compiler.py',265),
-  ('expression -> expression NEQ expression','expression',3,'p_expression_comparison','compiler.py',266),
-  ('expression -> expression LT expression','expression',3,'p_expression_comparison','compiler.py',267),
-  ('expression -> expression GT expression','expression',3,'p_expression_comparison','compiler.py',268),
-  ('expression -> expression LTE expression','expression',3,'p_expression_comparison','compiler.py',269),
-  ('expression -> expression GTE expression','expression',3,'p_expression_comparison','compiler.py',270),
-  ('expression -> NOT expression','expression',2,'p_expression_not','compiler.py',285),
-  ('comparison -> LPAREN expression RPAREN','comparison',3,'p_comparison_expr','compiler.py',290),
-  ('comparison -> NUMBER','comparison',1,'p_comparison_number','compiler.py',295),
-  ('factor -> comparison','factor',1,'p_factor_comparison','compiler.py',300),
-  ('factor -> ID','factor',1,'p_factor_id','compiler.py',308),
+  ('statement -> type declaration_list SEMICOLON','statement',3,'p_statement_declaration','compilerr .py',145),
+  ('statement -> CONST type ID EQUALS expression SEMICOLON','statement',6,'p_statement_declaration','compilerr .py',146),
+  ('declaration_list -> declaration','declaration_list',1,'p_declaration_list','compilerr .py',163),
+  ('declaration_list -> declaration COMMA declaration_list','declaration_list',3,'p_declaration_list','compilerr .py',164),
+  ('declaration -> ID','declaration',1,'p_declaration','compilerr .py',174),
+  ('declaration -> ID EQUALS expression','declaration',3,'p_declaration','compilerr .py',175),
+  ('statement -> ID EQUALS expression SEMICOLON','statement',4,'p_statement_assignment','compilerr .py',184),
+  ('type -> INT_TYPE','type',1,'p_type','compilerr .py',197),
+  ('type -> FLOAT_TYPE','type',1,'p_type','compilerr .py',198),
+  ('type -> BOOL_TYPE','type',1,'p_type','compilerr .py',199),
+  ('type -> CHAR_TYPE','type',1,'p_type','compilerr .py',200),
+  ('factor -> INT','factor',1,'p_factor_number','compilerr .py',210),
+  ('factor -> FLOAT','factor',1,'p_factor_number','compilerr .py',211),
+  ('factor -> CHAR','factor',1,'p_factor_number','compilerr .py',212),
+  ('factor -> BOOL','factor',1,'p_factor_number','compilerr .py',213),
+  ('expression -> expression PLUS term','expression',3,'p_binary_operators','compilerr .py',227),
+  ('expression -> expression MINUS term','expression',3,'p_binary_operators','compilerr .py',228),
+  ('term -> term MULTIPLY factor','term',3,'p_binary_operators','compilerr .py',229),
+  ('term -> term DIVIDE factor','term',3,'p_binary_operators','compilerr .py',230),
+  ('expression -> term','expression',1,'p_expression_term','compilerr .py',243),
+  ('term -> factor','term',1,'p_term_factor','compilerr .py',248),
+  ('factor -> NUMBER','factor',1,'p_factor_num','compilerr .py',253),
+  ('expression -> expression OR expression','expression',3,'p_expression_or','compilerr .py',270),
+  ('expression -> expression AND expression','expression',3,'p_expression_and','compilerr .py',275),
+  ('expression -> expression EQ expression','expression',3,'p_expression_comparison','compilerr .py',280),
+  ('expression -> expression NEQ expression','expression',3,'p_expression_comparison','compilerr .py',281),
+  ('expression -> expression LT expression','expression',3,'p_expression_comparison','compilerr .py',282),
+  ('expression -> expression GT expression','expression',3,'p_expression_comparison','compilerr .py',283),
+  ('expression -> expression LTE expression','expression',3,'p_expression_comparison','compilerr .py',284),
+  ('expression -> expression GTE expression','expression',3,'p_expression_comparison','compilerr .py',285),
+  ('expression -> NOT expression','expression',2,'p_expression_not','compilerr .py',300),
+  ('comparison -> LPAREN expression RPAREN','comparison',3,'p_comparison_expr','compilerr .py',305),
+  ('comparison -> NUMBER','comparison',1,'p_comparison_number','compilerr .py',310),
+  ('factor -> comparison','factor',1,'p_factor_comparison','compilerr .py',315),
+  ('factor -> ID','factor',1,'p_factor_id','compilerr .py',323),
+  ('statement -> IF LPAREN expression RPAREN block ELSE block','statement',7,'p_statement_if','compilerr .py',341),
+  ('statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block','statement',13,'p_statement_if','compilerr .py',342),
+  ('statement -> IF LPAREN expression RPAREN block','statement',5,'p_statement_if','compilerr .py',343),
+  ('block -> LBRACE statements RBRACE','block',3,'p_block','compilerr .py',371),
+  ('statements -> statement','statements',1,'p_statements','compilerr .py',375),
+  ('statements -> statement statements','statements',2,'p_statements','compilerr .py',376),
+  ('initialisation -> ID EQUALS INT','initialisation',3,'p_initialisation','compilerr .py',384),
+  ('step -> INT','step',1,'p_step','compilerr .py',389),
+  ('step -> ID','step',1,'p_step','compilerr .py',390),
+  ('statement -> FOR LPAREN initialisation COLON step COLON factor RPAREN block','statement',9,'p_statement_FORloop','compilerr .py',409),
 ]
