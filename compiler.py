@@ -234,10 +234,6 @@ def p_expression_term(t):
     'expression : term'
     t[0] = t[1]
 
-# T → F
-def p_term_factor(t):
-    'term : factor'
-    t[0] = t[1]
 
 # F → num
 def p_factor_num(t):
@@ -327,8 +323,16 @@ def p_factor_id(t):
 
 # Bloc de code entre accolades
 def p_block(t):
-    'block : LBRACE statement RBRACE'
-    t[0] = t[2]  # Le bloc contient une ou plusieurs instructions
+    '''block : LBRACE statements RBRACE'''
+    t[0] = t[2]  # Le bloc contient une liste d'instructions
+
+def p_statements(t):
+    '''statements : statement
+                  | statement statements'''
+    if len(t) == 2:
+        t[0] = [t[1]]  # Une seule instruction
+    else:
+        t[0] = [t[1]] + t[2]  # Plusieurs instructions
 
 # Nouvelle règle pour gérer les structures if/else avec les blocs
 def p_statement_if(t):
@@ -384,7 +388,7 @@ expressions = [
     "int x = 10;",
     "if (x > 5) {x = x + 5;} else if (x == 10) {x = x * 2;} else {x = x - 5;}",  # Si x > 5, additionne 5 ; sinon si x == 10, multiplie par 2 ; sinon, soustrait 5
     "int y = 3;",
-    "if (y > 5) {y = y + 1;} else if (y == 3) {y = y + 10;} else {y = y - 1;}",  # Si y > 5, ajoute 1 ; sinon si y == 3, ajoute 10 ; sinon, soustrait 1
+    "if (y > 5) {y = y + 1;} else if (y == 3) {y = y + 10; y = y - 1; x = x + 5;} else {y = y - 1;}",  # Si y > 5, ajoute 1 ; sinon si y == 3, ajoute 10 ; sinon, soustrait 1
     ]
 
 for stmt in expressions:
