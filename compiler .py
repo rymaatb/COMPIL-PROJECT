@@ -410,7 +410,7 @@ def p_step(t):
     
 def p_statement_FORloop(t):
     'statement : FOR LPAREN initialisation COLON step COLON factor RPAREN block'
-    t[0] = t[3]
+    t[0] = ('statement',t[3],t[5],t[7],t[9])
 
 def p_error(p):
     if p:
