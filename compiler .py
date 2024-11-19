@@ -443,8 +443,8 @@ if __name__ == '__main__':
     stm = [
         "int i, n = 2;",
         "for(i =0 : 1 : n){ i = i + 1;}",
-        "for(i  : 1 : n){ i = i + 1;}",
-        "for(i =0 : 1 : n){ }"
+        "for(i =0 : 1 : n){ }",
+        "for(i  : 1 : n){ i = i + 1;}"
     ]
     for line in stm:#prm:
        print(f"Parsing: {line}")
