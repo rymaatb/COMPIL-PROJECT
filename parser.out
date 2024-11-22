@@ -34,9 +34,9 @@ Rule 1     statement -> type declaration_list SEMICOLON
 Rule 2     statement -> CONST type ID EQUALS expression SEMICOLON
 Rule 3     declaration_list -> declaration
 Rule 4     declaration_list -> declaration COMMA declaration_list
-Rule 5     declaration -> ID LBRACKET INT RBRACKET
-Rule 6     declaration -> ID
-Rule 7     declaration -> ID EQUALS expression
+Rule 5     declaration -> ID
+Rule 6     declaration -> ID EQUALS expression
+Rule 7     declaration -> ID LBRACKET NUMBER RBRACKET
 Rule 8     expression -> ID
 Rule 9     expression -> FLOAT
 Rule 10    expression -> INT
@@ -67,7 +67,7 @@ DECLARATION          :
 DIVIDE               : 
 ELSE                 : 
 EQ                   : 
-EQUALS               : 2 7
+EQUALS               : 2 6
 FLOAT                : 9
 FLOAT_TYPE           : 13
 FOR                  : 
@@ -76,10 +76,10 @@ GTE                  :
 ID                   : 2 5 6 7 8 16 20 21
 IF                   : 
 INSTRUCTION          : 
-INT                  : 5 10
+INT                  : 10
 INT_TYPE             : 12
 LBRACE               : 
-LBRACKET             : 5 21
+LBRACKET             : 7 21
 LPAREN               : 16 17
 LT                   : 
 LTE                  : 
@@ -87,11 +87,11 @@ MINUS                :
 MULTIPLY             : 
 NEQ                  : 
 NOT                  : 
-NUMBER               : 21
+NUMBER               : 7 21
 OR                   : 
 PLUS                 : 
 RBRACE               : 
-RBRACKET             : 5 21
+RBRACKET             : 7 21
 READ                 : 16
 RPAREN               : 16 17
 SEMICOLON            : 1 2 16 17
@@ -103,7 +103,7 @@ Nonterminals, with rules where they appear
 
 declaration          : 3 4
 declaration_list     : 1 4
-expression           : 2 7
+expression           : 2 6
 statement            : 0
 type                 : 1 2
 write_content        : 17 19
@@ -145,9 +145,9 @@ state 2
     (1) statement -> type . declaration_list SEMICOLON
     (3) declaration_list -> . declaration
     (4) declaration_list -> . declaration COMMA declaration_list
-    (5) declaration -> . ID LBRACKET INT RBRACKET
-    (6) declaration -> . ID
-    (7) declaration -> . ID EQUALS expression
+    (5) declaration -> . ID
+    (6) declaration -> . ID EQUALS expression
+    (7) declaration -> . ID LBRACKET NUMBER RBRACKET
 
     ID              shift and go to state 12
 
@@ -229,14 +229,14 @@ state 11
 
 state 12
 
-    (5) declaration -> ID . LBRACKET INT RBRACKET
-    (6) declaration -> ID .
-    (7) declaration -> ID . EQUALS expression
+    (5) declaration -> ID .
+    (6) declaration -> ID . EQUALS expression
+    (7) declaration -> ID . LBRACKET NUMBER RBRACKET
 
-    LBRACKET        shift and go to state 18
-    COMMA           reduce using rule 6 (declaration -> ID .)
-    SEMICOLON       reduce using rule 6 (declaration -> ID .)
-    EQUALS          shift and go to state 19
+    COMMA           reduce using rule 5 (declaration -> ID .)
+    SEMICOLON       reduce using rule 5 (declaration -> ID .)
+    EQUALS          shift and go to state 18
+    LBRACKET        shift and go to state 19
 
 
 state 13
@@ -278,9 +278,9 @@ state 17
     (4) declaration_list -> declaration COMMA . declaration_list
     (3) declaration_list -> . declaration
     (4) declaration_list -> . declaration COMMA declaration_list
-    (5) declaration -> . ID LBRACKET INT RBRACKET
-    (6) declaration -> . ID
-    (7) declaration -> . ID EQUALS expression
+    (5) declaration -> . ID
+    (6) declaration -> . ID EQUALS expression
+    (7) declaration -> . ID LBRACKET NUMBER RBRACKET
 
     ID              shift and go to state 12
 
@@ -289,25 +289,25 @@ state 17
 
 state 18
 
-    (5) declaration -> ID LBRACKET . INT RBRACKET
-
-    INT             shift and go to state 26
-
-
-state 19
-
-    (7) declaration -> ID EQUALS . expression
+    (6) declaration -> ID EQUALS . expression
     (8) expression -> . ID
     (9) expression -> . FLOAT
     (10) expression -> . INT
     (11) expression -> . CHAR
 
-    ID              shift and go to state 27
-    FLOAT           shift and go to state 29
-    INT             shift and go to state 30
-    CHAR            shift and go to state 31
+    ID              shift and go to state 26
+    FLOAT           shift and go to state 28
+    INT             shift and go to state 29
+    CHAR            shift and go to state 30
 
-    expression                     shift and go to state 28
+    expression                     shift and go to state 27
+
+state 19
+
+    (7) declaration -> ID LBRACKET . NUMBER RBRACKET
+
+    NUMBER          shift and go to state 31
+
 
 state 20
 
@@ -359,28 +359,21 @@ state 25
 
 state 26
 
-    (5) declaration -> ID LBRACKET INT . RBRACKET
-
-    RBRACKET        shift and go to state 37
-
-
-state 27
-
     (8) expression -> ID .
 
     COMMA           reduce using rule 8 (expression -> ID .)
     SEMICOLON       reduce using rule 8 (expression -> ID .)
 
 
+state 27
+
+    (6) declaration -> ID EQUALS expression .
+
+    COMMA           reduce using rule 6 (declaration -> ID EQUALS expression .)
+    SEMICOLON       reduce using rule 6 (declaration -> ID EQUALS expression .)
+
+
 state 28
-
-    (7) declaration -> ID EQUALS expression .
-
-    COMMA           reduce using rule 7 (declaration -> ID EQUALS expression .)
-    SEMICOLON       reduce using rule 7 (declaration -> ID EQUALS expression .)
-
-
-state 29
 
     (9) expression -> FLOAT .
 
@@ -388,7 +381,7 @@ state 29
     SEMICOLON       reduce using rule 9 (expression -> FLOAT .)
 
 
-state 30
+state 29
 
     (10) expression -> INT .
 
@@ -396,12 +389,19 @@ state 30
     SEMICOLON       reduce using rule 10 (expression -> INT .)
 
 
-state 31
+state 30
 
     (11) expression -> CHAR .
 
     COMMA           reduce using rule 11 (expression -> CHAR .)
     SEMICOLON       reduce using rule 11 (expression -> CHAR .)
+
+
+state 31
+
+    (7) declaration -> ID LBRACKET NUMBER . RBRACKET
+
+    RBRACKET        shift and go to state 37
 
 
 state 32
@@ -412,10 +412,10 @@ state 32
     (10) expression -> . INT
     (11) expression -> . CHAR
 
-    ID              shift and go to state 27
-    FLOAT           shift and go to state 29
-    INT             shift and go to state 30
-    CHAR            shift and go to state 31
+    ID              shift and go to state 26
+    FLOAT           shift and go to state 28
+    INT             shift and go to state 29
+    CHAR            shift and go to state 30
 
     expression                     shift and go to state 38
 
@@ -452,10 +452,10 @@ state 36
 
 state 37
 
-    (5) declaration -> ID LBRACKET INT RBRACKET .
+    (7) declaration -> ID LBRACKET NUMBER RBRACKET .
 
-    COMMA           reduce using rule 5 (declaration -> ID LBRACKET INT RBRACKET .)
-    SEMICOLON       reduce using rule 5 (declaration -> ID LBRACKET INT RBRACKET .)
+    COMMA           reduce using rule 7 (declaration -> ID LBRACKET NUMBER RBRACKET .)
+    SEMICOLON       reduce using rule 7 (declaration -> ID LBRACKET NUMBER RBRACKET .)
 
 
 state 38

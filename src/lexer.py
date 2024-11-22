@@ -13,23 +13,7 @@ tokens = (
     'READ', 'WRITE',
 )
 
-# Reserved keywords
-reserved = {
-    'if': 'IF',
-    'else': 'ELSE',
-    'for': 'FOR',
-    'int': 'INT_TYPE',
-    'float': 'FLOAT_TYPE',
-    'bool': 'BOOL_TYPE',
-    'char': 'CHAR_TYPE',
-    'true': 'BOOL',
-    'false': 'BOOL',
-    'const': 'CONST',
-    'READ': 'READ',
-    'WRITE': 'WRITE',
-}
-
-# Regular expressions
+# Regular expressions for symbols, keywords, and identifiers
 t_VAR_GLOBAL = r'VAR_GLOBAL'
 t_DECLARATION = r'DECLARATION'
 t_INSTRUCTION = r'INSTRUCTION'
@@ -56,12 +40,33 @@ t_AND = r'&&'
 t_OR = r'\|\|'
 t_NOT = r'!'
 
-# Identifier and constants
+# Reserved keywords
+reserved = {
+    'if': 'IF',
+    'else': 'ELSE',
+    'for': 'FOR',
+    'int': 'INT_TYPE',
+    'float': 'FLOAT_TYPE',
+    'bool': 'BOOL_TYPE',
+    'char': 'CHAR_TYPE',
+    'true': 'BOOL',
+    'false': 'BOOL',
+    'const': 'CONST',
+    'READ': 'READ',
+    'WRITE': 'WRITE',
+}
+
+# Token for identifiers
 def t_ID(t):
     r'[A-Za-z_][a-zA-Z0-9_]*'
     t.type = reserved.get(t.value, 'ID')
+    if t.value == 'true':
+        t.value = True
+    elif t.value == 'false':
+        t.value = False
     return t
 
+# Other token definitions
 def t_FLOAT(t):
     r'\d+\.\d+'
     t.value = float(t.value)
@@ -81,6 +86,11 @@ def t_CHAR(t):
 def t_COMMENT(t):
     r'%%.*'
     pass
+
+# Handle newlines
+def t_newline(t):
+    r'\n+'
+    t.lexer.lineno += len(t.value)
 
 # Ignore spaces and tabs
 t_ignore = ' \t'
