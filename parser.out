@@ -45,12 +45,15 @@ Rule 12    type -> INT_TYPE
 Rule 13    type -> FLOAT_TYPE
 Rule 14    type -> BOOL_TYPE
 Rule 15    type -> CHAR_TYPE
-Rule 16    statement -> READ LPAREN ID RPAREN SEMICOLON
-Rule 17    statement -> WRITE LPAREN write_content RPAREN SEMICOLON
-Rule 18    write_content -> write_item
-Rule 19    write_content -> write_content COMMA write_item
-Rule 20    write_item -> ID
-Rule 21    write_item -> ID LBRACKET NUMBER RBRACKET
+Rule 16    declaration -> type ID LBRACKET NUMBER RBRACKET SEMICOLON
+Rule 17    statement -> ID LBRACKET expression RBRACKET EQUALS expression SEMICOLON
+Rule 18    factor -> ID LBRACKET expression RBRACKET
+Rule 19    statement -> READ LPAREN ID RPAREN SEMICOLON
+Rule 20    statement -> WRITE LPAREN write_content RPAREN SEMICOLON
+Rule 21    write_content -> write_item
+Rule 22    write_content -> write_content COMMA write_item
+Rule 23    write_item -> ID
+Rule 24    write_item -> ID LBRACKET NUMBER RBRACKET
 
 Terminals, with rules where they appear
 
@@ -60,54 +63,55 @@ BOOL_TYPE            : 14
 CHAR                 : 11
 CHAR_TYPE            : 15
 COLON                : 
-COMMA                : 4 19
+COMMA                : 4 22
 COMMENT              : 
 CONST                : 2
 DECLARATION          : 
 DIVIDE               : 
 ELSE                 : 
 EQ                   : 
-EQUALS               : 2 6
+EQUALS               : 2 6 17
 FLOAT                : 9
 FLOAT_TYPE           : 13
 FOR                  : 
 GT                   : 
 GTE                  : 
-ID                   : 2 5 6 7 8 16 20 21
+ID                   : 2 5 6 7 8 16 17 18 19 23 24
 IF                   : 
 INSTRUCTION          : 
 INT                  : 10
 INT_TYPE             : 12
 LBRACE               : 
-LBRACKET             : 7 21
-LPAREN               : 16 17
+LBRACKET             : 7 16 17 18 24
+LPAREN               : 19 20
 LT                   : 
 LTE                  : 
 MINUS                : 
 MULTIPLY             : 
 NEQ                  : 
 NOT                  : 
-NUMBER               : 7 21
+NUMBER               : 7 16 24
 OR                   : 
 PLUS                 : 
 RBRACE               : 
-RBRACKET             : 7 21
-READ                 : 16
-RPAREN               : 16 17
-SEMICOLON            : 1 2 16 17
+RBRACKET             : 7 16 17 18 24
+READ                 : 19
+RPAREN               : 19 20
+SEMICOLON            : 1 2 16 17 19 20
 VAR_GLOBAL           : 
-WRITE                : 17
+WRITE                : 20
 error                : 
 
 Nonterminals, with rules where they appear
 
 declaration          : 3 4
 declaration_list     : 1 4
-expression           : 2 6
+expression           : 2 6 17 17 18
+factor               : 
 statement            : 0
-type                 : 1 2
-write_content        : 17 19
-write_item           : 18 19
+type                 : 1 2 16
+write_content        : 20 22
+write_item           : 21 22
 
 Parsing method: LALR
 
@@ -116,20 +120,22 @@ state 0
     (0) S' -> . statement
     (1) statement -> . type declaration_list SEMICOLON
     (2) statement -> . CONST type ID EQUALS expression SEMICOLON
-    (16) statement -> . READ LPAREN ID RPAREN SEMICOLON
-    (17) statement -> . WRITE LPAREN write_content RPAREN SEMICOLON
+    (17) statement -> . ID LBRACKET expression RBRACKET EQUALS expression SEMICOLON
+    (19) statement -> . READ LPAREN ID RPAREN SEMICOLON
+    (20) statement -> . WRITE LPAREN write_content RPAREN SEMICOLON
     (12) type -> . INT_TYPE
     (13) type -> . FLOAT_TYPE
     (14) type -> . BOOL_TYPE
     (15) type -> . CHAR_TYPE
 
     CONST           shift and go to state 3
-    READ            shift and go to state 4
-    WRITE           shift and go to state 5
-    INT_TYPE        shift and go to state 6
-    FLOAT_TYPE      shift and go to state 7
-    BOOL_TYPE       shift and go to state 8
-    CHAR_TYPE       shift and go to state 9
+    ID              shift and go to state 4
+    READ            shift and go to state 5
+    WRITE           shift and go to state 6
+    INT_TYPE        shift and go to state 7
+    FLOAT_TYPE      shift and go to state 8
+    BOOL_TYPE       shift and go to state 9
+    CHAR_TYPE       shift and go to state 10
 
     statement                      shift and go to state 1
     type                           shift and go to state 2
@@ -148,11 +154,21 @@ state 2
     (5) declaration -> . ID
     (6) declaration -> . ID EQUALS expression
     (7) declaration -> . ID LBRACKET NUMBER RBRACKET
+    (16) declaration -> . type ID LBRACKET NUMBER RBRACKET SEMICOLON
+    (12) type -> . INT_TYPE
+    (13) type -> . FLOAT_TYPE
+    (14) type -> . BOOL_TYPE
+    (15) type -> . CHAR_TYPE
 
-    ID              shift and go to state 12
+    ID              shift and go to state 14
+    INT_TYPE        shift and go to state 7
+    FLOAT_TYPE      shift and go to state 8
+    BOOL_TYPE       shift and go to state 9
+    CHAR_TYPE       shift and go to state 10
 
-    declaration_list               shift and go to state 10
-    declaration                    shift and go to state 11
+    type                           shift and go to state 11
+    declaration_list               shift and go to state 12
+    declaration                    shift and go to state 13
 
 state 3
 
@@ -162,72 +178,102 @@ state 3
     (14) type -> . BOOL_TYPE
     (15) type -> . CHAR_TYPE
 
-    INT_TYPE        shift and go to state 6
-    FLOAT_TYPE      shift and go to state 7
-    BOOL_TYPE       shift and go to state 8
-    CHAR_TYPE       shift and go to state 9
+    INT_TYPE        shift and go to state 7
+    FLOAT_TYPE      shift and go to state 8
+    BOOL_TYPE       shift and go to state 9
+    CHAR_TYPE       shift and go to state 10
 
-    type                           shift and go to state 13
+    type                           shift and go to state 15
 
 state 4
 
-    (16) statement -> READ . LPAREN ID RPAREN SEMICOLON
+    (17) statement -> ID . LBRACKET expression RBRACKET EQUALS expression SEMICOLON
 
-    LPAREN          shift and go to state 14
+    LBRACKET        shift and go to state 16
 
 
 state 5
 
-    (17) statement -> WRITE . LPAREN write_content RPAREN SEMICOLON
+    (19) statement -> READ . LPAREN ID RPAREN SEMICOLON
 
-    LPAREN          shift and go to state 15
+    LPAREN          shift and go to state 17
 
 
 state 6
 
-    (12) type -> INT_TYPE .
+    (20) statement -> WRITE . LPAREN write_content RPAREN SEMICOLON
 
-    ID              reduce using rule 12 (type -> INT_TYPE .)
+    LPAREN          shift and go to state 18
 
 
 state 7
 
-    (13) type -> FLOAT_TYPE .
+    (12) type -> INT_TYPE .
 
-    ID              reduce using rule 13 (type -> FLOAT_TYPE .)
+    ID              reduce using rule 12 (type -> INT_TYPE .)
+    INT_TYPE        reduce using rule 12 (type -> INT_TYPE .)
+    FLOAT_TYPE      reduce using rule 12 (type -> INT_TYPE .)
+    BOOL_TYPE       reduce using rule 12 (type -> INT_TYPE .)
+    CHAR_TYPE       reduce using rule 12 (type -> INT_TYPE .)
 
 
 state 8
 
-    (14) type -> BOOL_TYPE .
+    (13) type -> FLOAT_TYPE .
 
-    ID              reduce using rule 14 (type -> BOOL_TYPE .)
+    ID              reduce using rule 13 (type -> FLOAT_TYPE .)
+    INT_TYPE        reduce using rule 13 (type -> FLOAT_TYPE .)
+    FLOAT_TYPE      reduce using rule 13 (type -> FLOAT_TYPE .)
+    BOOL_TYPE       reduce using rule 13 (type -> FLOAT_TYPE .)
+    CHAR_TYPE       reduce using rule 13 (type -> FLOAT_TYPE .)
 
 
 state 9
 
-    (15) type -> CHAR_TYPE .
+    (14) type -> BOOL_TYPE .
 
-    ID              reduce using rule 15 (type -> CHAR_TYPE .)
+    ID              reduce using rule 14 (type -> BOOL_TYPE .)
+    INT_TYPE        reduce using rule 14 (type -> BOOL_TYPE .)
+    FLOAT_TYPE      reduce using rule 14 (type -> BOOL_TYPE .)
+    BOOL_TYPE       reduce using rule 14 (type -> BOOL_TYPE .)
+    CHAR_TYPE       reduce using rule 14 (type -> BOOL_TYPE .)
 
 
 state 10
 
-    (1) statement -> type declaration_list . SEMICOLON
+    (15) type -> CHAR_TYPE .
 
-    SEMICOLON       shift and go to state 16
+    ID              reduce using rule 15 (type -> CHAR_TYPE .)
+    INT_TYPE        reduce using rule 15 (type -> CHAR_TYPE .)
+    FLOAT_TYPE      reduce using rule 15 (type -> CHAR_TYPE .)
+    BOOL_TYPE       reduce using rule 15 (type -> CHAR_TYPE .)
+    CHAR_TYPE       reduce using rule 15 (type -> CHAR_TYPE .)
 
 
 state 11
+
+    (16) declaration -> type . ID LBRACKET NUMBER RBRACKET SEMICOLON
+
+    ID              shift and go to state 19
+
+
+state 12
+
+    (1) statement -> type declaration_list . SEMICOLON
+
+    SEMICOLON       shift and go to state 20
+
+
+state 13
 
     (3) declaration_list -> declaration .
     (4) declaration_list -> declaration . COMMA declaration_list
 
     SEMICOLON       reduce using rule 3 (declaration_list -> declaration .)
-    COMMA           shift and go to state 17
+    COMMA           shift and go to state 21
 
 
-state 12
+state 14
 
     (5) declaration -> ID .
     (6) declaration -> ID . EQUALS expression
@@ -235,45 +281,67 @@ state 12
 
     COMMA           reduce using rule 5 (declaration -> ID .)
     SEMICOLON       reduce using rule 5 (declaration -> ID .)
-    EQUALS          shift and go to state 18
-    LBRACKET        shift and go to state 19
-
-
-state 13
-
-    (2) statement -> CONST type . ID EQUALS expression SEMICOLON
-
-    ID              shift and go to state 20
-
-
-state 14
-
-    (16) statement -> READ LPAREN . ID RPAREN SEMICOLON
-
-    ID              shift and go to state 21
+    EQUALS          shift and go to state 22
+    LBRACKET        shift and go to state 23
 
 
 state 15
 
-    (17) statement -> WRITE LPAREN . write_content RPAREN SEMICOLON
-    (18) write_content -> . write_item
-    (19) write_content -> . write_content COMMA write_item
-    (20) write_item -> . ID
-    (21) write_item -> . ID LBRACKET NUMBER RBRACKET
+    (2) statement -> CONST type . ID EQUALS expression SEMICOLON
 
     ID              shift and go to state 24
 
-    write_content                  shift and go to state 22
-    write_item                     shift and go to state 23
 
 state 16
+
+    (17) statement -> ID LBRACKET . expression RBRACKET EQUALS expression SEMICOLON
+    (8) expression -> . ID
+    (9) expression -> . FLOAT
+    (10) expression -> . INT
+    (11) expression -> . CHAR
+
+    ID              shift and go to state 25
+    FLOAT           shift and go to state 27
+    INT             shift and go to state 28
+    CHAR            shift and go to state 29
+
+    expression                     shift and go to state 26
+
+state 17
+
+    (19) statement -> READ LPAREN . ID RPAREN SEMICOLON
+
+    ID              shift and go to state 30
+
+
+state 18
+
+    (20) statement -> WRITE LPAREN . write_content RPAREN SEMICOLON
+    (21) write_content -> . write_item
+    (22) write_content -> . write_content COMMA write_item
+    (23) write_item -> . ID
+    (24) write_item -> . ID LBRACKET NUMBER RBRACKET
+
+    ID              shift and go to state 33
+
+    write_content                  shift and go to state 31
+    write_item                     shift and go to state 32
+
+state 19
+
+    (16) declaration -> type ID . LBRACKET NUMBER RBRACKET SEMICOLON
+
+    LBRACKET        shift and go to state 34
+
+
+state 20
 
     (1) statement -> type declaration_list SEMICOLON .
 
     $end            reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
 
 
-state 17
+state 21
 
     (4) declaration_list -> declaration COMMA . declaration_list
     (3) declaration_list -> . declaration
@@ -281,13 +349,23 @@ state 17
     (5) declaration -> . ID
     (6) declaration -> . ID EQUALS expression
     (7) declaration -> . ID LBRACKET NUMBER RBRACKET
+    (16) declaration -> . type ID LBRACKET NUMBER RBRACKET SEMICOLON
+    (12) type -> . INT_TYPE
+    (13) type -> . FLOAT_TYPE
+    (14) type -> . BOOL_TYPE
+    (15) type -> . CHAR_TYPE
 
-    ID              shift and go to state 12
+    ID              shift and go to state 14
+    INT_TYPE        shift and go to state 7
+    FLOAT_TYPE      shift and go to state 8
+    BOOL_TYPE       shift and go to state 9
+    CHAR_TYPE       shift and go to state 10
 
-    declaration                    shift and go to state 11
-    declaration_list               shift and go to state 25
+    declaration                    shift and go to state 13
+    declaration_list               shift and go to state 35
+    type                           shift and go to state 11
 
-state 18
+state 22
 
     (6) declaration -> ID EQUALS . expression
     (8) expression -> . ID
@@ -295,77 +373,119 @@ state 18
     (10) expression -> . INT
     (11) expression -> . CHAR
 
-    ID              shift and go to state 26
-    FLOAT           shift and go to state 28
-    INT             shift and go to state 29
-    CHAR            shift and go to state 30
+    ID              shift and go to state 25
+    FLOAT           shift and go to state 27
+    INT             shift and go to state 28
+    CHAR            shift and go to state 29
 
-    expression                     shift and go to state 27
-
-state 19
-
-    (7) declaration -> ID LBRACKET . NUMBER RBRACKET
-
-    NUMBER          shift and go to state 31
-
-
-state 20
-
-    (2) statement -> CONST type ID . EQUALS expression SEMICOLON
-
-    EQUALS          shift and go to state 32
-
-
-state 21
-
-    (16) statement -> READ LPAREN ID . RPAREN SEMICOLON
-
-    RPAREN          shift and go to state 33
-
-
-state 22
-
-    (17) statement -> WRITE LPAREN write_content . RPAREN SEMICOLON
-    (19) write_content -> write_content . COMMA write_item
-
-    RPAREN          shift and go to state 34
-    COMMA           shift and go to state 35
-
+    expression                     shift and go to state 36
 
 state 23
 
-    (18) write_content -> write_item .
+    (7) declaration -> ID LBRACKET . NUMBER RBRACKET
 
-    RPAREN          reduce using rule 18 (write_content -> write_item .)
-    COMMA           reduce using rule 18 (write_content -> write_item .)
+    NUMBER          shift and go to state 37
 
 
 state 24
 
-    (20) write_item -> ID .
-    (21) write_item -> ID . LBRACKET NUMBER RBRACKET
+    (2) statement -> CONST type ID . EQUALS expression SEMICOLON
 
-    RPAREN          reduce using rule 20 (write_item -> ID .)
-    COMMA           reduce using rule 20 (write_item -> ID .)
-    LBRACKET        shift and go to state 36
+    EQUALS          shift and go to state 38
 
 
 state 25
+
+    (8) expression -> ID .
+
+    RBRACKET        reduce using rule 8 (expression -> ID .)
+    COMMA           reduce using rule 8 (expression -> ID .)
+    SEMICOLON       reduce using rule 8 (expression -> ID .)
+
+
+state 26
+
+    (17) statement -> ID LBRACKET expression . RBRACKET EQUALS expression SEMICOLON
+
+    RBRACKET        shift and go to state 39
+
+
+state 27
+
+    (9) expression -> FLOAT .
+
+    RBRACKET        reduce using rule 9 (expression -> FLOAT .)
+    COMMA           reduce using rule 9 (expression -> FLOAT .)
+    SEMICOLON       reduce using rule 9 (expression -> FLOAT .)
+
+
+state 28
+
+    (10) expression -> INT .
+
+    RBRACKET        reduce using rule 10 (expression -> INT .)
+    COMMA           reduce using rule 10 (expression -> INT .)
+    SEMICOLON       reduce using rule 10 (expression -> INT .)
+
+
+state 29
+
+    (11) expression -> CHAR .
+
+    RBRACKET        reduce using rule 11 (expression -> CHAR .)
+    COMMA           reduce using rule 11 (expression -> CHAR .)
+    SEMICOLON       reduce using rule 11 (expression -> CHAR .)
+
+
+state 30
+
+    (19) statement -> READ LPAREN ID . RPAREN SEMICOLON
+
+    RPAREN          shift and go to state 40
+
+
+state 31
+
+    (20) statement -> WRITE LPAREN write_content . RPAREN SEMICOLON
+    (22) write_content -> write_content . COMMA write_item
+
+    RPAREN          shift and go to state 41
+    COMMA           shift and go to state 42
+
+
+state 32
+
+    (21) write_content -> write_item .
+
+    RPAREN          reduce using rule 21 (write_content -> write_item .)
+    COMMA           reduce using rule 21 (write_content -> write_item .)
+
+
+state 33
+
+    (23) write_item -> ID .
+    (24) write_item -> ID . LBRACKET NUMBER RBRACKET
+
+    RPAREN          reduce using rule 23 (write_item -> ID .)
+    COMMA           reduce using rule 23 (write_item -> ID .)
+    LBRACKET        shift and go to state 43
+
+
+state 34
+
+    (16) declaration -> type ID LBRACKET . NUMBER RBRACKET SEMICOLON
+
+    NUMBER          shift and go to state 44
+
+
+state 35
 
     (4) declaration_list -> declaration COMMA declaration_list .
 
     SEMICOLON       reduce using rule 4 (declaration_list -> declaration COMMA declaration_list .)
 
 
-state 26
-
-    (8) expression -> ID .
-
-    COMMA           reduce using rule 8 (expression -> ID .)
-    SEMICOLON       reduce using rule 8 (expression -> ID .)
-
-
-state 27
+state 36
 
     (6) declaration -> ID EQUALS expression .
 
@@ -373,38 +493,14 @@ state 27
     SEMICOLON       reduce using rule 6 (declaration -> ID EQUALS expression .)
 
 
-state 28
-
-    (9) expression -> FLOAT .
-
-    COMMA           reduce using rule 9 (expression -> FLOAT .)
-    SEMICOLON       reduce using rule 9 (expression -> FLOAT .)
-
-
-state 29
-
-    (10) expression -> INT .
-
-    COMMA           reduce using rule 10 (expression -> INT .)
-    SEMICOLON       reduce using rule 10 (expression -> INT .)
-
-
-state 30
-
-    (11) expression -> CHAR .
-
-    COMMA           reduce using rule 11 (expression -> CHAR .)
-    SEMICOLON       reduce using rule 11 (expression -> CHAR .)
-
-
-state 31
+state 37
 
     (7) declaration -> ID LBRACKET NUMBER . RBRACKET
 
-    RBRACKET        shift and go to state 37
+    RBRACKET        shift and go to state 45
 
 
-state 32
+state 38
 
     (2) statement -> CONST type ID EQUALS . expression SEMICOLON
     (8) expression -> . ID
@@ -412,45 +508,59 @@ state 32
     (10) expression -> . INT
     (11) expression -> . CHAR
 
-    ID              shift and go to state 26
-    FLOAT           shift and go to state 28
-    INT             shift and go to state 29
-    CHAR            shift and go to state 30
+    ID              shift and go to state 25
+    FLOAT           shift and go to state 27
+    INT             shift and go to state 28
+    CHAR            shift and go to state 29
 
-    expression                     shift and go to state 38
+    expression                     shift and go to state 46
 
-state 33
+state 39
 
-    (16) statement -> READ LPAREN ID RPAREN . SEMICOLON
+    (17) statement -> ID LBRACKET expression RBRACKET . EQUALS expression SEMICOLON
 
-    SEMICOLON       shift and go to state 39
-
-
-state 34
-
-    (17) statement -> WRITE LPAREN write_content RPAREN . SEMICOLON
-
-    SEMICOLON       shift and go to state 40
+    EQUALS          shift and go to state 47
 
 
-state 35
+state 40
 
-    (19) write_content -> write_content COMMA . write_item
-    (20) write_item -> . ID
-    (21) write_item -> . ID LBRACKET NUMBER RBRACKET
+    (19) statement -> READ LPAREN ID RPAREN . SEMICOLON
 
-    ID              shift and go to state 24
-
-    write_item                     shift and go to state 41
-
-state 36
-
-    (21) write_item -> ID LBRACKET . NUMBER RBRACKET
-
-    NUMBER          shift and go to state 42
+    SEMICOLON       shift and go to state 48
 
 
-state 37
+state 41
+
+    (20) statement -> WRITE LPAREN write_content RPAREN . SEMICOLON
+
+    SEMICOLON       shift and go to state 49
+
+
+state 42
+
+    (22) write_content -> write_content COMMA . write_item
+    (23) write_item -> . ID
+    (24) write_item -> . ID LBRACKET NUMBER RBRACKET
+
+    ID              shift and go to state 33
+
+    write_item                     shift and go to state 50
+
+state 43
+
+    (24) write_item -> ID LBRACKET . NUMBER RBRACKET
+
+    NUMBER          shift and go to state 51
+
+
+state 44
+
+    (16) declaration -> type ID LBRACKET NUMBER . RBRACKET SEMICOLON
+
+    RBRACKET        shift and go to state 52
+
+
+state 45
 
     (7) declaration -> ID LBRACKET NUMBER RBRACKET .
 
@@ -458,53 +568,97 @@ state 37
     SEMICOLON       reduce using rule 7 (declaration -> ID LBRACKET NUMBER RBRACKET .)
 
 
-state 38
+state 46
 
     (2) statement -> CONST type ID EQUALS expression . SEMICOLON
 
-    SEMICOLON       shift and go to state 43
+    SEMICOLON       shift and go to state 53
 
 
-state 39
+state 47
 
-    (16) statement -> READ LPAREN ID RPAREN SEMICOLON .
+    (17) statement -> ID LBRACKET expression RBRACKET EQUALS . expression SEMICOLON
+    (8) expression -> . ID
+    (9) expression -> . FLOAT
+    (10) expression -> . INT
+    (11) expression -> . CHAR
 
-    $end            reduce using rule 16 (statement -> READ LPAREN ID RPAREN SEMICOLON .)
+    ID              shift and go to state 25
+    FLOAT           shift and go to state 27
+    INT             shift and go to state 28
+    CHAR            shift and go to state 29
 
+    expression                     shift and go to state 54
 
-state 40
+state 48
 
-    (17) statement -> WRITE LPAREN write_content RPAREN SEMICOLON .
+    (19) statement -> READ LPAREN ID RPAREN SEMICOLON .
 
-    $end            reduce using rule 17 (statement -> WRITE LPAREN write_content RPAREN SEMICOLON .)
-
-
-state 41
-
-    (19) write_content -> write_content COMMA write_item .
-
-    RPAREN          reduce using rule 19 (write_content -> write_content COMMA write_item .)
-    COMMA           reduce using rule 19 (write_content -> write_content COMMA write_item .)
-
-
-state 42
-
-    (21) write_item -> ID LBRACKET NUMBER . RBRACKET
-
-    RBRACKET        shift and go to state 44
+    $end            reduce using rule 19 (statement -> READ LPAREN ID RPAREN SEMICOLON .)
 
 
-state 43
+state 49
+
+    (20) statement -> WRITE LPAREN write_content RPAREN SEMICOLON .
+
+    $end            reduce using rule 20 (statement -> WRITE LPAREN write_content RPAREN SEMICOLON .)
+
+
+state 50
+
+    (22) write_content -> write_content COMMA write_item .
+
+    RPAREN          reduce using rule 22 (write_content -> write_content COMMA write_item .)
+    COMMA           reduce using rule 22 (write_content -> write_content COMMA write_item .)
+
+
+state 51
+
+    (24) write_item -> ID LBRACKET NUMBER . RBRACKET
+
+    RBRACKET        shift and go to state 55
+
+
+state 52
+
+    (16) declaration -> type ID LBRACKET NUMBER RBRACKET . SEMICOLON
+
+    SEMICOLON       shift and go to state 56
+
+
+state 53
 
     (2) statement -> CONST type ID EQUALS expression SEMICOLON .
 
     $end            reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
 
 
-state 44
+state 54
 
-    (21) write_item -> ID LBRACKET NUMBER RBRACKET .
+    (17) statement -> ID LBRACKET expression RBRACKET EQUALS expression . SEMICOLON
 
-    RPAREN          reduce using rule 21 (write_item -> ID LBRACKET NUMBER RBRACKET .)
-    COMMA           reduce using rule 21 (write_item -> ID LBRACKET NUMBER RBRACKET .)
+    SEMICOLON       shift and go to state 57
+
+
+state 55
+
+    (24) write_item -> ID LBRACKET NUMBER RBRACKET .
+
+    RPAREN          reduce using rule 24 (write_item -> ID LBRACKET NUMBER RBRACKET .)
+    COMMA           reduce using rule 24 (write_item -> ID LBRACKET NUMBER RBRACKET .)
+
+
+state 56
+
+    (16) declaration -> type ID LBRACKET NUMBER RBRACKET SEMICOLON .
+
+    COMMA           reduce using rule 16 (declaration -> type ID LBRACKET NUMBER RBRACKET SEMICOLON .)
+    SEMICOLON       reduce using rule 16 (declaration -> type ID LBRACKET NUMBER RBRACKET SEMICOLON .)
+
+
+state 57
+
+    (17) statement -> ID LBRACKET expression RBRACKET EQUALS expression SEMICOLON .
+
+    $end            reduce using rule 17 (statement -> ID LBRACKET expression RBRACKET EQUALS expression SEMICOLON .)
 

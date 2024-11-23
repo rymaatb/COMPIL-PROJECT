@@ -1,26 +1,28 @@
-import sys
-from pathlib import Path
-
-sys.path.append(str(Path(__file__).resolve().parent / "src"))
-
-from src.main import test_lexer
 
 
-sample_code = '''
-    INTEGER a, b;       %% Simple variable declaration
-    FLOAT pi = 3.14;    %% Constant
-    CHAR letter = 'a';  %% Single character variable
-    
-    %% End of declarations
+from compiler import test_lexer
+
+
+code = '''
+        %% Variable declarations
+        int a;
+        float b = 4.2;
+        char c = 'X';
+        int arr[2];
+        const int MAX = 100;
+
+        %% Assignments and expressions
+        a = 10;
+        b = a + 3.5;
+
+        %% Read and write operations
+        READ(a);
+        WRITE(a, b, c);
+
+        
 '''
-# Exemple de code source pour tester le lexer
-input_text = '''
-VAR_GLOBAL A;
-DECLARATION INTEGER x = 5;
-INSTRUCTION x = 10 + 20;
 
-'''
-test_lexer(sample_code)
-print("-----------------------------")
-# Appel à la fonction de test du lexer
-test_lexer(input_text)
+
+
+test_lexer(code)
+
