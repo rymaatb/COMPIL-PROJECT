@@ -1,6 +1,6 @@
 from lexer import lexer
 from parser import parser
-from symbol_table import display_symbol_table
+from parser import display_symbol_table
 
 def test_lexer(input_text):
     print("Lexical Analysis:")

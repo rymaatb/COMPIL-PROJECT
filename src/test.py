@@ -26,17 +26,13 @@ def pipeline_test(input_code):
     display_symbol_table()
     print("-" * 40)
 
-# Exemples de tests
-code_examples = [
-    "int arr[5];",
-    "arr[0] = 42;",
-    "x = arr[0];",
-   
-    "float matrix[3];",
-    "matrix[2] = 3.14;",
-]
 
-for code in code_examples:
-    print(f"Test pour le code: {code}")
-    pipeline_test(code)
-    print("\n")
+
+
+
+
+
+
+
+
+
