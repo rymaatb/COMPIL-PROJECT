@@ -138,12 +138,12 @@ def p_statement(t):
 
 def p_simple_assignment(t):
     '''simple_assignment : ID EQUALS expression SEMICOLON'''
-    var_name, value = t[1], t[3]
-    print(f"Affectation simple : {var_name} = {value}")
-    if not find_in_symbol_table(var_name, "global"):
-        add_to_symbol_table(var_name, "UNKNOWN", "global", value, "Affectation simple")
-    else:
-        update_symbol_table(var_name, value)
+    var_name = t[1]
+    expr_value=t[3]
+    expr_type = type(expr_value).__name__  # Déterminer le type de l'expression
+    add_to_symbol_table(var_name, expr_type, "global", expr_value, "Affectation simple")
+    update_symbol_table(var_name, expr_value)
+   
 
 
 def p_const_declaration(t):
