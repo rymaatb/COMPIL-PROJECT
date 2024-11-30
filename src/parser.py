@@ -61,6 +61,7 @@ def t_ID(t):
 def t_FLOAT(t):
     r'\d+\.\d+'
     t.value = float(t.value)
+    
     return t
 
 def t_INTEGER(t):
@@ -127,39 +128,40 @@ def p_statements(t):
         t[0] = [t[1]]
     else:
         t[0] = [t[1]] + t[2]
-
 def p_statement(t):
-    '''statement : type ID LBRACKET INTEGER RBRACKET SEMICOLON
-                 | ID LBRACKET INTEGER RBRACKET EQUALS INTEGER SEMICOLON
-                 | ID EQUALS expression SEMICOLON
+    '''statement : simple_assignment
+                 | array_declaration
+                 | array_assignment
                  | type declaration_list SEMICOLON
-                 | CONST type ID EQUALS expression SEMICOLON'''
-    print(f"Traitement de la déclaration : {t.slice}")
+                 | const_declaration'''
+    
 
-    if len(t) == 7:  # Déclaration de tableau
-        var_type, var_name, size = t[1], t[2], t[4]
-        if size <= 0:
-            print(f"Erreur : Taille invalide pour le tableau '{var_name}'.")
-        else:
-            value = [None] * size
-            add_to_symbol_table(var_name, var_type, "global", value, f"Tableau de taille {size}")
-    elif len(t) == 4:  # Affectation simple
-        var_name = t[1]
-        update_symbol_table(var_name, t[3])
-    elif len(t) == 6:  # Déclaration constante
-        var_type, var_name, value = t[2], t[3], t[5]
-        add_to_symbol_table(var_name, var_type, "global", value, "constant")
+def p_simple_assignment(t):
+    '''simple_assignment : ID EQUALS expression SEMICOLON'''
+    var_name, value = t[1], t[3]
+    print(f"Affectation simple : {var_name} = {value}")
+    if not find_in_symbol_table(var_name, "global"):
+        add_to_symbol_table(var_name, "UNKNOWN", "global", value, "Affectation simple")
+    else:
+        update_symbol_table(var_name, value)
 
 
+def p_const_declaration(t):
+    '''const_declaration : CONST type ID EQUALS expression SEMICOLON'''
+    var_type, var_name, value = t[2], t[3], t[5]
+    print(f"Déclaration constante : {var_name} = {value} (type : {var_type})")
+    add_to_symbol_table(var_name, var_type, "global", value, "constant")
+  
 
+def p_array_declaration(t):
+    'array_declaration : type ID LBRACKET INTEGER RBRACKET SEMICOLON'
+    var_type, var_name, size = t[1], t[2], t[4]
+    if size <= 0:
+        print(f"Erreur : Taille invalide pour le tableau '{var_name}'.")
+    else:
+        value = [None] * size
+        add_to_symbol_table(var_name, var_type, "global", value, f"Tableau de taille {size}")
 
-
-
-
-
-
-
-           
 
 
 
@@ -198,7 +200,11 @@ def p_expression(t):
                   | FLOAT
                   | INTEGER
                   | CHAR'''
+    
+    print(f"Expression analysée : {t[1]}")
     t[0] = t[1]
+
+
 
 
 def p_type(t):
@@ -289,7 +295,6 @@ def p_factor_id(t):
     t[0] = 0
 
 
-
 def p_array_access(t):
     'factor : ID LBRACKET expression RBRACKET'
     var_name, index = t[1], t[3]
@@ -297,6 +302,7 @@ def p_array_access(t):
         if entry[0] == var_name and isinstance(entry[4], list):  # Vérifie que c'est un tableau
             if isinstance(index, int) and 0 <= index < len(entry[4]):
                 t[0] = entry[4][index]
+                print(f"Valeur récupérée : {t[0]} de {var_name}[{index}]")
                 return
             else:
                 print(f"Erreur : Indice hors limites pour '{var_name}'.")
@@ -307,20 +313,18 @@ def p_array_access(t):
 
 
 def p_array_assignment(t):
-    'statement : ID LBRACKET expression RBRACKET EQUALS expression SEMICOLON'
+    'array_assignment : ID LBRACKET expression RBRACKET EQUALS expression SEMICOLON'
     var_name, index, value = t[1], t[3], t[6]
+    print(f"Affectation de tableau : {var_name}[{index}] = {value}")
     for entry in symbol_table:
-        if entry[0] == var_name and isinstance(entry[4], list):  # Vérifie que c'est un tableau
+        if entry[0] == var_name and isinstance(entry[4], list):
             if isinstance(index, int) and 0 <= index < len(entry[4]):
                 entry[4][index] = value
-                print(f"Tableau '{var_name}' mis à jour : {entry[4]}")
                 return
             else:
                 print(f"Erreur : Indice hors limites pour '{var_name}'.")
                 return
     print(f"Erreur : Tableau '{var_name}' non déclaré.")
-# updating variable , ID= exp(arth or logic or comparison);
-
 
 
 parser = yacc.yacc()
@@ -335,8 +339,17 @@ def display_symbol_table():
     headers = ["Name", "Type", "Scope", "Memory Address", "Value", "Additional Info"]
     print(tabulate(symbol_table, headers=headers, tablefmt="grid"))
 
-# Test simple pour vérifier la règle p_array_declaration
-lexer.input("INTEGER Arr[5];")
-for token in lexer:
-    print(token)
-parser.parse("INTEGER Arr[5];")
+
+expressions = [
+    "INTEGER Matrix[3];",      # Déclaration de tableau
+    "Matrix[2] = 3.14;",       # Affectation de FLOAT
+    "INTEGER Arr[5];",         # Déclaration valide
+    "Arr[0] = 42;",            # Affectation d'entier
+    "X = Arr[0];",             # Accès à un tableau
+    "FLOAT Invalid[-1];",      # Taille négative (Erreur attendue)
+]
+for stmt in expressions:
+    print(f"Parsing statement: {stmt}")
+    parse_statement(stmt)
+    print("-" * 40)
+
