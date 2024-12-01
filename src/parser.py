@@ -343,13 +343,14 @@ def display_symbol_table():
 expressions = [
     "INTEGER Matrix[3];",      # Déclaration de tableau
     "Matrix[2] = 3.14;",       # Affectation de FLOAT
-    "INTEGER Arr[5];",         # Déclaration valide
-    "Arr[0] = 42;",            # Affectation d'entier
+    "FLOAT Arr[5];",         # Déclaration valide
+    "Arr[0] = 42.3;",            # Affectation d'entier
     "X = Arr[0];",             # Accès à un tableau
     "FLOAT Invalid[-1];",      # Taille négative (Erreur attendue)
 ]
 for stmt in expressions:
     print(f"Parsing statement: {stmt}")
     parse_statement(stmt)
+    display_symbol_table()
     print("-" * 40)
 
