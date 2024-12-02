@@ -2,663 +2,1470 @@ Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 
 Unused terminals:
 
-    AND
-    BOOL
-    COLON
-    COMMENT
     DECLARATION
-    DIVIDE
     ELSE
-    EQ
-    FOR
-    GT
     GTE
-    IF
     INSTRUCTION
-    LBRACE
-    LT
     LTE
-    MINUS
-    MULTIPLY
-    NEQ
-    NOT
-    OR
-    PLUS
-    RBRACE
-    VAR_GLOBAL
 
 Grammar
 
-Rule 0     S' -> statement
-Rule 1     statement -> type declaration_list SEMICOLON
-Rule 2     statement -> CONST type ID EQUALS expression SEMICOLON
-Rule 3     declaration_list -> declaration
-Rule 4     declaration_list -> declaration COMMA declaration_list
-Rule 5     declaration -> ID
-Rule 6     declaration -> ID EQUALS expression
-Rule 7     declaration -> ID LBRACKET NUMBER RBRACKET
-Rule 8     expression -> ID
-Rule 9     expression -> FLOAT
-Rule 10    expression -> INT
-Rule 11    expression -> CHAR
-Rule 12    type -> INT_TYPE
-Rule 13    type -> FLOAT_TYPE
-Rule 14    type -> BOOL_TYPE
-Rule 15    type -> CHAR_TYPE
-Rule 16    declaration -> type ID LBRACKET NUMBER RBRACKET SEMICOLON
-Rule 17    statement -> ID LBRACKET expression RBRACKET EQUALS expression SEMICOLON
-Rule 18    factor -> ID LBRACKET expression RBRACKET
-Rule 19    statement -> READ LPAREN ID RPAREN SEMICOLON
-Rule 20    statement -> WRITE LPAREN write_content RPAREN SEMICOLON
-Rule 21    write_content -> write_item
-Rule 22    write_content -> write_content COMMA write_item
-Rule 23    write_item -> ID
-Rule 24    write_item -> ID LBRACKET NUMBER RBRACKET
+Rule 0     S' -> program
+Rule 1     program -> VAR_GLOBAL declarations instructions
+Rule 2     declarations -> declarations declaration
+Rule 3     declarations -> declaration
+Rule 4     declaration -> INTEGER ID SEMICOLON
+Rule 5     declaration -> FLOAT ID SEMICOLON
+Rule 6     declaration -> CHAR ID SEMICOLON
+Rule 7     declaration -> CONST INTEGER ID ASSIGN NUMBER SEMICOLON
+Rule 8     declaration -> CONST FLOAT ID ASSIGN NUMBER SEMICOLON
+Rule 9     declaration -> CONST CHAR ID ASSIGN ID SEMICOLON
+Rule 10    declaration -> INTEGER ID LSQUARE NUMBER RSQUARE SEMICOLON
+Rule 11    declaration -> FLOAT ID LSQUARE NUMBER RSQUARE SEMICOLON
+Rule 12    declaration -> CHAR ID LSQUARE NUMBER RSQUARE SEMICOLON
+Rule 13    instructions -> instructions instruction
+Rule 14    instructions -> instruction
+Rule 15    instruction -> ID ASSIGN expression SEMICOLON
+Rule 16    instruction -> ID LSQUARE expression RSQUARE ASSIGN expression SEMICOLON
+Rule 17    instruction -> IF LPAREN condition RPAREN block
+Rule 18    instruction -> FOR LPAREN ID ASSIGN expression SEMICOLON condition SEMICOLON expression RPAREN block
+Rule 19    instruction -> READ LPAREN ID RPAREN SEMICOLON
+Rule 20    instruction -> WRITE LPAREN expression RPAREN SEMICOLON
+Rule 21    block -> LBRACE instructions RBRACE
+Rule 22    expression -> expression PLUS term
+Rule 23    expression -> expression MINUS term
+Rule 24    expression -> term
+Rule 25    term -> term MULTIPLY factor
+Rule 26    term -> term DIVIDE factor
+Rule 27    term -> factor
+Rule 28    factor -> NUMBER
+Rule 29    factor -> ID
+Rule 30    factor -> ID LSQUARE expression RSQUARE
+Rule 31    condition -> expression GT expression
+Rule 32    condition -> expression LT expression
+Rule 33    condition -> expression EQ expression
+Rule 34    condition -> expression NEQ expression
 
 Terminals, with rules where they appear
 
-AND                  : 
-BOOL                 : 
-BOOL_TYPE            : 14
-CHAR                 : 11
-CHAR_TYPE            : 15
-COLON                : 
-COMMA                : 4 22
-COMMENT              : 
-CONST                : 2
+ASSIGN               : 7 8 9 15 16 18
+CHAR                 : 6 9 12
+CONST                : 7 8 9
 DECLARATION          : 
-DIVIDE               : 
+DIVIDE               : 26
 ELSE                 : 
-EQ                   : 
-EQUALS               : 2 6 17
-FLOAT                : 9
-FLOAT_TYPE           : 13
-FOR                  : 
-GT                   : 
+EQ                   : 33
+FLOAT                : 5 8 11
+FOR                  : 18
+GT                   : 31
 GTE                  : 
-ID                   : 2 5 6 7 8 16 17 18 19 23 24
-IF                   : 
+ID                   : 4 5 6 7 8 9 9 10 11 12 15 16 18 19 29 30
+IF                   : 17
 INSTRUCTION          : 
-INT                  : 10
-INT_TYPE             : 12
-LBRACE               : 
-LBRACKET             : 7 16 17 18 24
-LPAREN               : 19 20
-LT                   : 
+INTEGER              : 4 7 10
+LBRACE               : 21
+LPAREN               : 17 18 19 20
+LSQUARE              : 10 11 12 16 30
+LT                   : 32
 LTE                  : 
-MINUS                : 
-MULTIPLY             : 
-NEQ                  : 
-NOT                  : 
-NUMBER               : 7 16 24
-OR                   : 
-PLUS                 : 
-RBRACE               : 
-RBRACKET             : 7 16 17 18 24
+MINUS                : 23
+MULTIPLY             : 25
+NEQ                  : 34
+NUMBER               : 7 8 10 11 12 28
+PLUS                 : 22
+RBRACE               : 21
 READ                 : 19
-RPAREN               : 19 20
-SEMICOLON            : 1 2 16 17 19 20
-VAR_GLOBAL           : 
+RPAREN               : 17 18 19 20
+RSQUARE              : 10 11 12 16 30
+SEMICOLON            : 4 5 6 7 8 9 10 11 12 15 16 18 18 19 20
+VAR_GLOBAL           : 1
 WRITE                : 20
 error                : 
 
 Nonterminals, with rules where they appear
 
-declaration          : 3 4
-declaration_list     : 1 4
-expression           : 2 6 17 17 18
-factor               : 
-statement            : 0
-type                 : 1 2 16
-write_content        : 20 22
-write_item           : 21 22
+block                : 17 18
+condition            : 17 18
+declaration          : 2 3
+declarations         : 1 2
+expression           : 15 16 16 18 18 20 22 23 30 31 31 32 32 33 33 34 34
+factor               : 25 26 27
+instruction          : 13 14
+instructions         : 1 13 21
+program              : 0
+term                 : 22 23 24 25 26
 
 Parsing method: LALR
 
 state 0
 
-    (0) S' -> . statement
-    (1) statement -> . type declaration_list SEMICOLON
-    (2) statement -> . CONST type ID EQUALS expression SEMICOLON
-    (17) statement -> . ID LBRACKET expression RBRACKET EQUALS expression SEMICOLON
-    (19) statement -> . READ LPAREN ID RPAREN SEMICOLON
-    (20) statement -> . WRITE LPAREN write_content RPAREN SEMICOLON
-    (12) type -> . INT_TYPE
-    (13) type -> . FLOAT_TYPE
-    (14) type -> . BOOL_TYPE
-    (15) type -> . CHAR_TYPE
+    (0) S' -> . program
+    (1) program -> . VAR_GLOBAL declarations instructions
 
-    CONST           shift and go to state 3
-    ID              shift and go to state 4
-    READ            shift and go to state 5
-    WRITE           shift and go to state 6
-    INT_TYPE        shift and go to state 7
-    FLOAT_TYPE      shift and go to state 8
-    BOOL_TYPE       shift and go to state 9
-    CHAR_TYPE       shift and go to state 10
+    VAR_GLOBAL      shift and go to state 2
 
-    statement                      shift and go to state 1
-    type                           shift and go to state 2
+    program                        shift and go to state 1
 
 state 1
 
-    (0) S' -> statement .
+    (0) S' -> program .
 
 
 
 state 2
 
-    (1) statement -> type . declaration_list SEMICOLON
-    (3) declaration_list -> . declaration
-    (4) declaration_list -> . declaration COMMA declaration_list
-    (5) declaration -> . ID
-    (6) declaration -> . ID EQUALS expression
-    (7) declaration -> . ID LBRACKET NUMBER RBRACKET
-    (16) declaration -> . type ID LBRACKET NUMBER RBRACKET SEMICOLON
-    (12) type -> . INT_TYPE
-    (13) type -> . FLOAT_TYPE
-    (14) type -> . BOOL_TYPE
-    (15) type -> . CHAR_TYPE
+    (1) program -> VAR_GLOBAL . declarations instructions
+    (2) declarations -> . declarations declaration
+    (3) declarations -> . declaration
+    (4) declaration -> . INTEGER ID SEMICOLON
+    (5) declaration -> . FLOAT ID SEMICOLON
+    (6) declaration -> . CHAR ID SEMICOLON
+    (7) declaration -> . CONST INTEGER ID ASSIGN NUMBER SEMICOLON
+    (8) declaration -> . CONST FLOAT ID ASSIGN NUMBER SEMICOLON
+    (9) declaration -> . CONST CHAR ID ASSIGN ID SEMICOLON
+    (10) declaration -> . INTEGER ID LSQUARE NUMBER RSQUARE SEMICOLON
+    (11) declaration -> . FLOAT ID LSQUARE NUMBER RSQUARE SEMICOLON
+    (12) declaration -> . CHAR ID LSQUARE NUMBER RSQUARE SEMICOLON
 
-    ID              shift and go to state 14
-    INT_TYPE        shift and go to state 7
-    FLOAT_TYPE      shift and go to state 8
-    BOOL_TYPE       shift and go to state 9
-    CHAR_TYPE       shift and go to state 10
+    INTEGER         shift and go to state 5
+    FLOAT           shift and go to state 6
+    CHAR            shift and go to state 7
+    CONST           shift and go to state 8
 
-    type                           shift and go to state 11
-    declaration_list               shift and go to state 12
-    declaration                    shift and go to state 13
+    declarations                   shift and go to state 3
+    declaration                    shift and go to state 4
 
 state 3
 
-    (2) statement -> CONST . type ID EQUALS expression SEMICOLON
-    (12) type -> . INT_TYPE
-    (13) type -> . FLOAT_TYPE
-    (14) type -> . BOOL_TYPE
-    (15) type -> . CHAR_TYPE
+    (1) program -> VAR_GLOBAL declarations . instructions
+    (2) declarations -> declarations . declaration
+    (13) instructions -> . instructions instruction
+    (14) instructions -> . instruction
+    (4) declaration -> . INTEGER ID SEMICOLON
+    (5) declaration -> . FLOAT ID SEMICOLON
+    (6) declaration -> . CHAR ID SEMICOLON
+    (7) declaration -> . CONST INTEGER ID ASSIGN NUMBER SEMICOLON
+    (8) declaration -> . CONST FLOAT ID ASSIGN NUMBER SEMICOLON
+    (9) declaration -> . CONST CHAR ID ASSIGN ID SEMICOLON
+    (10) declaration -> . INTEGER ID LSQUARE NUMBER RSQUARE SEMICOLON
+    (11) declaration -> . FLOAT ID LSQUARE NUMBER RSQUARE SEMICOLON
+    (12) declaration -> . CHAR ID LSQUARE NUMBER RSQUARE SEMICOLON
+    (15) instruction -> . ID ASSIGN expression SEMICOLON
+    (16) instruction -> . ID LSQUARE expression RSQUARE ASSIGN expression SEMICOLON
+    (17) instruction -> . IF LPAREN condition RPAREN block
+    (18) instruction -> . FOR LPAREN ID ASSIGN expression SEMICOLON condition SEMICOLON expression RPAREN block
+    (19) instruction -> . READ LPAREN ID RPAREN SEMICOLON
+    (20) instruction -> . WRITE LPAREN expression RPAREN SEMICOLON
 
-    INT_TYPE        shift and go to state 7
-    FLOAT_TYPE      shift and go to state 8
-    BOOL_TYPE       shift and go to state 9
-    CHAR_TYPE       shift and go to state 10
+    INTEGER         shift and go to state 5
+    FLOAT           shift and go to state 6
+    CHAR            shift and go to state 7
+    CONST           shift and go to state 8
+    ID              shift and go to state 12
+    IF              shift and go to state 13
+    FOR             shift and go to state 14
+    READ            shift and go to state 15
+    WRITE           shift and go to state 16
 
-    type                           shift and go to state 15
+    instructions                   shift and go to state 9
+    declaration                    shift and go to state 10
+    instruction                    shift and go to state 11
 
 state 4
 
-    (17) statement -> ID . LBRACKET expression RBRACKET EQUALS expression SEMICOLON
+    (3) declarations -> declaration .
 
-    LBRACKET        shift and go to state 16
+    INTEGER         reduce using rule 3 (declarations -> declaration .)
+    FLOAT           reduce using rule 3 (declarations -> declaration .)
+    CHAR            reduce using rule 3 (declarations -> declaration .)
+    CONST           reduce using rule 3 (declarations -> declaration .)
+    ID              reduce using rule 3 (declarations -> declaration .)
+    IF              reduce using rule 3 (declarations -> declaration .)
+    FOR             reduce using rule 3 (declarations -> declaration .)
+    READ            reduce using rule 3 (declarations -> declaration .)
+    WRITE           reduce using rule 3 (declarations -> declaration .)
 
 
 state 5
 
-    (19) statement -> READ . LPAREN ID RPAREN SEMICOLON
+    (4) declaration -> INTEGER . ID SEMICOLON
+    (10) declaration -> INTEGER . ID LSQUARE NUMBER RSQUARE SEMICOLON
 
-    LPAREN          shift and go to state 17
+    ID              shift and go to state 17
 
 
 state 6
 
-    (20) statement -> WRITE . LPAREN write_content RPAREN SEMICOLON
+    (5) declaration -> FLOAT . ID SEMICOLON
+    (11) declaration -> FLOAT . ID LSQUARE NUMBER RSQUARE SEMICOLON
 
-    LPAREN          shift and go to state 18
+    ID              shift and go to state 18
 
 
 state 7
 
-    (12) type -> INT_TYPE .
-
-    ID              reduce using rule 12 (type -> INT_TYPE .)
-    INT_TYPE        reduce using rule 12 (type -> INT_TYPE .)
-    FLOAT_TYPE      reduce using rule 12 (type -> INT_TYPE .)
-    BOOL_TYPE       reduce using rule 12 (type -> INT_TYPE .)
-    CHAR_TYPE       reduce using rule 12 (type -> INT_TYPE .)
-
-
-state 8
-
-    (13) type -> FLOAT_TYPE .
-
-    ID              reduce using rule 13 (type -> FLOAT_TYPE .)
-    INT_TYPE        reduce using rule 13 (type -> FLOAT_TYPE .)
-    FLOAT_TYPE      reduce using rule 13 (type -> FLOAT_TYPE .)
-    BOOL_TYPE       reduce using rule 13 (type -> FLOAT_TYPE .)
-    CHAR_TYPE       reduce using rule 13 (type -> FLOAT_TYPE .)
-
-
-state 9
-
-    (14) type -> BOOL_TYPE .
-
-    ID              reduce using rule 14 (type -> BOOL_TYPE .)
-    INT_TYPE        reduce using rule 14 (type -> BOOL_TYPE .)
-    FLOAT_TYPE      reduce using rule 14 (type -> BOOL_TYPE .)
-    BOOL_TYPE       reduce using rule 14 (type -> BOOL_TYPE .)
-    CHAR_TYPE       reduce using rule 14 (type -> BOOL_TYPE .)
-
-
-state 10
-
-    (15) type -> CHAR_TYPE .
-
-    ID              reduce using rule 15 (type -> CHAR_TYPE .)
-    INT_TYPE        reduce using rule 15 (type -> CHAR_TYPE .)
-    FLOAT_TYPE      reduce using rule 15 (type -> CHAR_TYPE .)
-    BOOL_TYPE       reduce using rule 15 (type -> CHAR_TYPE .)
-    CHAR_TYPE       reduce using rule 15 (type -> CHAR_TYPE .)
-
-
-state 11
-
-    (16) declaration -> type . ID LBRACKET NUMBER RBRACKET SEMICOLON
+    (6) declaration -> CHAR . ID SEMICOLON
+    (12) declaration -> CHAR . ID LSQUARE NUMBER RSQUARE SEMICOLON
 
     ID              shift and go to state 19
 
 
+state 8
+
+    (7) declaration -> CONST . INTEGER ID ASSIGN NUMBER SEMICOLON
+    (8) declaration -> CONST . FLOAT ID ASSIGN NUMBER SEMICOLON
+    (9) declaration -> CONST . CHAR ID ASSIGN ID SEMICOLON
+
+    INTEGER         shift and go to state 20
+    FLOAT           shift and go to state 21
+    CHAR            shift and go to state 22
+
+
+state 9
+
+    (1) program -> VAR_GLOBAL declarations instructions .
+    (13) instructions -> instructions . instruction
+    (15) instruction -> . ID ASSIGN expression SEMICOLON
+    (16) instruction -> . ID LSQUARE expression RSQUARE ASSIGN expression SEMICOLON
+    (17) instruction -> . IF LPAREN condition RPAREN block
+    (18) instruction -> . FOR LPAREN ID ASSIGN expression SEMICOLON condition SEMICOLON expression RPAREN block
+    (19) instruction -> . READ LPAREN ID RPAREN SEMICOLON
+    (20) instruction -> . WRITE LPAREN expression RPAREN SEMICOLON
+
+    $end            reduce using rule 1 (program -> VAR_GLOBAL declarations instructions .)
+    ID              shift and go to state 12
+    IF              shift and go to state 13
+    FOR             shift and go to state 14
+    READ            shift and go to state 15
+    WRITE           shift and go to state 16
+
+    instruction                    shift and go to state 23
+
+state 10
+
+    (2) declarations -> declarations declaration .
+
+    INTEGER         reduce using rule 2 (declarations -> declarations declaration .)
+    FLOAT           reduce using rule 2 (declarations -> declarations declaration .)
+    CHAR            reduce using rule 2 (declarations -> declarations declaration .)
+    CONST           reduce using rule 2 (declarations -> declarations declaration .)
+    ID              reduce using rule 2 (declarations -> declarations declaration .)
+    IF              reduce using rule 2 (declarations -> declarations declaration .)
+    FOR             reduce using rule 2 (declarations -> declarations declaration .)
+    READ            reduce using rule 2 (declarations -> declarations declaration .)
+    WRITE           reduce using rule 2 (declarations -> declarations declaration .)
+
+
+state 11
+
+    (14) instructions -> instruction .
+
+    ID              reduce using rule 14 (instructions -> instruction .)
+    IF              reduce using rule 14 (instructions -> instruction .)
+    FOR             reduce using rule 14 (instructions -> instruction .)
+    READ            reduce using rule 14 (instructions -> instruction .)
+    WRITE           reduce using rule 14 (instructions -> instruction .)
+    $end            reduce using rule 14 (instructions -> instruction .)
+    RBRACE          reduce using rule 14 (instructions -> instruction .)
+
+
 state 12
 
-    (1) statement -> type declaration_list . SEMICOLON
+    (15) instruction -> ID . ASSIGN expression SEMICOLON
+    (16) instruction -> ID . LSQUARE expression RSQUARE ASSIGN expression SEMICOLON
 
-    SEMICOLON       shift and go to state 20
+    ASSIGN          shift and go to state 24
+    LSQUARE         shift and go to state 25
 
 
 state 13
 
-    (3) declaration_list -> declaration .
-    (4) declaration_list -> declaration . COMMA declaration_list
+    (17) instruction -> IF . LPAREN condition RPAREN block
 
-    SEMICOLON       reduce using rule 3 (declaration_list -> declaration .)
-    COMMA           shift and go to state 21
+    LPAREN          shift and go to state 26
 
 
 state 14
 
-    (5) declaration -> ID .
-    (6) declaration -> ID . EQUALS expression
-    (7) declaration -> ID . LBRACKET NUMBER RBRACKET
+    (18) instruction -> FOR . LPAREN ID ASSIGN expression SEMICOLON condition SEMICOLON expression RPAREN block
 
-    COMMA           reduce using rule 5 (declaration -> ID .)
-    SEMICOLON       reduce using rule 5 (declaration -> ID .)
-    EQUALS          shift and go to state 22
-    LBRACKET        shift and go to state 23
+    LPAREN          shift and go to state 27
 
 
 state 15
 
-    (2) statement -> CONST type . ID EQUALS expression SEMICOLON
+    (19) instruction -> READ . LPAREN ID RPAREN SEMICOLON
 
-    ID              shift and go to state 24
+    LPAREN          shift and go to state 28
 
 
 state 16
 
-    (17) statement -> ID LBRACKET . expression RBRACKET EQUALS expression SEMICOLON
-    (8) expression -> . ID
-    (9) expression -> . FLOAT
-    (10) expression -> . INT
-    (11) expression -> . CHAR
+    (20) instruction -> WRITE . LPAREN expression RPAREN SEMICOLON
 
-    ID              shift and go to state 25
-    FLOAT           shift and go to state 27
-    INT             shift and go to state 28
-    CHAR            shift and go to state 29
+    LPAREN          shift and go to state 29
 
-    expression                     shift and go to state 26
 
 state 17
 
-    (19) statement -> READ LPAREN . ID RPAREN SEMICOLON
+    (4) declaration -> INTEGER ID . SEMICOLON
+    (10) declaration -> INTEGER ID . LSQUARE NUMBER RSQUARE SEMICOLON
 
-    ID              shift and go to state 30
+    SEMICOLON       shift and go to state 30
+    LSQUARE         shift and go to state 31
 
 
 state 18
 
-    (20) statement -> WRITE LPAREN . write_content RPAREN SEMICOLON
-    (21) write_content -> . write_item
-    (22) write_content -> . write_content COMMA write_item
-    (23) write_item -> . ID
-    (24) write_item -> . ID LBRACKET NUMBER RBRACKET
+    (5) declaration -> FLOAT ID . SEMICOLON
+    (11) declaration -> FLOAT ID . LSQUARE NUMBER RSQUARE SEMICOLON
 
-    ID              shift and go to state 33
+    SEMICOLON       shift and go to state 32
+    LSQUARE         shift and go to state 33
 
-    write_content                  shift and go to state 31
-    write_item                     shift and go to state 32
 
 state 19
 
-    (16) declaration -> type ID . LBRACKET NUMBER RBRACKET SEMICOLON
+    (6) declaration -> CHAR ID . SEMICOLON
+    (12) declaration -> CHAR ID . LSQUARE NUMBER RSQUARE SEMICOLON
 
-    LBRACKET        shift and go to state 34
+    SEMICOLON       shift and go to state 34
+    LSQUARE         shift and go to state 35
 
 
 state 20
 
-    (1) statement -> type declaration_list SEMICOLON .
+    (7) declaration -> CONST INTEGER . ID ASSIGN NUMBER SEMICOLON
 
-    $end            reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
+    ID              shift and go to state 36
 
 
 state 21
 
-    (4) declaration_list -> declaration COMMA . declaration_list
-    (3) declaration_list -> . declaration
-    (4) declaration_list -> . declaration COMMA declaration_list
-    (5) declaration -> . ID
-    (6) declaration -> . ID EQUALS expression
-    (7) declaration -> . ID LBRACKET NUMBER RBRACKET
-    (16) declaration -> . type ID LBRACKET NUMBER RBRACKET SEMICOLON
-    (12) type -> . INT_TYPE
-    (13) type -> . FLOAT_TYPE
-    (14) type -> . BOOL_TYPE
-    (15) type -> . CHAR_TYPE
+    (8) declaration -> CONST FLOAT . ID ASSIGN NUMBER SEMICOLON
 
-    ID              shift and go to state 14
-    INT_TYPE        shift and go to state 7
-    FLOAT_TYPE      shift and go to state 8
-    BOOL_TYPE       shift and go to state 9
-    CHAR_TYPE       shift and go to state 10
+    ID              shift and go to state 37
 
-    declaration                    shift and go to state 13
-    declaration_list               shift and go to state 35
-    type                           shift and go to state 11
 
 state 22
 
-    (6) declaration -> ID EQUALS . expression
-    (8) expression -> . ID
-    (9) expression -> . FLOAT
-    (10) expression -> . INT
-    (11) expression -> . CHAR
+    (9) declaration -> CONST CHAR . ID ASSIGN ID SEMICOLON
 
-    ID              shift and go to state 25
-    FLOAT           shift and go to state 27
-    INT             shift and go to state 28
-    CHAR            shift and go to state 29
+    ID              shift and go to state 38
 
-    expression                     shift and go to state 36
 
 state 23
 
-    (7) declaration -> ID LBRACKET . NUMBER RBRACKET
+    (13) instructions -> instructions instruction .
 
-    NUMBER          shift and go to state 37
+    ID              reduce using rule 13 (instructions -> instructions instruction .)
+    IF              reduce using rule 13 (instructions -> instructions instruction .)
+    FOR             reduce using rule 13 (instructions -> instructions instruction .)
+    READ            reduce using rule 13 (instructions -> instructions instruction .)
+    WRITE           reduce using rule 13 (instructions -> instructions instruction .)
+    $end            reduce using rule 13 (instructions -> instructions instruction .)
+    RBRACE          reduce using rule 13 (instructions -> instructions instruction .)
 
 
 state 24
 
-    (2) statement -> CONST type ID . EQUALS expression SEMICOLON
+    (15) instruction -> ID ASSIGN . expression SEMICOLON
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term MULTIPLY factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . NUMBER
+    (29) factor -> . ID
+    (30) factor -> . ID LSQUARE expression RSQUARE
 
-    EQUALS          shift and go to state 38
+    NUMBER          shift and go to state 43
+    ID              shift and go to state 39
 
+    expression                     shift and go to state 40
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
 
 state 25
 
-    (8) expression -> ID .
+    (16) instruction -> ID LSQUARE . expression RSQUARE ASSIGN expression SEMICOLON
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term MULTIPLY factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . NUMBER
+    (29) factor -> . ID
+    (30) factor -> . ID LSQUARE expression RSQUARE
 
-    RBRACKET        reduce using rule 8 (expression -> ID .)
-    COMMA           reduce using rule 8 (expression -> ID .)
-    SEMICOLON       reduce using rule 8 (expression -> ID .)
+    NUMBER          shift and go to state 43
+    ID              shift and go to state 39
 
+    expression                     shift and go to state 44
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
 
 state 26
 
-    (17) statement -> ID LBRACKET expression . RBRACKET EQUALS expression SEMICOLON
+    (17) instruction -> IF LPAREN . condition RPAREN block
+    (31) condition -> . expression GT expression
+    (32) condition -> . expression LT expression
+    (33) condition -> . expression EQ expression
+    (34) condition -> . expression NEQ expression
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term MULTIPLY factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . NUMBER
+    (29) factor -> . ID
+    (30) factor -> . ID LSQUARE expression RSQUARE
 
-    RBRACKET        shift and go to state 39
+    NUMBER          shift and go to state 43
+    ID              shift and go to state 39
 
+    condition                      shift and go to state 45
+    expression                     shift and go to state 46
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
 
 state 27
 
-    (9) expression -> FLOAT .
+    (18) instruction -> FOR LPAREN . ID ASSIGN expression SEMICOLON condition SEMICOLON expression RPAREN block
 
-    RBRACKET        reduce using rule 9 (expression -> FLOAT .)
-    COMMA           reduce using rule 9 (expression -> FLOAT .)
-    SEMICOLON       reduce using rule 9 (expression -> FLOAT .)
+    ID              shift and go to state 47
 
 
 state 28
 
-    (10) expression -> INT .
+    (19) instruction -> READ LPAREN . ID RPAREN SEMICOLON
 
-    RBRACKET        reduce using rule 10 (expression -> INT .)
-    COMMA           reduce using rule 10 (expression -> INT .)
-    SEMICOLON       reduce using rule 10 (expression -> INT .)
+    ID              shift and go to state 48
 
 
 state 29
 
-    (11) expression -> CHAR .
+    (20) instruction -> WRITE LPAREN . expression RPAREN SEMICOLON
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term MULTIPLY factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . NUMBER
+    (29) factor -> . ID
+    (30) factor -> . ID LSQUARE expression RSQUARE
 
-    RBRACKET        reduce using rule 11 (expression -> CHAR .)
-    COMMA           reduce using rule 11 (expression -> CHAR .)
-    SEMICOLON       reduce using rule 11 (expression -> CHAR .)
+    NUMBER          shift and go to state 43
+    ID              shift and go to state 39
 
+    expression                     shift and go to state 49
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
 
 state 30
 
-    (19) statement -> READ LPAREN ID . RPAREN SEMICOLON
+    (4) declaration -> INTEGER ID SEMICOLON .
 
-    RPAREN          shift and go to state 40
+    INTEGER         reduce using rule 4 (declaration -> INTEGER ID SEMICOLON .)
+    FLOAT           reduce using rule 4 (declaration -> INTEGER ID SEMICOLON .)
+    CHAR            reduce using rule 4 (declaration -> INTEGER ID SEMICOLON .)
+    CONST           reduce using rule 4 (declaration -> INTEGER ID SEMICOLON .)
+    ID              reduce using rule 4 (declaration -> INTEGER ID SEMICOLON .)
+    IF              reduce using rule 4 (declaration -> INTEGER ID SEMICOLON .)
+    FOR             reduce using rule 4 (declaration -> INTEGER ID SEMICOLON .)
+    READ            reduce using rule 4 (declaration -> INTEGER ID SEMICOLON .)
+    WRITE           reduce using rule 4 (declaration -> INTEGER ID SEMICOLON .)
 
 
 state 31
 
-    (20) statement -> WRITE LPAREN write_content . RPAREN SEMICOLON
-    (22) write_content -> write_content . COMMA write_item
+    (10) declaration -> INTEGER ID LSQUARE . NUMBER RSQUARE SEMICOLON
 
-    RPAREN          shift and go to state 41
-    COMMA           shift and go to state 42
+    NUMBER          shift and go to state 50
 
 
 state 32
 
-    (21) write_content -> write_item .
+    (5) declaration -> FLOAT ID SEMICOLON .
 
-    RPAREN          reduce using rule 21 (write_content -> write_item .)
-    COMMA           reduce using rule 21 (write_content -> write_item .)
+    INTEGER         reduce using rule 5 (declaration -> FLOAT ID SEMICOLON .)
+    FLOAT           reduce using rule 5 (declaration -> FLOAT ID SEMICOLON .)
+    CHAR            reduce using rule 5 (declaration -> FLOAT ID SEMICOLON .)
+    CONST           reduce using rule 5 (declaration -> FLOAT ID SEMICOLON .)
+    ID              reduce using rule 5 (declaration -> FLOAT ID SEMICOLON .)
+    IF              reduce using rule 5 (declaration -> FLOAT ID SEMICOLON .)
+    FOR             reduce using rule 5 (declaration -> FLOAT ID SEMICOLON .)
+    READ            reduce using rule 5 (declaration -> FLOAT ID SEMICOLON .)
+    WRITE           reduce using rule 5 (declaration -> FLOAT ID SEMICOLON .)
 
 
 state 33
 
-    (23) write_item -> ID .
-    (24) write_item -> ID . LBRACKET NUMBER RBRACKET
-
-    RPAREN          reduce using rule 23 (write_item -> ID .)
-    COMMA           reduce using rule 23 (write_item -> ID .)
-    LBRACKET        shift and go to state 43
-
-
-state 34
-
-    (16) declaration -> type ID LBRACKET . NUMBER RBRACKET SEMICOLON
-
-    NUMBER          shift and go to state 44
-
-
-state 35
-
-    (4) declaration_list -> declaration COMMA declaration_list .
-
-    SEMICOLON       reduce using rule 4 (declaration_list -> declaration COMMA declaration_list .)
-
-
-state 36
-
-    (6) declaration -> ID EQUALS expression .
-
-    COMMA           reduce using rule 6 (declaration -> ID EQUALS expression .)
-    SEMICOLON       reduce using rule 6 (declaration -> ID EQUALS expression .)
-
-
-state 37
-
-    (7) declaration -> ID LBRACKET NUMBER . RBRACKET
-
-    RBRACKET        shift and go to state 45
-
-
-state 38
-
-    (2) statement -> CONST type ID EQUALS . expression SEMICOLON
-    (8) expression -> . ID
-    (9) expression -> . FLOAT
-    (10) expression -> . INT
-    (11) expression -> . CHAR
-
-    ID              shift and go to state 25
-    FLOAT           shift and go to state 27
-    INT             shift and go to state 28
-    CHAR            shift and go to state 29
-
-    expression                     shift and go to state 46
-
-state 39
-
-    (17) statement -> ID LBRACKET expression RBRACKET . EQUALS expression SEMICOLON
-
-    EQUALS          shift and go to state 47
-
-
-state 40
-
-    (19) statement -> READ LPAREN ID RPAREN . SEMICOLON
-
-    SEMICOLON       shift and go to state 48
-
-
-state 41
-
-    (20) statement -> WRITE LPAREN write_content RPAREN . SEMICOLON
-
-    SEMICOLON       shift and go to state 49
-
-
-state 42
-
-    (22) write_content -> write_content COMMA . write_item
-    (23) write_item -> . ID
-    (24) write_item -> . ID LBRACKET NUMBER RBRACKET
-
-    ID              shift and go to state 33
-
-    write_item                     shift and go to state 50
-
-state 43
-
-    (24) write_item -> ID LBRACKET . NUMBER RBRACKET
+    (11) declaration -> FLOAT ID LSQUARE . NUMBER RSQUARE SEMICOLON
 
     NUMBER          shift and go to state 51
 
 
+state 34
+
+    (6) declaration -> CHAR ID SEMICOLON .
+
+    INTEGER         reduce using rule 6 (declaration -> CHAR ID SEMICOLON .)
+    FLOAT           reduce using rule 6 (declaration -> CHAR ID SEMICOLON .)
+    CHAR            reduce using rule 6 (declaration -> CHAR ID SEMICOLON .)
+    CONST           reduce using rule 6 (declaration -> CHAR ID SEMICOLON .)
+    ID              reduce using rule 6 (declaration -> CHAR ID SEMICOLON .)
+    IF              reduce using rule 6 (declaration -> CHAR ID SEMICOLON .)
+    FOR             reduce using rule 6 (declaration -> CHAR ID SEMICOLON .)
+    READ            reduce using rule 6 (declaration -> CHAR ID SEMICOLON .)
+    WRITE           reduce using rule 6 (declaration -> CHAR ID SEMICOLON .)
+
+
+state 35
+
+    (12) declaration -> CHAR ID LSQUARE . NUMBER RSQUARE SEMICOLON
+
+    NUMBER          shift and go to state 52
+
+
+state 36
+
+    (7) declaration -> CONST INTEGER ID . ASSIGN NUMBER SEMICOLON
+
+    ASSIGN          shift and go to state 53
+
+
+state 37
+
+    (8) declaration -> CONST FLOAT ID . ASSIGN NUMBER SEMICOLON
+
+    ASSIGN          shift and go to state 54
+
+
+state 38
+
+    (9) declaration -> CONST CHAR ID . ASSIGN ID SEMICOLON
+
+    ASSIGN          shift and go to state 55
+
+
+state 39
+
+    (29) factor -> ID .
+    (30) factor -> ID . LSQUARE expression RSQUARE
+
+    MULTIPLY        reduce using rule 29 (factor -> ID .)
+    DIVIDE          reduce using rule 29 (factor -> ID .)
+    SEMICOLON       reduce using rule 29 (factor -> ID .)
+    PLUS            reduce using rule 29 (factor -> ID .)
+    MINUS           reduce using rule 29 (factor -> ID .)
+    RSQUARE         reduce using rule 29 (factor -> ID .)
+    GT              reduce using rule 29 (factor -> ID .)
+    LT              reduce using rule 29 (factor -> ID .)
+    EQ              reduce using rule 29 (factor -> ID .)
+    NEQ             reduce using rule 29 (factor -> ID .)
+    RPAREN          reduce using rule 29 (factor -> ID .)
+    LSQUARE         shift and go to state 56
+
+
+state 40
+
+    (15) instruction -> ID ASSIGN expression . SEMICOLON
+    (22) expression -> expression . PLUS term
+    (23) expression -> expression . MINUS term
+
+    SEMICOLON       shift and go to state 57
+    PLUS            shift and go to state 58
+    MINUS           shift and go to state 59
+
+
+state 41
+
+    (24) expression -> term .
+    (25) term -> term . MULTIPLY factor
+    (26) term -> term . DIVIDE factor
+
+    SEMICOLON       reduce using rule 24 (expression -> term .)
+    PLUS            reduce using rule 24 (expression -> term .)
+    MINUS           reduce using rule 24 (expression -> term .)
+    RSQUARE         reduce using rule 24 (expression -> term .)
+    GT              reduce using rule 24 (expression -> term .)
+    LT              reduce using rule 24 (expression -> term .)
+    EQ              reduce using rule 24 (expression -> term .)
+    NEQ             reduce using rule 24 (expression -> term .)
+    RPAREN          reduce using rule 24 (expression -> term .)
+    MULTIPLY        shift and go to state 60
+    DIVIDE          shift and go to state 61
+
+
+state 42
+
+    (27) term -> factor .
+
+    MULTIPLY        reduce using rule 27 (term -> factor .)
+    DIVIDE          reduce using rule 27 (term -> factor .)
+    SEMICOLON       reduce using rule 27 (term -> factor .)
+    PLUS            reduce using rule 27 (term -> factor .)
+    MINUS           reduce using rule 27 (term -> factor .)
+    RSQUARE         reduce using rule 27 (term -> factor .)
+    GT              reduce using rule 27 (term -> factor .)
+    LT              reduce using rule 27 (term -> factor .)
+    EQ              reduce using rule 27 (term -> factor .)
+    NEQ             reduce using rule 27 (term -> factor .)
+    RPAREN          reduce using rule 27 (term -> factor .)
+
+
+state 43
+
+    (28) factor -> NUMBER .
+
+    MULTIPLY        reduce using rule 28 (factor -> NUMBER .)
+    DIVIDE          reduce using rule 28 (factor -> NUMBER .)
+    SEMICOLON       reduce using rule 28 (factor -> NUMBER .)
+    PLUS            reduce using rule 28 (factor -> NUMBER .)
+    MINUS           reduce using rule 28 (factor -> NUMBER .)
+    RSQUARE         reduce using rule 28 (factor -> NUMBER .)
+    GT              reduce using rule 28 (factor -> NUMBER .)
+    LT              reduce using rule 28 (factor -> NUMBER .)
+    EQ              reduce using rule 28 (factor -> NUMBER .)
+    NEQ             reduce using rule 28 (factor -> NUMBER .)
+    RPAREN          reduce using rule 28 (factor -> NUMBER .)
+
+
 state 44
 
-    (16) declaration -> type ID LBRACKET NUMBER . RBRACKET SEMICOLON
+    (16) instruction -> ID LSQUARE expression . RSQUARE ASSIGN expression SEMICOLON
+    (22) expression -> expression . PLUS term
+    (23) expression -> expression . MINUS term
 
-    RBRACKET        shift and go to state 52
+    RSQUARE         shift and go to state 62
+    PLUS            shift and go to state 58
+    MINUS           shift and go to state 59
 
 
 state 45
 
-    (7) declaration -> ID LBRACKET NUMBER RBRACKET .
+    (17) instruction -> IF LPAREN condition . RPAREN block
 
-    COMMA           reduce using rule 7 (declaration -> ID LBRACKET NUMBER RBRACKET .)
-    SEMICOLON       reduce using rule 7 (declaration -> ID LBRACKET NUMBER RBRACKET .)
+    RPAREN          shift and go to state 63
 
 
 state 46
 
-    (2) statement -> CONST type ID EQUALS expression . SEMICOLON
+    (31) condition -> expression . GT expression
+    (32) condition -> expression . LT expression
+    (33) condition -> expression . EQ expression
+    (34) condition -> expression . NEQ expression
+    (22) expression -> expression . PLUS term
+    (23) expression -> expression . MINUS term
 
-    SEMICOLON       shift and go to state 53
+    GT              shift and go to state 64
+    LT              shift and go to state 65
+    EQ              shift and go to state 66
+    NEQ             shift and go to state 67
+    PLUS            shift and go to state 58
+    MINUS           shift and go to state 59
 
 
 state 47
 
-    (17) statement -> ID LBRACKET expression RBRACKET EQUALS . expression SEMICOLON
-    (8) expression -> . ID
-    (9) expression -> . FLOAT
-    (10) expression -> . INT
-    (11) expression -> . CHAR
+    (18) instruction -> FOR LPAREN ID . ASSIGN expression SEMICOLON condition SEMICOLON expression RPAREN block
 
-    ID              shift and go to state 25
-    FLOAT           shift and go to state 27
-    INT             shift and go to state 28
-    CHAR            shift and go to state 29
+    ASSIGN          shift and go to state 68
 
-    expression                     shift and go to state 54
 
 state 48
 
-    (19) statement -> READ LPAREN ID RPAREN SEMICOLON .
+    (19) instruction -> READ LPAREN ID . RPAREN SEMICOLON
 
-    $end            reduce using rule 19 (statement -> READ LPAREN ID RPAREN SEMICOLON .)
+    RPAREN          shift and go to state 69
 
 
 state 49
 
-    (20) statement -> WRITE LPAREN write_content RPAREN SEMICOLON .
+    (20) instruction -> WRITE LPAREN expression . RPAREN SEMICOLON
+    (22) expression -> expression . PLUS term
+    (23) expression -> expression . MINUS term
 
-    $end            reduce using rule 20 (statement -> WRITE LPAREN write_content RPAREN SEMICOLON .)
+    RPAREN          shift and go to state 70
+    PLUS            shift and go to state 58
+    MINUS           shift and go to state 59
 
 
 state 50
 
-    (22) write_content -> write_content COMMA write_item .
+    (10) declaration -> INTEGER ID LSQUARE NUMBER . RSQUARE SEMICOLON
 
-    RPAREN          reduce using rule 22 (write_content -> write_content COMMA write_item .)
-    COMMA           reduce using rule 22 (write_content -> write_content COMMA write_item .)
+    RSQUARE         shift and go to state 71
 
 
 state 51
 
-    (24) write_item -> ID LBRACKET NUMBER . RBRACKET
+    (11) declaration -> FLOAT ID LSQUARE NUMBER . RSQUARE SEMICOLON
 
-    RBRACKET        shift and go to state 55
+    RSQUARE         shift and go to state 72
 
 
 state 52
 
-    (16) declaration -> type ID LBRACKET NUMBER RBRACKET . SEMICOLON
+    (12) declaration -> CHAR ID LSQUARE NUMBER . RSQUARE SEMICOLON
 
-    SEMICOLON       shift and go to state 56
+    RSQUARE         shift and go to state 73
 
 
 state 53
 
-    (2) statement -> CONST type ID EQUALS expression SEMICOLON .
+    (7) declaration -> CONST INTEGER ID ASSIGN . NUMBER SEMICOLON
 
-    $end            reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
+    NUMBER          shift and go to state 74
 
 
 state 54
 
-    (17) statement -> ID LBRACKET expression RBRACKET EQUALS expression . SEMICOLON
+    (8) declaration -> CONST FLOAT ID ASSIGN . NUMBER SEMICOLON
 
-    SEMICOLON       shift and go to state 57
+    NUMBER          shift and go to state 75
 
 
 state 55
 
-    (24) write_item -> ID LBRACKET NUMBER RBRACKET .
+    (9) declaration -> CONST CHAR ID ASSIGN . ID SEMICOLON
 
-    RPAREN          reduce using rule 24 (write_item -> ID LBRACKET NUMBER RBRACKET .)
-    COMMA           reduce using rule 24 (write_item -> ID LBRACKET NUMBER RBRACKET .)
+    ID              shift and go to state 76
 
 
 state 56
 
-    (16) declaration -> type ID LBRACKET NUMBER RBRACKET SEMICOLON .
+    (30) factor -> ID LSQUARE . expression RSQUARE
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term MULTIPLY factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . NUMBER
+    (29) factor -> . ID
+    (30) factor -> . ID LSQUARE expression RSQUARE
 
-    COMMA           reduce using rule 16 (declaration -> type ID LBRACKET NUMBER RBRACKET SEMICOLON .)
-    SEMICOLON       reduce using rule 16 (declaration -> type ID LBRACKET NUMBER RBRACKET SEMICOLON .)
+    NUMBER          shift and go to state 43
+    ID              shift and go to state 39
 
+    expression                     shift and go to state 77
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
 
 state 57
 
-    (17) statement -> ID LBRACKET expression RBRACKET EQUALS expression SEMICOLON .
+    (15) instruction -> ID ASSIGN expression SEMICOLON .
 
-    $end            reduce using rule 17 (statement -> ID LBRACKET expression RBRACKET EQUALS expression SEMICOLON .)
+    ID              reduce using rule 15 (instruction -> ID ASSIGN expression SEMICOLON .)
+    IF              reduce using rule 15 (instruction -> ID ASSIGN expression SEMICOLON .)
+    FOR             reduce using rule 15 (instruction -> ID ASSIGN expression SEMICOLON .)
+    READ            reduce using rule 15 (instruction -> ID ASSIGN expression SEMICOLON .)
+    WRITE           reduce using rule 15 (instruction -> ID ASSIGN expression SEMICOLON .)
+    $end            reduce using rule 15 (instruction -> ID ASSIGN expression SEMICOLON .)
+    RBRACE          reduce using rule 15 (instruction -> ID ASSIGN expression SEMICOLON .)
+
+
+state 58
+
+    (22) expression -> expression PLUS . term
+    (25) term -> . term MULTIPLY factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . NUMBER
+    (29) factor -> . ID
+    (30) factor -> . ID LSQUARE expression RSQUARE
+
+    NUMBER          shift and go to state 43
+    ID              shift and go to state 39
+
+    term                           shift and go to state 78
+    factor                         shift and go to state 42
+
+state 59
+
+    (23) expression -> expression MINUS . term
+    (25) term -> . term MULTIPLY factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . NUMBER
+    (29) factor -> . ID
+    (30) factor -> . ID LSQUARE expression RSQUARE
+
+    NUMBER          shift and go to state 43
+    ID              shift and go to state 39
+
+    term                           shift and go to state 79
+    factor                         shift and go to state 42
+
+state 60
+
+    (25) term -> term MULTIPLY . factor
+    (28) factor -> . NUMBER
+    (29) factor -> . ID
+    (30) factor -> . ID LSQUARE expression RSQUARE
+
+    NUMBER          shift and go to state 43
+    ID              shift and go to state 39
+
+    factor                         shift and go to state 80
+
+state 61
+
+    (26) term -> term DIVIDE . factor
+    (28) factor -> . NUMBER
+    (29) factor -> . ID
+    (30) factor -> . ID LSQUARE expression RSQUARE
+
+    NUMBER          shift and go to state 43
+    ID              shift and go to state 39
+
+    factor                         shift and go to state 81
+
+state 62
+
+    (16) instruction -> ID LSQUARE expression RSQUARE . ASSIGN expression SEMICOLON
+
+    ASSIGN          shift and go to state 82
+
+
+state 63
+
+    (17) instruction -> IF LPAREN condition RPAREN . block
+    (21) block -> . LBRACE instructions RBRACE
+
+    LBRACE          shift and go to state 84
+
+    block                          shift and go to state 83
+
+state 64
+
+    (31) condition -> expression GT . expression
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term MULTIPLY factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . NUMBER
+    (29) factor -> . ID
+    (30) factor -> . ID LSQUARE expression RSQUARE
+
+    NUMBER          shift and go to state 43
+    ID              shift and go to state 39
+
+    expression                     shift and go to state 85
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+
+state 65
+
+    (32) condition -> expression LT . expression
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term MULTIPLY factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . NUMBER
+    (29) factor -> . ID
+    (30) factor -> . ID LSQUARE expression RSQUARE
+
+    NUMBER          shift and go to state 43
+    ID              shift and go to state 39
+
+    expression                     shift and go to state 86
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+
+state 66
+
+    (33) condition -> expression EQ . expression
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term MULTIPLY factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . NUMBER
+    (29) factor -> . ID
+    (30) factor -> . ID LSQUARE expression RSQUARE
+
+    NUMBER          shift and go to state 43
+    ID              shift and go to state 39
+
+    expression                     shift and go to state 87
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+
+state 67
+
+    (34) condition -> expression NEQ . expression
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term MULTIPLY factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . NUMBER
+    (29) factor -> . ID
+    (30) factor -> . ID LSQUARE expression RSQUARE
+
+    NUMBER          shift and go to state 43
+    ID              shift and go to state 39
+
+    expression                     shift and go to state 88
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+
+state 68
+
+    (18) instruction -> FOR LPAREN ID ASSIGN . expression SEMICOLON condition SEMICOLON expression RPAREN block
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term MULTIPLY factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . NUMBER
+    (29) factor -> . ID
+    (30) factor -> . ID LSQUARE expression RSQUARE
+
+    NUMBER          shift and go to state 43
+    ID              shift and go to state 39
+
+    expression                     shift and go to state 89
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+
+state 69
+
+    (19) instruction -> READ LPAREN ID RPAREN . SEMICOLON
+
+    SEMICOLON       shift and go to state 90
+
+
+state 70
+
+    (20) instruction -> WRITE LPAREN expression RPAREN . SEMICOLON
+
+    SEMICOLON       shift and go to state 91
+
+
+state 71
+
+    (10) declaration -> INTEGER ID LSQUARE NUMBER RSQUARE . SEMICOLON
+
+    SEMICOLON       shift and go to state 92
+
+
+state 72
+
+    (11) declaration -> FLOAT ID LSQUARE NUMBER RSQUARE . SEMICOLON
+
+    SEMICOLON       shift and go to state 93
+
+
+state 73
+
+    (12) declaration -> CHAR ID LSQUARE NUMBER RSQUARE . SEMICOLON
+
+    SEMICOLON       shift and go to state 94
+
+
+state 74
+
+    (7) declaration -> CONST INTEGER ID ASSIGN NUMBER . SEMICOLON
+
+    SEMICOLON       shift and go to state 95
+
+
+state 75
+
+    (8) declaration -> CONST FLOAT ID ASSIGN NUMBER . SEMICOLON
+
+    SEMICOLON       shift and go to state 96
+
+
+state 76
+
+    (9) declaration -> CONST CHAR ID ASSIGN ID . SEMICOLON
+
+    SEMICOLON       shift and go to state 97
+
+
+state 77
+
+    (30) factor -> ID LSQUARE expression . RSQUARE
+    (22) expression -> expression . PLUS term
+    (23) expression -> expression . MINUS term
+
+    RSQUARE         shift and go to state 98
+    PLUS            shift and go to state 58
+    MINUS           shift and go to state 59
+
+
+state 78
+
+    (22) expression -> expression PLUS term .
+    (25) term -> term . MULTIPLY factor
+    (26) term -> term . DIVIDE factor
+
+    SEMICOLON       reduce using rule 22 (expression -> expression PLUS term .)
+    PLUS            reduce using rule 22 (expression -> expression PLUS term .)
+    MINUS           reduce using rule 22 (expression -> expression PLUS term .)
+    RSQUARE         reduce using rule 22 (expression -> expression PLUS term .)
+    GT              reduce using rule 22 (expression -> expression PLUS term .)
+    LT              reduce using rule 22 (expression -> expression PLUS term .)
+    EQ              reduce using rule 22 (expression -> expression PLUS term .)
+    NEQ             reduce using rule 22 (expression -> expression PLUS term .)
+    RPAREN          reduce using rule 22 (expression -> expression PLUS term .)
+    MULTIPLY        shift and go to state 60
+    DIVIDE          shift and go to state 61
+
+
+state 79
+
+    (23) expression -> expression MINUS term .
+    (25) term -> term . MULTIPLY factor
+    (26) term -> term . DIVIDE factor
+
+    SEMICOLON       reduce using rule 23 (expression -> expression MINUS term .)
+    PLUS            reduce using rule 23 (expression -> expression MINUS term .)
+    MINUS           reduce using rule 23 (expression -> expression MINUS term .)
+    RSQUARE         reduce using rule 23 (expression -> expression MINUS term .)
+    GT              reduce using rule 23 (expression -> expression MINUS term .)
+    LT              reduce using rule 23 (expression -> expression MINUS term .)
+    EQ              reduce using rule 23 (expression -> expression MINUS term .)
+    NEQ             reduce using rule 23 (expression -> expression MINUS term .)
+    RPAREN          reduce using rule 23 (expression -> expression MINUS term .)
+    MULTIPLY        shift and go to state 60
+    DIVIDE          shift and go to state 61
+
+
+state 80
+
+    (25) term -> term MULTIPLY factor .
+
+    MULTIPLY        reduce using rule 25 (term -> term MULTIPLY factor .)
+    DIVIDE          reduce using rule 25 (term -> term MULTIPLY factor .)
+    SEMICOLON       reduce using rule 25 (term -> term MULTIPLY factor .)
+    PLUS            reduce using rule 25 (term -> term MULTIPLY factor .)
+    MINUS           reduce using rule 25 (term -> term MULTIPLY factor .)
+    RSQUARE         reduce using rule 25 (term -> term MULTIPLY factor .)
+    GT              reduce using rule 25 (term -> term MULTIPLY factor .)
+    LT              reduce using rule 25 (term -> term MULTIPLY factor .)
+    EQ              reduce using rule 25 (term -> term MULTIPLY factor .)
+    NEQ             reduce using rule 25 (term -> term MULTIPLY factor .)
+    RPAREN          reduce using rule 25 (term -> term MULTIPLY factor .)
+
+
+state 81
+
+    (26) term -> term DIVIDE factor .
+
+    MULTIPLY        reduce using rule 26 (term -> term DIVIDE factor .)
+    DIVIDE          reduce using rule 26 (term -> term DIVIDE factor .)
+    SEMICOLON       reduce using rule 26 (term -> term DIVIDE factor .)
+    PLUS            reduce using rule 26 (term -> term DIVIDE factor .)
+    MINUS           reduce using rule 26 (term -> term DIVIDE factor .)
+    RSQUARE         reduce using rule 26 (term -> term DIVIDE factor .)
+    GT              reduce using rule 26 (term -> term DIVIDE factor .)
+    LT              reduce using rule 26 (term -> term DIVIDE factor .)
+    EQ              reduce using rule 26 (term -> term DIVIDE factor .)
+    NEQ             reduce using rule 26 (term -> term DIVIDE factor .)
+    RPAREN          reduce using rule 26 (term -> term DIVIDE factor .)
+
+
+state 82
+
+    (16) instruction -> ID LSQUARE expression RSQUARE ASSIGN . expression SEMICOLON
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term MULTIPLY factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . NUMBER
+    (29) factor -> . ID
+    (30) factor -> . ID LSQUARE expression RSQUARE
+
+    NUMBER          shift and go to state 43
+    ID              shift and go to state 39
+
+    expression                     shift and go to state 99
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+
+state 83
+
+    (17) instruction -> IF LPAREN condition RPAREN block .
+
+    ID              reduce using rule 17 (instruction -> IF LPAREN condition RPAREN block .)
+    IF              reduce using rule 17 (instruction -> IF LPAREN condition RPAREN block .)
+    FOR             reduce using rule 17 (instruction -> IF LPAREN condition RPAREN block .)
+    READ            reduce using rule 17 (instruction -> IF LPAREN condition RPAREN block .)
+    WRITE           reduce using rule 17 (instruction -> IF LPAREN condition RPAREN block .)
+    $end            reduce using rule 17 (instruction -> IF LPAREN condition RPAREN block .)
+    RBRACE          reduce using rule 17 (instruction -> IF LPAREN condition RPAREN block .)
+
+
+state 84
+
+    (21) block -> LBRACE . instructions RBRACE
+    (13) instructions -> . instructions instruction
+    (14) instructions -> . instruction
+    (15) instruction -> . ID ASSIGN expression SEMICOLON
+    (16) instruction -> . ID LSQUARE expression RSQUARE ASSIGN expression SEMICOLON
+    (17) instruction -> . IF LPAREN condition RPAREN block
+    (18) instruction -> . FOR LPAREN ID ASSIGN expression SEMICOLON condition SEMICOLON expression RPAREN block
+    (19) instruction -> . READ LPAREN ID RPAREN SEMICOLON
+    (20) instruction -> . WRITE LPAREN expression RPAREN SEMICOLON
+
+    ID              shift and go to state 12
+    IF              shift and go to state 13
+    FOR             shift and go to state 14
+    READ            shift and go to state 15
+    WRITE           shift and go to state 16
+
+    instructions                   shift and go to state 100
+    instruction                    shift and go to state 11
+
+state 85
+
+    (31) condition -> expression GT expression .
+    (22) expression -> expression . PLUS term
+    (23) expression -> expression . MINUS term
+
+    RPAREN          reduce using rule 31 (condition -> expression GT expression .)
+    SEMICOLON       reduce using rule 31 (condition -> expression GT expression .)
+    PLUS            shift and go to state 58
+    MINUS           shift and go to state 59
+
+
+state 86
+
+    (32) condition -> expression LT expression .
+    (22) expression -> expression . PLUS term
+    (23) expression -> expression . MINUS term
+
+    RPAREN          reduce using rule 32 (condition -> expression LT expression .)
+    SEMICOLON       reduce using rule 32 (condition -> expression LT expression .)
+    PLUS            shift and go to state 58
+    MINUS           shift and go to state 59
+
+
+state 87
+
+    (33) condition -> expression EQ expression .
+    (22) expression -> expression . PLUS term
+    (23) expression -> expression . MINUS term
+
+    RPAREN          reduce using rule 33 (condition -> expression EQ expression .)
+    SEMICOLON       reduce using rule 33 (condition -> expression EQ expression .)
+    PLUS            shift and go to state 58
+    MINUS           shift and go to state 59
+
+
+state 88
+
+    (34) condition -> expression NEQ expression .
+    (22) expression -> expression . PLUS term
+    (23) expression -> expression . MINUS term
+
+    RPAREN          reduce using rule 34 (condition -> expression NEQ expression .)
+    SEMICOLON       reduce using rule 34 (condition -> expression NEQ expression .)
+    PLUS            shift and go to state 58
+    MINUS           shift and go to state 59
+
+
+state 89
+
+    (18) instruction -> FOR LPAREN ID ASSIGN expression . SEMICOLON condition SEMICOLON expression RPAREN block
+    (22) expression -> expression . PLUS term
+    (23) expression -> expression . MINUS term
+
+    SEMICOLON       shift and go to state 101
+    PLUS            shift and go to state 58
+    MINUS           shift and go to state 59
+
+
+state 90
+
+    (19) instruction -> READ LPAREN ID RPAREN SEMICOLON .
+
+    ID              reduce using rule 19 (instruction -> READ LPAREN ID RPAREN SEMICOLON .)
+    IF              reduce using rule 19 (instruction -> READ LPAREN ID RPAREN SEMICOLON .)
+    FOR             reduce using rule 19 (instruction -> READ LPAREN ID RPAREN SEMICOLON .)
+    READ            reduce using rule 19 (instruction -> READ LPAREN ID RPAREN SEMICOLON .)
+    WRITE           reduce using rule 19 (instruction -> READ LPAREN ID RPAREN SEMICOLON .)
+    $end            reduce using rule 19 (instruction -> READ LPAREN ID RPAREN SEMICOLON .)
+    RBRACE          reduce using rule 19 (instruction -> READ LPAREN ID RPAREN SEMICOLON .)
+
+
+state 91
+
+    (20) instruction -> WRITE LPAREN expression RPAREN SEMICOLON .
+
+    ID              reduce using rule 20 (instruction -> WRITE LPAREN expression RPAREN SEMICOLON .)
+    IF              reduce using rule 20 (instruction -> WRITE LPAREN expression RPAREN SEMICOLON .)
+    FOR             reduce using rule 20 (instruction -> WRITE LPAREN expression RPAREN SEMICOLON .)
+    READ            reduce using rule 20 (instruction -> WRITE LPAREN expression RPAREN SEMICOLON .)
+    WRITE           reduce using rule 20 (instruction -> WRITE LPAREN expression RPAREN SEMICOLON .)
+    $end            reduce using rule 20 (instruction -> WRITE LPAREN expression RPAREN SEMICOLON .)
+    RBRACE          reduce using rule 20 (instruction -> WRITE LPAREN expression RPAREN SEMICOLON .)
+
+
+state 92
+
+    (10) declaration -> INTEGER ID LSQUARE NUMBER RSQUARE SEMICOLON .
+
+    INTEGER         reduce using rule 10 (declaration -> INTEGER ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    FLOAT           reduce using rule 10 (declaration -> INTEGER ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    CHAR            reduce using rule 10 (declaration -> INTEGER ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    CONST           reduce using rule 10 (declaration -> INTEGER ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    ID              reduce using rule 10 (declaration -> INTEGER ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    IF              reduce using rule 10 (declaration -> INTEGER ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    FOR             reduce using rule 10 (declaration -> INTEGER ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    READ            reduce using rule 10 (declaration -> INTEGER ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    WRITE           reduce using rule 10 (declaration -> INTEGER ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+
+
+state 93
+
+    (11) declaration -> FLOAT ID LSQUARE NUMBER RSQUARE SEMICOLON .
+
+    INTEGER         reduce using rule 11 (declaration -> FLOAT ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    FLOAT           reduce using rule 11 (declaration -> FLOAT ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    CHAR            reduce using rule 11 (declaration -> FLOAT ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    CONST           reduce using rule 11 (declaration -> FLOAT ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    ID              reduce using rule 11 (declaration -> FLOAT ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    IF              reduce using rule 11 (declaration -> FLOAT ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    FOR             reduce using rule 11 (declaration -> FLOAT ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    READ            reduce using rule 11 (declaration -> FLOAT ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    WRITE           reduce using rule 11 (declaration -> FLOAT ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+
+
+state 94
+
+    (12) declaration -> CHAR ID LSQUARE NUMBER RSQUARE SEMICOLON .
+
+    INTEGER         reduce using rule 12 (declaration -> CHAR ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    FLOAT           reduce using rule 12 (declaration -> CHAR ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    CHAR            reduce using rule 12 (declaration -> CHAR ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    CONST           reduce using rule 12 (declaration -> CHAR ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    ID              reduce using rule 12 (declaration -> CHAR ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    IF              reduce using rule 12 (declaration -> CHAR ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    FOR             reduce using rule 12 (declaration -> CHAR ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    READ            reduce using rule 12 (declaration -> CHAR ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+    WRITE           reduce using rule 12 (declaration -> CHAR ID LSQUARE NUMBER RSQUARE SEMICOLON .)
+
+
+state 95
+
+    (7) declaration -> CONST INTEGER ID ASSIGN NUMBER SEMICOLON .
+
+    INTEGER         reduce using rule 7 (declaration -> CONST INTEGER ID ASSIGN NUMBER SEMICOLON .)
+    FLOAT           reduce using rule 7 (declaration -> CONST INTEGER ID ASSIGN NUMBER SEMICOLON .)
+    CHAR            reduce using rule 7 (declaration -> CONST INTEGER ID ASSIGN NUMBER SEMICOLON .)
+    CONST           reduce using rule 7 (declaration -> CONST INTEGER ID ASSIGN NUMBER SEMICOLON .)
+    ID              reduce using rule 7 (declaration -> CONST INTEGER ID ASSIGN NUMBER SEMICOLON .)
+    IF              reduce using rule 7 (declaration -> CONST INTEGER ID ASSIGN NUMBER SEMICOLON .)
+    FOR             reduce using rule 7 (declaration -> CONST INTEGER ID ASSIGN NUMBER SEMICOLON .)
+    READ            reduce using rule 7 (declaration -> CONST INTEGER ID ASSIGN NUMBER SEMICOLON .)
+    WRITE           reduce using rule 7 (declaration -> CONST INTEGER ID ASSIGN NUMBER SEMICOLON .)
+
+
+state 96
+
+    (8) declaration -> CONST FLOAT ID ASSIGN NUMBER SEMICOLON .
+
+    INTEGER         reduce using rule 8 (declaration -> CONST FLOAT ID ASSIGN NUMBER SEMICOLON .)
+    FLOAT           reduce using rule 8 (declaration -> CONST FLOAT ID ASSIGN NUMBER SEMICOLON .)
+    CHAR            reduce using rule 8 (declaration -> CONST FLOAT ID ASSIGN NUMBER SEMICOLON .)
+    CONST           reduce using rule 8 (declaration -> CONST FLOAT ID ASSIGN NUMBER SEMICOLON .)
+    ID              reduce using rule 8 (declaration -> CONST FLOAT ID ASSIGN NUMBER SEMICOLON .)
+    IF              reduce using rule 8 (declaration -> CONST FLOAT ID ASSIGN NUMBER SEMICOLON .)
+    FOR             reduce using rule 8 (declaration -> CONST FLOAT ID ASSIGN NUMBER SEMICOLON .)
+    READ            reduce using rule 8 (declaration -> CONST FLOAT ID ASSIGN NUMBER SEMICOLON .)
+    WRITE           reduce using rule 8 (declaration -> CONST FLOAT ID ASSIGN NUMBER SEMICOLON .)
+
+
+state 97
+
+    (9) declaration -> CONST CHAR ID ASSIGN ID SEMICOLON .
+
+    INTEGER         reduce using rule 9 (declaration -> CONST CHAR ID ASSIGN ID SEMICOLON .)
+    FLOAT           reduce using rule 9 (declaration -> CONST CHAR ID ASSIGN ID SEMICOLON .)
+    CHAR            reduce using rule 9 (declaration -> CONST CHAR ID ASSIGN ID SEMICOLON .)
+    CONST           reduce using rule 9 (declaration -> CONST CHAR ID ASSIGN ID SEMICOLON .)
+    ID              reduce using rule 9 (declaration -> CONST CHAR ID ASSIGN ID SEMICOLON .)
+    IF              reduce using rule 9 (declaration -> CONST CHAR ID ASSIGN ID SEMICOLON .)
+    FOR             reduce using rule 9 (declaration -> CONST CHAR ID ASSIGN ID SEMICOLON .)
+    READ            reduce using rule 9 (declaration -> CONST CHAR ID ASSIGN ID SEMICOLON .)
+    WRITE           reduce using rule 9 (declaration -> CONST CHAR ID ASSIGN ID SEMICOLON .)
+
+
+state 98
+
+    (30) factor -> ID LSQUARE expression RSQUARE .
+
+    MULTIPLY        reduce using rule 30 (factor -> ID LSQUARE expression RSQUARE .)
+    DIVIDE          reduce using rule 30 (factor -> ID LSQUARE expression RSQUARE .)
+    SEMICOLON       reduce using rule 30 (factor -> ID LSQUARE expression RSQUARE .)
+    PLUS            reduce using rule 30 (factor -> ID LSQUARE expression RSQUARE .)
+    MINUS           reduce using rule 30 (factor -> ID LSQUARE expression RSQUARE .)
+    RSQUARE         reduce using rule 30 (factor -> ID LSQUARE expression RSQUARE .)
+    GT              reduce using rule 30 (factor -> ID LSQUARE expression RSQUARE .)
+    LT              reduce using rule 30 (factor -> ID LSQUARE expression RSQUARE .)
+    EQ              reduce using rule 30 (factor -> ID LSQUARE expression RSQUARE .)
+    NEQ             reduce using rule 30 (factor -> ID LSQUARE expression RSQUARE .)
+    RPAREN          reduce using rule 30 (factor -> ID LSQUARE expression RSQUARE .)
+
+
+state 99
+
+    (16) instruction -> ID LSQUARE expression RSQUARE ASSIGN expression . SEMICOLON
+    (22) expression -> expression . PLUS term
+    (23) expression -> expression . MINUS term
+
+    SEMICOLON       shift and go to state 102
+    PLUS            shift and go to state 58
+    MINUS           shift and go to state 59
+
+
+state 100
+
+    (21) block -> LBRACE instructions . RBRACE
+    (13) instructions -> instructions . instruction
+    (15) instruction -> . ID ASSIGN expression SEMICOLON
+    (16) instruction -> . ID LSQUARE expression RSQUARE ASSIGN expression SEMICOLON
+    (17) instruction -> . IF LPAREN condition RPAREN block
+    (18) instruction -> . FOR LPAREN ID ASSIGN expression SEMICOLON condition SEMICOLON expression RPAREN block
+    (19) instruction -> . READ LPAREN ID RPAREN SEMICOLON
+    (20) instruction -> . WRITE LPAREN expression RPAREN SEMICOLON
+
+    RBRACE          shift and go to state 103
+    ID              shift and go to state 12
+    IF              shift and go to state 13
+    FOR             shift and go to state 14
+    READ            shift and go to state 15
+    WRITE           shift and go to state 16
+
+    instruction                    shift and go to state 23
+
+state 101
+
+    (18) instruction -> FOR LPAREN ID ASSIGN expression SEMICOLON . condition SEMICOLON expression RPAREN block
+    (31) condition -> . expression GT expression
+    (32) condition -> . expression LT expression
+    (33) condition -> . expression EQ expression
+    (34) condition -> . expression NEQ expression
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term MULTIPLY factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . NUMBER
+    (29) factor -> . ID
+    (30) factor -> . ID LSQUARE expression RSQUARE
+
+    NUMBER          shift and go to state 43
+    ID              shift and go to state 39
+
+    expression                     shift and go to state 46
+    condition                      shift and go to state 104
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+
+state 102
+
+    (16) instruction -> ID LSQUARE expression RSQUARE ASSIGN expression SEMICOLON .
+
+    ID              reduce using rule 16 (instruction -> ID LSQUARE expression RSQUARE ASSIGN expression SEMICOLON .)
+    IF              reduce using rule 16 (instruction -> ID LSQUARE expression RSQUARE ASSIGN expression SEMICOLON .)
+    FOR             reduce using rule 16 (instruction -> ID LSQUARE expression RSQUARE ASSIGN expression SEMICOLON .)
+    READ            reduce using rule 16 (instruction -> ID LSQUARE expression RSQUARE ASSIGN expression SEMICOLON .)
+    WRITE           reduce using rule 16 (instruction -> ID LSQUARE expression RSQUARE ASSIGN expression SEMICOLON .)
+    $end            reduce using rule 16 (instruction -> ID LSQUARE expression RSQUARE ASSIGN expression SEMICOLON .)
+    RBRACE          reduce using rule 16 (instruction -> ID LSQUARE expression RSQUARE ASSIGN expression SEMICOLON .)
+
+
+state 103
+
+    (21) block -> LBRACE instructions RBRACE .
+
+    ID              reduce using rule 21 (block -> LBRACE instructions RBRACE .)
+    IF              reduce using rule 21 (block -> LBRACE instructions RBRACE .)
+    FOR             reduce using rule 21 (block -> LBRACE instructions RBRACE .)
+    READ            reduce using rule 21 (block -> LBRACE instructions RBRACE .)
+    WRITE           reduce using rule 21 (block -> LBRACE instructions RBRACE .)
+    $end            reduce using rule 21 (block -> LBRACE instructions RBRACE .)
+    RBRACE          reduce using rule 21 (block -> LBRACE instructions RBRACE .)
+
+
+state 104
+
+    (18) instruction -> FOR LPAREN ID ASSIGN expression SEMICOLON condition . SEMICOLON expression RPAREN block
+
+    SEMICOLON       shift and go to state 105
+
+
+state 105
+
+    (18) instruction -> FOR LPAREN ID ASSIGN expression SEMICOLON condition SEMICOLON . expression RPAREN block
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term MULTIPLY factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . NUMBER
+    (29) factor -> . ID
+    (30) factor -> . ID LSQUARE expression RSQUARE
+
+    NUMBER          shift and go to state 43
+    ID              shift and go to state 39
+
+    expression                     shift and go to state 106
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+
+state 106
+
+    (18) instruction -> FOR LPAREN ID ASSIGN expression SEMICOLON condition SEMICOLON expression . RPAREN block
+    (22) expression -> expression . PLUS term
+    (23) expression -> expression . MINUS term
+
+    RPAREN          shift and go to state 107
+    PLUS            shift and go to state 58
+    MINUS           shift and go to state 59
+
+
+state 107
+
+    (18) instruction -> FOR LPAREN ID ASSIGN expression SEMICOLON condition SEMICOLON expression RPAREN . block
+    (21) block -> . LBRACE instructions RBRACE
+
+    LBRACE          shift and go to state 84
+
+    block                          shift and go to state 108
+
+state 108
+
+    (18) instruction -> FOR LPAREN ID ASSIGN expression SEMICOLON condition SEMICOLON expression RPAREN block .
+
+    ID              reduce using rule 18 (instruction -> FOR LPAREN ID ASSIGN expression SEMICOLON condition SEMICOLON expression RPAREN block .)
+    IF              reduce using rule 18 (instruction -> FOR LPAREN ID ASSIGN expression SEMICOLON condition SEMICOLON expression RPAREN block .)
+    FOR             reduce using rule 18 (instruction -> FOR LPAREN ID ASSIGN expression SEMICOLON condition SEMICOLON expression RPAREN block .)
+    READ            reduce using rule 18 (instruction -> FOR LPAREN ID ASSIGN expression SEMICOLON condition SEMICOLON expression RPAREN block .)
+    WRITE           reduce using rule 18 (instruction -> FOR LPAREN ID ASSIGN expression SEMICOLON condition SEMICOLON expression RPAREN block .)
+    $end            reduce using rule 18 (instruction -> FOR LPAREN ID ASSIGN expression SEMICOLON condition SEMICOLON expression RPAREN block .)
+    RBRACE          reduce using rule 18 (instruction -> FOR LPAREN ID ASSIGN expression SEMICOLON condition SEMICOLON expression RPAREN block .)
 

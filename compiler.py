@@ -211,10 +211,14 @@ def p_array_declaration(t):
     'declaration : type ID LBRACKET NUMBER RBRACKET SEMICOLON'
     var_type, var_name, size = t[1], t[2], t[4]
     if size <= 0:
-        print(f"Erreur : Taille invalide pour le tableau '{var_name}'.")
+        print(f"Error: Invalid size for array '{var_name}'.")
     else:
-        value = [None] * size  # Initialiser avec des valeurs par défaut
-        add_to_symbol_table(var_name, var_type, "global", value, f"Tableau de taille {size}")        
+        if var_type == "char":
+            value = ['\x00'] * size  # Initialize char array as empty string
+        else:
+            value = [None] * size  # Default for other types
+        add_to_symbol_table(var_name, var_type, "global", value, f"Array of size {size}")
+    
 
 def p_array_assignment(t):
     'statement : ID LBRACKET expression RBRACKET EQUALS expression SEMICOLON'
@@ -251,15 +255,25 @@ def p_read_statement(t):
     var_name = t[3]
     for entry in symbol_table:
         if entry[0] == var_name:
-            value = input(f"Enter value for '{var_name}': ")
-            if entry[1] == "int":
-                entry[4] = int(value)
-            elif entry[1] == "float":
-                entry[4] = float(value)
-            elif entry[1] == "char":
-                entry[4] = value[0]
+            if entry[1] == "char" and entry[6]:  # Check if it's a char array
+                value = input(f"Enter string for '{var_name}': ")
+                if len(value) > len(entry[4]):  # Check if the input fits in the array
+                    print(f"Error: Input string exceeds the size of '{var_name}'.")
+                    return
+                entry[4][:len(value)] = list(value)  # Store input as a list of chars
+                print(f"Updated '{var_name}' with value: {entry[4]}")
+            elif entry[1] == "char":  # Single char
+                value = input(f"Enter value for '{var_name}': ")
+                entry[4] = value[0] if value else None
+            else:
+                value = input(f"Enter value for '{var_name}': ")
+                if entry[1] == "int":
+                    entry[4] = int(value)
+                elif entry[1] == "float":
+                    entry[4] = float(value)
             return
     print(f"Error: Variable '{var_name}' not declared.")
+
 
 # WRITE statement
 def p_write_statement(t):
@@ -283,19 +297,23 @@ def p_write_item(t):
     if len(t) == 2:
         for entry in symbol_table:
             if entry[0] == var_name:
-                t[0] = entry[4]
+                if entry[6]:  # Check if it's an array
+                    t[0] = ''.join(entry[4]).strip('\x00')  # Convert char array to string
+                else:
+                    t[0] = entry[4]
                 return
         print(f"Error: Variable '{var_name}' not declared.")
     else:
         index = t[3]
         for entry in symbol_table:
-            if entry[0] == var_name and entry[6]:
+            if entry[0] == var_name and entry[6]:  # Check if it's an array
                 if 0 <= index < len(entry[4]):
                     t[0] = entry[4][index]
                 else:
                     print(f"Error: Index {index} out of bounds for '{var_name}'.")
                 return
         print(f"Error: Array '{var_name}' not declared.")
+
 
 # Error handling
 def p_error(t):
@@ -313,11 +331,13 @@ def display_symbol_table():
 if __name__ == '__main__':
     expressions = [
         "int a;",
-        "char b[5];",
+        "char tab[]=['a', 'b', 'c', 'd', 'e'];",
         "float c = 3.14;",
         "READ(c);",
         "WRITE(c);",
-        "WRITE(b[2]);",
+        "WRITE(tab[2]);",
+        "READ(tab);",
+        "WRITE(tab);",
     ]
     for stmt in expressions:
         print(f"Parsing statement: {stmt}")
