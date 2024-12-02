@@ -343,8 +343,8 @@ def display_symbol_table():
 expressions = [
     "INTEGER Matrix[3];",      # Déclaration de tableau
     "Matrix[2] = 3.14;",       # Affectation de FLOAT
-    "FLOAT Arr[5];",         # Déclaration valide
-    "Arr[0] = 42.3;",            # Affectation d'entier
+    "CHAR Arr[5];",         # Déclaration valide
+    "Arr[0] =  B;",            # Affectation d'entier
     "X = Arr[0];",             # Accès à un tableau
     "FLOAT Invalid[-1];",      # Taille négative (Erreur attendue)
 ]
