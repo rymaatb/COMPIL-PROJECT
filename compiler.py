@@ -120,11 +120,11 @@ def add_to_symbol_table(name, var_type, scope, value=None, additional_info=None)
 def update_symbol_table(name, value):
     for entry in symbol_table:
         if entry[0] == name:  # entry[0] is the 'Name' field
-            entry[4] = value  # entry[4] is the 'Value' field
+            entry[4] = value  # entry[4] is the 'Value' field   
             break
 
 
-
+quadruplets = []
 def p_statements(t):
     '''statements : statement
                   | statement statements '''
@@ -135,7 +135,7 @@ def p_statements(t):
 def p_statement(t):
     '''statement : simple_assignment
                  | array_declaration
-                 | array_assignment
+                 | array_assignment 
                  | type declaration_list SEMICOLON
                  | const_declaration'''
     
@@ -356,19 +356,25 @@ def p_read_statement(t):
                     else:
                         entry[4][i] = None  # Clear remaining slots
 
+                # Add quadruplets for each character read
+                for i, char in enumerate(entry[4]):
+                    if char is not None:
+                        quadruplets.append(('READ', None, None, f"{var_name}[{i}]"))
+
             # Handle scalar CHAR
             elif var_type == 'CHAR':
                 value = input(f"Enter a single char value for '{var_name}': ")
                 entry[4] = value[0] if value else None
+                quadruplets.append(('READ', None, None, var_name))  # Add quadruplet
 
             # Handle other types like INTEGER or FLOAT
             elif var_type in ('INTEGER', 'FLOAT'):
                 value = input(f"Enter {var_type.lower()} value for '{var_name}': ")
                 try:
                     entry[4] = int(value) if var_type == 'INTEGER' else float(value)
+                    quadruplets.append(('READ', None, None, var_name))  # Add quadruplet
                 except ValueError:
                     print(f"Error: Invalid {var_type.lower()} input.")
-
             else:
                 print(f"Unsupported type '{var_type}' for READ.")
             break
@@ -377,12 +383,17 @@ def p_read_statement(t):
         print(f"Error: Variable '{var_name}' not declared.")
 
 
+
 # WRITE statement
 def p_write_statement(t):
     'statement : WRITE LPAREN write_content RPAREN SEMICOLON'
     for content in t[3]:
+        # Print the value
         print(content, end=' ')
-    print()
+        # Add a quadruplet for each write operation
+        quadruplets.append(('WRITE', None, None, content))
+    print()  # For a newline after writing
+
 
 def p_write_content_single(t):
     'write_content : write_item'
@@ -450,7 +461,7 @@ def display_symbol_table():
 
 
 expressions = [
-        "FLOAT Scores[2];",           # Declare FLOAT array
+    "FLOAT Scores[2];",           # Declare FLOAT array
     "Scores[0] = 98.5;",          # Write FLOAT value to index 0
     "Scores[1] = 87.6;",          # Write FLOAT value to index 1
 
@@ -467,7 +478,9 @@ expressions = [
     "WRITE(A);",
     "WRITE(Characters[2]);",
     "CHAR Name[10];",
-    "READ(Name);"
+    "READ(Name);",
+    "WRITE(B);",
+
 ]
 for stmt in expressions:
     print(f"Parsing statement: {stmt}")
