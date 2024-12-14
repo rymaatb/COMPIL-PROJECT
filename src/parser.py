@@ -377,11 +377,8 @@ def display_symbol_table():
 
 
 expressions = [
-    "INTEGER X;",
-    "X = 42;",
-    "FLOAT Y;",
-    "Y = 3.14;"
-]
+ "INTEGER Matrix[3];"
+ ]
 for stmt in expressions:
     print(f"Parsing statement: {stmt}")
     parse_statement(stmt)
