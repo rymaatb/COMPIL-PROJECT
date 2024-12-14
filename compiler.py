@@ -334,45 +334,42 @@ def p_array_assignment(t):
     print(f"Erreur : Tableau '{var_name}' non déclaré.")
 
 
-# READ statement
+# READ 
 def p_read_statement(t):
-    'statement : READ LPAREN ID RPAREN SEMICOLON'
+    '''statement : READ LPAREN ID RPAREN SEMICOLON
+                 | READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON'''
     var_name = t[3]
-    found = False
 
+    if len(t) == 6:  # Case: READ(ID)
+        # Normal ID (simple variable read)
+        process_read_var(var_name, None)
+    elif len(t) == 9:  # Case: READ(ID[INTEGER])
+        index = int(t[5])  # Extract the index from t[6]
+        process_read_array(var_name, index)
+    else:
+        print("Unexpected read format.")
+        
+def process_read_var(var_name, index=None):
+    found = False
     for entry in symbol_table:
         if entry[0] == var_name:  # Check if variable exists
             found = True
             var_type = entry[1]  # Get type from symbol table
-
-            # Check if it's an array of CHAR
-            if isinstance(entry[4], list) and var_type == 'CHAR':
-                input_string = input(f"Enter a string for '{var_name}' (max {len(entry[4])} chars): ").strip()
-
-                # Update array values
-                for i in range(len(entry[4])):
-                    if i < len(input_string):
-                        entry[4][i] = input_string[i]
-                    else:
-                        entry[4][i] = None  # Clear remaining slots
-
-                # Add quadruplets for each character read
-                for i, char in enumerate(entry[4]):
-                    if char is not None:
-                        quadruplets.append(('READ', None, None, f"{var_name}[{i}]"))
-
-            # Handle scalar CHAR
-            elif var_type == 'CHAR':
-                value = input(f"Enter a single char value for '{var_name}': ")
+            
+            if var_type == 'CHAR':
+                if index is not None:
+                    print(f"Enter a string for '{var_name}[{index}]' (max {len(entry[4])} chars): ")
+                else:
+                    print(f"Enter a single char value for '{var_name}': ")
+                value = input().strip()
                 entry[4] = value[0] if value else None
-                quadruplets.append(('READ', None, None, var_name))  # Add quadruplet
-
-            # Handle other types like INTEGER or FLOAT
+                quadruplets.append(('READ', None, None, var_name if index is None else f"{var_name}[{index}]"))
+            
             elif var_type in ('INTEGER', 'FLOAT'):
                 value = input(f"Enter {var_type.lower()} value for '{var_name}': ")
                 try:
                     entry[4] = int(value) if var_type == 'INTEGER' else float(value)
-                    quadruplets.append(('READ', None, None, var_name))  # Add quadruplet
+                    quadruplets.append(('READ', None, None, var_name if index is None else f"{var_name}[{index}]"))
                 except ValueError:
                     print(f"Error: Invalid {var_type.lower()} input.")
             else:
@@ -381,6 +378,36 @@ def p_read_statement(t):
 
     if not found:
         print(f"Error: Variable '{var_name}' not declared.")
+
+def process_read_array(var_name, index):
+    found = False
+    for entry in symbol_table:
+        if entry[0] == var_name and isinstance(entry[4], list):  # Ensure it's an array
+            found = True
+            if 0 <= index < len(entry[4]):
+                var_type = entry[1]
+                if var_type == 'CHAR':
+                    print(f"Enter a string for '{var_name}[{index}]' (max {len(entry[4])} chars): ")
+                    input_string = input().strip()
+                    entry[4][index] = input_string[:1] if input_string else None
+                    quadruplets.append(('READ', None, None, f"{var_name}[{index}]"))
+                elif var_type in ('INTEGER', 'FLOAT'):
+                    value = input(f"Enter {var_type.lower()} value for '{var_name}[{index}]': ")
+                    try:
+                        entry[4][index] = int(value) if var_type == 'INTEGER' else float(value)
+                        quadruplets.append(('READ', None, None, f"{var_name}[{index}]"))
+                    except ValueError:
+                        print(f"Error: Invalid {var_type.lower()} input.")
+                else:
+                    print(f"Unsupported type '{var_type}' for READ.")
+            else:
+                print(f"Error: Index {index} out of bounds for array '{var_name}'.")
+            break
+    if not found:
+        print(f"Error: Variable '{var_name}' not declared as an array.")
+
+
+
 
 
 
@@ -424,24 +451,20 @@ def get_variable_value(var_name):
     for entry in symbol_table:
         if entry[0] == var_name:
             # Check if it's an array
-            if "Tableau de taille" in entry[5]:
-                print(f"Error: '{var_name}' is an array, not a scalar variable.")
-                return None
+            if isinstance(entry[4], list):
+                return None  # Indicates an error
             return entry[4]  # Return the scalar value
-    print(f"Error: Variable '{var_name}' not declared.")
-    return None
+    return None  # Indicates variable not found
 
 def get_array_value(var_name, index):
     for entry in symbol_table:
-        if entry[0] == var_name and "Tableau de taille" in entry[5]:
-            if isinstance(entry[4], list):  # Ensure entry[4] is a list
-                if 0 <= index < len(entry[4]):
-                    return entry[4][index]
-                else:
-                    print(f"Error: Index {index} out of bounds for '{var_name}'.")
-                    return None
-    print(f"Error: Array '{var_name}' not declared.")
-    return None
+        if entry[0] == var_name and isinstance(entry[4], list):
+            if 0 <= index < len(entry[4]):
+                return entry[4][index]
+            else:
+                return None  # Indicates index out of bounds
+    return None  # Indicates array not found
+
 
 
 
@@ -454,6 +477,14 @@ parser = yacc.yacc()
 def parse_statement(statement):
     parser.parse(statement)
 
+    # Function to display quadruplets
+def display_quadruplets():
+    print("Generated Quadruplets:")
+    for quad in quadruplets:
+        print(quad)
+    print()  # For separation between outputs
+
+
 # display symbol table as matrix
 def display_symbol_table():
     headers = ["Name", "Type", "Scope", "Memory Address", "Value", "Additional Info"]
@@ -464,26 +495,23 @@ expressions = [
     "FLOAT Scores[2];",           # Declare FLOAT array
     "Scores[0] = 98.5;",          # Write FLOAT value to index 0
     "Scores[1] = 87.6;",          # Write FLOAT value to index 1
-
-    "CHAR Characters[4];",        # Declare CHAR array
-    "Characters[0] = 'A';",       # Write CHAR value to index 0
-    "Characters[1] = 'B';",       # Write CHAR value to index 1
-    "Characters[2] = 'C';",       # Write CHAR value to index 2
-    "Characters[3] = 'D';",       # Write CHAR value to index 3
+    
 
     # --- Read Operations (Valid) ---
+    "Char Letter='A';",
+    "READ(Word);",                 # Read CHAR value
+    "READ(Scores[0]);",           # Read FLOAT value from index 0
+    "WRITE(Scores[1]);",          # Write FLOAT value to index 1
     "FLOAT A;",
-    "A = Scores[0];",            # Read FLOAT value from index 0
-    "READ(A);",
-    "WRITE(A);",
-    "WRITE(Characters[2]);",
-    "CHAR Name[10];",
-    "READ(Name);",
-    "WRITE(B);",
+    "A = Scores[0];", 
+     "READ(Maroua);"   , 
+     "WRITE(Undefined);",
+   
 
 ]
 for stmt in expressions:
     print(f"Parsing statement: {stmt}")
     parse_statement(stmt)
     display_symbol_table()
+    display_quadruplets()
     print("-" * 40)
