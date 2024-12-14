@@ -22,19 +22,19 @@ Rule 3     declaration_list -> declaration
 Rule 4     declaration_list -> declaration COMMA declaration_list
 Rule 5     declaration -> ID
 Rule 6     declaration -> ID EQUALS expression
-Rule 7     statement -> ID EQUALS expression SEMICOLON
-Rule 8     type -> INT_TYPE
-Rule 9     type -> FLOAT_TYPE
-Rule 10    type -> BOOL_TYPE
-Rule 11    type -> CHAR_TYPE
-Rule 12    factor -> INT
-Rule 13    factor -> FLOAT
-Rule 14    factor -> CHAR
-Rule 15    factor -> BOOL
-Rule 16    expression -> expression PLUS term
-Rule 17    expression -> expression MINUS term
-Rule 18    term -> term MULTIPLY factor
-Rule 19    term -> term DIVIDE factor
+Rule 7     type -> INT_TYPE
+Rule 8     type -> FLOAT_TYPE
+Rule 9     type -> BOOL_TYPE
+Rule 10    type -> CHAR_TYPE
+Rule 11    factor -> INT
+Rule 12    factor -> FLOAT
+Rule 13    factor -> CHAR
+Rule 14    factor -> BOOL
+Rule 15    expression -> expression PLUS term
+Rule 16    expression -> expression MINUS term
+Rule 17    term -> term MULTIPLY factor
+Rule 18    term -> term DIVIDE factor
+Rule 19    statement -> ID EQUALS expression SEMICOLON
 Rule 20    expression -> term
 Rule 21    term -> factor
 Rule 22    factor -> NUMBER
@@ -55,43 +55,43 @@ Rule 35    factor -> ID
 Terminals, with rules where they appear
 
 AND                  : 24
-BOOL                 : 15
-BOOL_TYPE            : 10
-CHAR                 : 14
-CHAR_TYPE            : 11
+BOOL                 : 14
+BOOL_TYPE            : 9
+CHAR                 : 13
+CHAR_TYPE            : 10
 COLON                : 
 COMMA                : 4
 COMMENT              : 
 CONST                : 2
 DECLARATION          : 
-DIVIDE               : 19
+DIVIDE               : 18
 ELSE                 : 
 EQ                   : 25
-EQUALS               : 2 6 7
-FLOAT                : 13
-FLOAT_TYPE           : 9
+EQUALS               : 2 6 19
+FLOAT                : 12
+FLOAT_TYPE           : 8
 FOR                  : 
 GT                   : 28
 GTE                  : 30
-ID                   : 2 5 6 7 35
+ID                   : 2 5 6 19 35
 IF                   : 
 INSTRUCTION          : 
-INT                  : 12
-INT_TYPE             : 8
+INT                  : 11
+INT_TYPE             : 7
 LBRACE               : 
 LPAREN               : 32
 LT                   : 27
 LTE                  : 29
-MINUS                : 17
-MULTIPLY             : 18
+MINUS                : 16
+MULTIPLY             : 17
 NEQ                  : 26
 NOT                  : 31
 NUMBER               : 22 33
 OR                   : 23
-PLUS                 : 16
+PLUS                 : 15
 RBRACE               : 
 RPAREN               : 32
-SEMICOLON            : 1 2 7
+SEMICOLON            : 1 2 19
 VAR_GLOBAL           : 
 error                : 
 
@@ -100,10 +100,10 @@ Nonterminals, with rules where they appear
 comparison           : 34
 declaration          : 3 4
 declaration_list     : 1 4
-expression           : 2 6 7 16 17 23 23 24 24 25 25 26 26 27 27 28 28 29 29 30 30 31 32
-factor               : 18 19 21
+expression           : 2 6 15 16 19 23 23 24 24 25 25 26 26 27 27 28 28 29 29 30 30 31 32
+factor               : 17 18 21
 statement            : 0
-term                 : 16 17 18 19 20
+term                 : 15 16 17 18 20
 type                 : 1 2
 
 Parsing method: LALR
@@ -113,11 +113,11 @@ state 0
     (0) S' -> . statement
     (1) statement -> . type declaration_list SEMICOLON
     (2) statement -> . CONST type ID EQUALS expression SEMICOLON
-    (7) statement -> . ID EQUALS expression SEMICOLON
-    (8) type -> . INT_TYPE
-    (9) type -> . FLOAT_TYPE
-    (10) type -> . BOOL_TYPE
-    (11) type -> . CHAR_TYPE
+    (19) statement -> . ID EQUALS expression SEMICOLON
+    (7) type -> . INT_TYPE
+    (8) type -> . FLOAT_TYPE
+    (9) type -> . BOOL_TYPE
+    (10) type -> . CHAR_TYPE
 
     CONST           shift and go to state 3
     ID              shift and go to state 4
@@ -151,10 +151,10 @@ state 2
 state 3
 
     (2) statement -> CONST . type ID EQUALS expression SEMICOLON
-    (8) type -> . INT_TYPE
-    (9) type -> . FLOAT_TYPE
-    (10) type -> . BOOL_TYPE
-    (11) type -> . CHAR_TYPE
+    (7) type -> . INT_TYPE
+    (8) type -> . FLOAT_TYPE
+    (9) type -> . BOOL_TYPE
+    (10) type -> . CHAR_TYPE
 
     INT_TYPE        shift and go to state 5
     FLOAT_TYPE      shift and go to state 6
@@ -165,37 +165,37 @@ state 3
 
 state 4
 
-    (7) statement -> ID . EQUALS expression SEMICOLON
+    (19) statement -> ID . EQUALS expression SEMICOLON
 
     EQUALS          shift and go to state 13
 
 
 state 5
 
-    (8) type -> INT_TYPE .
+    (7) type -> INT_TYPE .
 
-    ID              reduce using rule 8 (type -> INT_TYPE .)
+    ID              reduce using rule 7 (type -> INT_TYPE .)
 
 
 state 6
 
-    (9) type -> FLOAT_TYPE .
+    (8) type -> FLOAT_TYPE .
 
-    ID              reduce using rule 9 (type -> FLOAT_TYPE .)
+    ID              reduce using rule 8 (type -> FLOAT_TYPE .)
 
 
 state 7
 
-    (10) type -> BOOL_TYPE .
+    (9) type -> BOOL_TYPE .
 
-    ID              reduce using rule 10 (type -> BOOL_TYPE .)
+    ID              reduce using rule 9 (type -> BOOL_TYPE .)
 
 
 state 8
 
-    (11) type -> CHAR_TYPE .
+    (10) type -> CHAR_TYPE .
 
-    ID              reduce using rule 11 (type -> CHAR_TYPE .)
+    ID              reduce using rule 10 (type -> CHAR_TYPE .)
 
 
 state 9
@@ -233,9 +233,9 @@ state 12
 
 state 13
 
-    (7) statement -> ID EQUALS . expression SEMICOLON
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
+    (19) statement -> ID EQUALS . expression SEMICOLON
+    (15) expression -> . expression PLUS term
+    (16) expression -> . expression MINUS term
     (20) expression -> . term
     (23) expression -> . expression OR expression
     (24) expression -> . expression AND expression
@@ -246,13 +246,13 @@ state 13
     (29) expression -> . expression LTE expression
     (30) expression -> . expression GTE expression
     (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
+    (17) term -> . term MULTIPLY factor
+    (18) term -> . term DIVIDE factor
     (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
+    (11) factor -> . INT
+    (12) factor -> . FLOAT
+    (13) factor -> . CHAR
+    (14) factor -> . BOOL
     (22) factor -> . NUMBER
     (34) factor -> . comparison
     (35) factor -> . ID
@@ -296,8 +296,8 @@ state 15
 state 16
 
     (6) declaration -> ID EQUALS . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
+    (15) expression -> . expression PLUS term
+    (16) expression -> . expression MINUS term
     (20) expression -> . term
     (23) expression -> . expression OR expression
     (24) expression -> . expression AND expression
@@ -308,13 +308,13 @@ state 16
     (29) expression -> . expression LTE expression
     (30) expression -> . expression GTE expression
     (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
+    (17) term -> . term MULTIPLY factor
+    (18) term -> . term DIVIDE factor
     (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
+    (11) factor -> . INT
+    (12) factor -> . FLOAT
+    (13) factor -> . CHAR
+    (14) factor -> . BOOL
     (22) factor -> . NUMBER
     (34) factor -> . comparison
     (35) factor -> . ID
@@ -365,9 +365,9 @@ state 18
 
 state 19
 
-    (7) statement -> ID EQUALS expression . SEMICOLON
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
+    (19) statement -> ID EQUALS expression . SEMICOLON
+    (15) expression -> expression . PLUS term
+    (16) expression -> expression . MINUS term
     (23) expression -> expression . OR expression
     (24) expression -> expression . AND expression
     (25) expression -> expression . EQ expression
@@ -393,8 +393,8 @@ state 19
 state 20
 
     (20) expression -> term .
-    (18) term -> term . MULTIPLY factor
-    (19) term -> term . DIVIDE factor
+    (17) term -> term . MULTIPLY factor
+    (18) term -> term . DIVIDE factor
 
     SEMICOLON       reduce using rule 20 (expression -> term .)
     PLUS            reduce using rule 20 (expression -> term .)
@@ -416,8 +416,8 @@ state 20
 state 21
 
     (31) expression -> NOT . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
+    (15) expression -> . expression PLUS term
+    (16) expression -> . expression MINUS term
     (20) expression -> . term
     (23) expression -> . expression OR expression
     (24) expression -> . expression AND expression
@@ -428,13 +428,13 @@ state 21
     (29) expression -> . expression LTE expression
     (30) expression -> . expression GTE expression
     (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
+    (17) term -> . term MULTIPLY factor
+    (18) term -> . term DIVIDE factor
     (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
+    (11) factor -> . INT
+    (12) factor -> . FLOAT
+    (13) factor -> . CHAR
+    (14) factor -> . BOOL
     (22) factor -> . NUMBER
     (34) factor -> . comparison
     (35) factor -> . ID
@@ -478,86 +478,86 @@ state 22
 
 state 23
 
-    (12) factor -> INT .
+    (11) factor -> INT .
 
-    MULTIPLY        reduce using rule 12 (factor -> INT .)
-    DIVIDE          reduce using rule 12 (factor -> INT .)
-    SEMICOLON       reduce using rule 12 (factor -> INT .)
-    PLUS            reduce using rule 12 (factor -> INT .)
-    MINUS           reduce using rule 12 (factor -> INT .)
-    OR              reduce using rule 12 (factor -> INT .)
-    AND             reduce using rule 12 (factor -> INT .)
-    EQ              reduce using rule 12 (factor -> INT .)
-    NEQ             reduce using rule 12 (factor -> INT .)
-    LT              reduce using rule 12 (factor -> INT .)
-    GT              reduce using rule 12 (factor -> INT .)
-    LTE             reduce using rule 12 (factor -> INT .)
-    GTE             reduce using rule 12 (factor -> INT .)
-    COMMA           reduce using rule 12 (factor -> INT .)
-    RPAREN          reduce using rule 12 (factor -> INT .)
+    MULTIPLY        reduce using rule 11 (factor -> INT .)
+    DIVIDE          reduce using rule 11 (factor -> INT .)
+    SEMICOLON       reduce using rule 11 (factor -> INT .)
+    PLUS            reduce using rule 11 (factor -> INT .)
+    MINUS           reduce using rule 11 (factor -> INT .)
+    OR              reduce using rule 11 (factor -> INT .)
+    AND             reduce using rule 11 (factor -> INT .)
+    EQ              reduce using rule 11 (factor -> INT .)
+    NEQ             reduce using rule 11 (factor -> INT .)
+    LT              reduce using rule 11 (factor -> INT .)
+    GT              reduce using rule 11 (factor -> INT .)
+    LTE             reduce using rule 11 (factor -> INT .)
+    GTE             reduce using rule 11 (factor -> INT .)
+    COMMA           reduce using rule 11 (factor -> INT .)
+    RPAREN          reduce using rule 11 (factor -> INT .)
 
 
 state 24
 
-    (13) factor -> FLOAT .
+    (12) factor -> FLOAT .
 
-    MULTIPLY        reduce using rule 13 (factor -> FLOAT .)
-    DIVIDE          reduce using rule 13 (factor -> FLOAT .)
-    SEMICOLON       reduce using rule 13 (factor -> FLOAT .)
-    PLUS            reduce using rule 13 (factor -> FLOAT .)
-    MINUS           reduce using rule 13 (factor -> FLOAT .)
-    OR              reduce using rule 13 (factor -> FLOAT .)
-    AND             reduce using rule 13 (factor -> FLOAT .)
-    EQ              reduce using rule 13 (factor -> FLOAT .)
-    NEQ             reduce using rule 13 (factor -> FLOAT .)
-    LT              reduce using rule 13 (factor -> FLOAT .)
-    GT              reduce using rule 13 (factor -> FLOAT .)
-    LTE             reduce using rule 13 (factor -> FLOAT .)
-    GTE             reduce using rule 13 (factor -> FLOAT .)
-    COMMA           reduce using rule 13 (factor -> FLOAT .)
-    RPAREN          reduce using rule 13 (factor -> FLOAT .)
+    MULTIPLY        reduce using rule 12 (factor -> FLOAT .)
+    DIVIDE          reduce using rule 12 (factor -> FLOAT .)
+    SEMICOLON       reduce using rule 12 (factor -> FLOAT .)
+    PLUS            reduce using rule 12 (factor -> FLOAT .)
+    MINUS           reduce using rule 12 (factor -> FLOAT .)
+    OR              reduce using rule 12 (factor -> FLOAT .)
+    AND             reduce using rule 12 (factor -> FLOAT .)
+    EQ              reduce using rule 12 (factor -> FLOAT .)
+    NEQ             reduce using rule 12 (factor -> FLOAT .)
+    LT              reduce using rule 12 (factor -> FLOAT .)
+    GT              reduce using rule 12 (factor -> FLOAT .)
+    LTE             reduce using rule 12 (factor -> FLOAT .)
+    GTE             reduce using rule 12 (factor -> FLOAT .)
+    COMMA           reduce using rule 12 (factor -> FLOAT .)
+    RPAREN          reduce using rule 12 (factor -> FLOAT .)
 
 
 state 25
 
-    (14) factor -> CHAR .
+    (13) factor -> CHAR .
 
-    MULTIPLY        reduce using rule 14 (factor -> CHAR .)
-    DIVIDE          reduce using rule 14 (factor -> CHAR .)
-    SEMICOLON       reduce using rule 14 (factor -> CHAR .)
-    PLUS            reduce using rule 14 (factor -> CHAR .)
-    MINUS           reduce using rule 14 (factor -> CHAR .)
-    OR              reduce using rule 14 (factor -> CHAR .)
-    AND             reduce using rule 14 (factor -> CHAR .)
-    EQ              reduce using rule 14 (factor -> CHAR .)
-    NEQ             reduce using rule 14 (factor -> CHAR .)
-    LT              reduce using rule 14 (factor -> CHAR .)
-    GT              reduce using rule 14 (factor -> CHAR .)
-    LTE             reduce using rule 14 (factor -> CHAR .)
-    GTE             reduce using rule 14 (factor -> CHAR .)
-    COMMA           reduce using rule 14 (factor -> CHAR .)
-    RPAREN          reduce using rule 14 (factor -> CHAR .)
+    MULTIPLY        reduce using rule 13 (factor -> CHAR .)
+    DIVIDE          reduce using rule 13 (factor -> CHAR .)
+    SEMICOLON       reduce using rule 13 (factor -> CHAR .)
+    PLUS            reduce using rule 13 (factor -> CHAR .)
+    MINUS           reduce using rule 13 (factor -> CHAR .)
+    OR              reduce using rule 13 (factor -> CHAR .)
+    AND             reduce using rule 13 (factor -> CHAR .)
+    EQ              reduce using rule 13 (factor -> CHAR .)
+    NEQ             reduce using rule 13 (factor -> CHAR .)
+    LT              reduce using rule 13 (factor -> CHAR .)
+    GT              reduce using rule 13 (factor -> CHAR .)
+    LTE             reduce using rule 13 (factor -> CHAR .)
+    GTE             reduce using rule 13 (factor -> CHAR .)
+    COMMA           reduce using rule 13 (factor -> CHAR .)
+    RPAREN          reduce using rule 13 (factor -> CHAR .)
 
 
 state 26
 
-    (15) factor -> BOOL .
+    (14) factor -> BOOL .
 
-    MULTIPLY        reduce using rule 15 (factor -> BOOL .)
-    DIVIDE          reduce using rule 15 (factor -> BOOL .)
-    SEMICOLON       reduce using rule 15 (factor -> BOOL .)
-    PLUS            reduce using rule 15 (factor -> BOOL .)
-    MINUS           reduce using rule 15 (factor -> BOOL .)
-    OR              reduce using rule 15 (factor -> BOOL .)
-    AND             reduce using rule 15 (factor -> BOOL .)
-    EQ              reduce using rule 15 (factor -> BOOL .)
-    NEQ             reduce using rule 15 (factor -> BOOL .)
-    LT              reduce using rule 15 (factor -> BOOL .)
-    GT              reduce using rule 15 (factor -> BOOL .)
-    LTE             reduce using rule 15 (factor -> BOOL .)
-    GTE             reduce using rule 15 (factor -> BOOL .)
-    COMMA           reduce using rule 15 (factor -> BOOL .)
-    RPAREN          reduce using rule 15 (factor -> BOOL .)
+    MULTIPLY        reduce using rule 14 (factor -> BOOL .)
+    DIVIDE          reduce using rule 14 (factor -> BOOL .)
+    SEMICOLON       reduce using rule 14 (factor -> BOOL .)
+    PLUS            reduce using rule 14 (factor -> BOOL .)
+    MINUS           reduce using rule 14 (factor -> BOOL .)
+    OR              reduce using rule 14 (factor -> BOOL .)
+    AND             reduce using rule 14 (factor -> BOOL .)
+    EQ              reduce using rule 14 (factor -> BOOL .)
+    NEQ             reduce using rule 14 (factor -> BOOL .)
+    LT              reduce using rule 14 (factor -> BOOL .)
+    GT              reduce using rule 14 (factor -> BOOL .)
+    LTE             reduce using rule 14 (factor -> BOOL .)
+    GTE             reduce using rule 14 (factor -> BOOL .)
+    COMMA           reduce using rule 14 (factor -> BOOL .)
+    RPAREN          reduce using rule 14 (factor -> BOOL .)
 
 
 state 27
@@ -637,8 +637,8 @@ state 28
 state 29
 
     (32) comparison -> LPAREN . expression RPAREN
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
+    (15) expression -> . expression PLUS term
+    (16) expression -> . expression MINUS term
     (20) expression -> . term
     (23) expression -> . expression OR expression
     (24) expression -> . expression AND expression
@@ -649,13 +649,13 @@ state 29
     (29) expression -> . expression LTE expression
     (30) expression -> . expression GTE expression
     (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
+    (17) term -> . term MULTIPLY factor
+    (18) term -> . term DIVIDE factor
     (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
+    (11) factor -> . INT
+    (12) factor -> . FLOAT
+    (13) factor -> . CHAR
+    (14) factor -> . BOOL
     (22) factor -> . NUMBER
     (34) factor -> . comparison
     (35) factor -> . ID
@@ -686,8 +686,8 @@ state 30
 state 31
 
     (6) declaration -> ID EQUALS expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
+    (15) expression -> expression . PLUS term
+    (16) expression -> expression . MINUS term
     (23) expression -> expression . OR expression
     (24) expression -> expression . AND expression
     (25) expression -> expression . EQ expression
@@ -714,8 +714,8 @@ state 31
 state 32
 
     (2) statement -> CONST type ID EQUALS . expression SEMICOLON
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
+    (15) expression -> . expression PLUS term
+    (16) expression -> . expression MINUS term
     (20) expression -> . term
     (23) expression -> . expression OR expression
     (24) expression -> . expression AND expression
@@ -726,13 +726,13 @@ state 32
     (29) expression -> . expression LTE expression
     (30) expression -> . expression GTE expression
     (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
+    (17) term -> . term MULTIPLY factor
+    (18) term -> . term DIVIDE factor
     (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
+    (11) factor -> . INT
+    (12) factor -> . FLOAT
+    (13) factor -> . CHAR
+    (14) factor -> . BOOL
     (22) factor -> . NUMBER
     (34) factor -> . comparison
     (35) factor -> . ID
@@ -755,21 +755,21 @@ state 32
 
 state 33
 
-    (7) statement -> ID EQUALS expression SEMICOLON .
+    (19) statement -> ID EQUALS expression SEMICOLON .
 
-    $end            reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+    $end            reduce using rule 19 (statement -> ID EQUALS expression SEMICOLON .)
 
 
 state 34
 
-    (16) expression -> expression PLUS . term
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
+    (15) expression -> expression PLUS . term
+    (17) term -> . term MULTIPLY factor
+    (18) term -> . term DIVIDE factor
     (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
+    (11) factor -> . INT
+    (12) factor -> . FLOAT
+    (13) factor -> . CHAR
+    (14) factor -> . BOOL
     (22) factor -> . NUMBER
     (34) factor -> . comparison
     (35) factor -> . ID
@@ -790,14 +790,14 @@ state 34
 
 state 35
 
-    (17) expression -> expression MINUS . term
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
+    (16) expression -> expression MINUS . term
+    (17) term -> . term MULTIPLY factor
+    (18) term -> . term DIVIDE factor
     (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
+    (11) factor -> . INT
+    (12) factor -> . FLOAT
+    (13) factor -> . CHAR
+    (14) factor -> . BOOL
     (22) factor -> . NUMBER
     (34) factor -> . comparison
     (35) factor -> . ID
@@ -819,8 +819,8 @@ state 35
 state 36
 
     (23) expression -> expression OR . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
+    (15) expression -> . expression PLUS term
+    (16) expression -> . expression MINUS term
     (20) expression -> . term
     (23) expression -> . expression OR expression
     (24) expression -> . expression AND expression
@@ -831,13 +831,13 @@ state 36
     (29) expression -> . expression LTE expression
     (30) expression -> . expression GTE expression
     (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
+    (17) term -> . term MULTIPLY factor
+    (18) term -> . term DIVIDE factor
     (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
+    (11) factor -> . INT
+    (12) factor -> . FLOAT
+    (13) factor -> . CHAR
+    (14) factor -> . BOOL
     (22) factor -> . NUMBER
     (34) factor -> . comparison
     (35) factor -> . ID
@@ -861,8 +861,8 @@ state 36
 state 37
 
     (24) expression -> expression AND . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
+    (15) expression -> . expression PLUS term
+    (16) expression -> . expression MINUS term
     (20) expression -> . term
     (23) expression -> . expression OR expression
     (24) expression -> . expression AND expression
@@ -873,13 +873,13 @@ state 37
     (29) expression -> . expression LTE expression
     (30) expression -> . expression GTE expression
     (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
+    (17) term -> . term MULTIPLY factor
+    (18) term -> . term DIVIDE factor
     (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
+    (11) factor -> . INT
+    (12) factor -> . FLOAT
+    (13) factor -> . CHAR
+    (14) factor -> . BOOL
     (22) factor -> . NUMBER
     (34) factor -> . comparison
     (35) factor -> . ID
@@ -903,8 +903,8 @@ state 37
 state 38
 
     (25) expression -> expression EQ . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
+    (15) expression -> . expression PLUS term
+    (16) expression -> . expression MINUS term
     (20) expression -> . term
     (23) expression -> . expression OR expression
     (24) expression -> . expression AND expression
@@ -915,13 +915,13 @@ state 38
     (29) expression -> . expression LTE expression
     (30) expression -> . expression GTE expression
     (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
+    (17) term -> . term MULTIPLY factor
+    (18) term -> . term DIVIDE factor
     (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
+    (11) factor -> . INT
+    (12) factor -> . FLOAT
+    (13) factor -> . CHAR
+    (14) factor -> . BOOL
     (22) factor -> . NUMBER
     (34) factor -> . comparison
     (35) factor -> . ID
@@ -945,8 +945,8 @@ state 38
 state 39
 
     (26) expression -> expression NEQ . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
+    (15) expression -> . expression PLUS term
+    (16) expression -> . expression MINUS term
     (20) expression -> . term
     (23) expression -> . expression OR expression
     (24) expression -> . expression AND expression
@@ -957,13 +957,13 @@ state 39
     (29) expression -> . expression LTE expression
     (30) expression -> . expression GTE expression
     (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
+    (17) term -> . term MULTIPLY factor
+    (18) term -> . term DIVIDE factor
     (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
+    (11) factor -> . INT
+    (12) factor -> . FLOAT
+    (13) factor -> . CHAR
+    (14) factor -> . BOOL
     (22) factor -> . NUMBER
     (34) factor -> . comparison
     (35) factor -> . ID
@@ -987,8 +987,8 @@ state 39
 state 40
 
     (27) expression -> expression LT . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
+    (15) expression -> . expression PLUS term
+    (16) expression -> . expression MINUS term
     (20) expression -> . term
     (23) expression -> . expression OR expression
     (24) expression -> . expression AND expression
@@ -999,13 +999,13 @@ state 40
     (29) expression -> . expression LTE expression
     (30) expression -> . expression GTE expression
     (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
+    (17) term -> . term MULTIPLY factor
+    (18) term -> . term DIVIDE factor
     (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
+    (11) factor -> . INT
+    (12) factor -> . FLOAT
+    (13) factor -> . CHAR
+    (14) factor -> . BOOL
     (22) factor -> . NUMBER
     (34) factor -> . comparison
     (35) factor -> . ID
@@ -1029,8 +1029,8 @@ state 40
 state 41
 
     (28) expression -> expression GT . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
+    (15) expression -> . expression PLUS term
+    (16) expression -> . expression MINUS term
     (20) expression -> . term
     (23) expression -> . expression OR expression
     (24) expression -> . expression AND expression
@@ -1041,13 +1041,13 @@ state 41
     (29) expression -> . expression LTE expression
     (30) expression -> . expression GTE expression
     (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
+    (17) term -> . term MULTIPLY factor
+    (18) term -> . term DIVIDE factor
     (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
+    (11) factor -> . INT
+    (12) factor -> . FLOAT
+    (13) factor -> . CHAR
+    (14) factor -> . BOOL
     (22) factor -> . NUMBER
     (34) factor -> . comparison
     (35) factor -> . ID
@@ -1071,8 +1071,8 @@ state 41
 state 42
 
     (29) expression -> expression LTE . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
+    (15) expression -> . expression PLUS term
+    (16) expression -> . expression MINUS term
     (20) expression -> . term
     (23) expression -> . expression OR expression
     (24) expression -> . expression AND expression
@@ -1083,13 +1083,13 @@ state 42
     (29) expression -> . expression LTE expression
     (30) expression -> . expression GTE expression
     (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
+    (17) term -> . term MULTIPLY factor
+    (18) term -> . term DIVIDE factor
     (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
+    (11) factor -> . INT
+    (12) factor -> . FLOAT
+    (13) factor -> . CHAR
+    (14) factor -> . BOOL
     (22) factor -> . NUMBER
     (34) factor -> . comparison
     (35) factor -> . ID
@@ -1113,8 +1113,8 @@ state 42
 state 43
 
     (30) expression -> expression GTE . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
+    (15) expression -> . expression PLUS term
+    (16) expression -> . expression MINUS term
     (20) expression -> . term
     (23) expression -> . expression OR expression
     (24) expression -> . expression AND expression
@@ -1125,13 +1125,13 @@ state 43
     (29) expression -> . expression LTE expression
     (30) expression -> . expression GTE expression
     (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
+    (17) term -> . term MULTIPLY factor
+    (18) term -> . term DIVIDE factor
     (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
+    (11) factor -> . INT
+    (12) factor -> . FLOAT
+    (13) factor -> . CHAR
+    (14) factor -> . BOOL
     (22) factor -> . NUMBER
     (34) factor -> . comparison
     (35) factor -> . ID
@@ -1154,11 +1154,11 @@ state 43
 
 state 44
 
-    (18) term -> term MULTIPLY . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
+    (17) term -> term MULTIPLY . factor
+    (11) factor -> . INT
+    (12) factor -> . FLOAT
+    (13) factor -> . CHAR
+    (14) factor -> . BOOL
     (22) factor -> . NUMBER
     (34) factor -> . comparison
     (35) factor -> . ID
@@ -1178,11 +1178,11 @@ state 44
 
 state 45
 
-    (19) term -> term DIVIDE . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
+    (18) term -> term DIVIDE . factor
+    (11) factor -> . INT
+    (12) factor -> . FLOAT
+    (13) factor -> . CHAR
+    (14) factor -> . BOOL
     (22) factor -> . NUMBER
     (34) factor -> . comparison
     (35) factor -> . ID
@@ -1203,8 +1203,8 @@ state 45
 state 46
 
     (31) expression -> NOT expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
+    (15) expression -> expression . PLUS term
+    (16) expression -> expression . MINUS term
     (23) expression -> expression . OR expression
     (24) expression -> expression . AND expression
     (25) expression -> expression . EQ expression
@@ -1253,8 +1253,8 @@ state 46
 state 47
 
     (32) comparison -> LPAREN expression . RPAREN
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
+    (15) expression -> expression . PLUS term
+    (16) expression -> expression . MINUS term
     (23) expression -> expression . OR expression
     (24) expression -> expression . AND expression
     (25) expression -> expression . EQ expression
@@ -1280,8 +1280,8 @@ state 47
 state 48
 
     (2) statement -> CONST type ID EQUALS expression . SEMICOLON
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
+    (15) expression -> expression . PLUS term
+    (16) expression -> expression . MINUS term
     (23) expression -> expression . OR expression
     (24) expression -> expression . AND expression
     (25) expression -> expression . EQ expression
@@ -1306,46 +1306,46 @@ state 48
 
 state 49
 
-    (16) expression -> expression PLUS term .
-    (18) term -> term . MULTIPLY factor
-    (19) term -> term . DIVIDE factor
+    (15) expression -> expression PLUS term .
+    (17) term -> term . MULTIPLY factor
+    (18) term -> term . DIVIDE factor
 
-    SEMICOLON       reduce using rule 16 (expression -> expression PLUS term .)
-    PLUS            reduce using rule 16 (expression -> expression PLUS term .)
-    MINUS           reduce using rule 16 (expression -> expression PLUS term .)
-    OR              reduce using rule 16 (expression -> expression PLUS term .)
-    AND             reduce using rule 16 (expression -> expression PLUS term .)
-    EQ              reduce using rule 16 (expression -> expression PLUS term .)
-    NEQ             reduce using rule 16 (expression -> expression PLUS term .)
-    LT              reduce using rule 16 (expression -> expression PLUS term .)
-    GT              reduce using rule 16 (expression -> expression PLUS term .)
-    LTE             reduce using rule 16 (expression -> expression PLUS term .)
-    GTE             reduce using rule 16 (expression -> expression PLUS term .)
-    COMMA           reduce using rule 16 (expression -> expression PLUS term .)
-    RPAREN          reduce using rule 16 (expression -> expression PLUS term .)
+    SEMICOLON       reduce using rule 15 (expression -> expression PLUS term .)
+    PLUS            reduce using rule 15 (expression -> expression PLUS term .)
+    MINUS           reduce using rule 15 (expression -> expression PLUS term .)
+    OR              reduce using rule 15 (expression -> expression PLUS term .)
+    AND             reduce using rule 15 (expression -> expression PLUS term .)
+    EQ              reduce using rule 15 (expression -> expression PLUS term .)
+    NEQ             reduce using rule 15 (expression -> expression PLUS term .)
+    LT              reduce using rule 15 (expression -> expression PLUS term .)
+    GT              reduce using rule 15 (expression -> expression PLUS term .)
+    LTE             reduce using rule 15 (expression -> expression PLUS term .)
+    GTE             reduce using rule 15 (expression -> expression PLUS term .)
+    COMMA           reduce using rule 15 (expression -> expression PLUS term .)
+    RPAREN          reduce using rule 15 (expression -> expression PLUS term .)
     MULTIPLY        shift and go to state 44
     DIVIDE          shift and go to state 45
 
 
 state 50
 
-    (17) expression -> expression MINUS term .
-    (18) term -> term . MULTIPLY factor
-    (19) term -> term . DIVIDE factor
+    (16) expression -> expression MINUS term .
+    (17) term -> term . MULTIPLY factor
+    (18) term -> term . DIVIDE factor
 
-    SEMICOLON       reduce using rule 17 (expression -> expression MINUS term .)
-    PLUS            reduce using rule 17 (expression -> expression MINUS term .)
-    MINUS           reduce using rule 17 (expression -> expression MINUS term .)
-    OR              reduce using rule 17 (expression -> expression MINUS term .)
-    AND             reduce using rule 17 (expression -> expression MINUS term .)
-    EQ              reduce using rule 17 (expression -> expression MINUS term .)
-    NEQ             reduce using rule 17 (expression -> expression MINUS term .)
-    LT              reduce using rule 17 (expression -> expression MINUS term .)
-    GT              reduce using rule 17 (expression -> expression MINUS term .)
-    LTE             reduce using rule 17 (expression -> expression MINUS term .)
-    GTE             reduce using rule 17 (expression -> expression MINUS term .)
-    COMMA           reduce using rule 17 (expression -> expression MINUS term .)
-    RPAREN          reduce using rule 17 (expression -> expression MINUS term .)
+    SEMICOLON       reduce using rule 16 (expression -> expression MINUS term .)
+    PLUS            reduce using rule 16 (expression -> expression MINUS term .)
+    MINUS           reduce using rule 16 (expression -> expression MINUS term .)
+    OR              reduce using rule 16 (expression -> expression MINUS term .)
+    AND             reduce using rule 16 (expression -> expression MINUS term .)
+    EQ              reduce using rule 16 (expression -> expression MINUS term .)
+    NEQ             reduce using rule 16 (expression -> expression MINUS term .)
+    LT              reduce using rule 16 (expression -> expression MINUS term .)
+    GT              reduce using rule 16 (expression -> expression MINUS term .)
+    LTE             reduce using rule 16 (expression -> expression MINUS term .)
+    GTE             reduce using rule 16 (expression -> expression MINUS term .)
+    COMMA           reduce using rule 16 (expression -> expression MINUS term .)
+    RPAREN          reduce using rule 16 (expression -> expression MINUS term .)
     MULTIPLY        shift and go to state 44
     DIVIDE          shift and go to state 45
 
@@ -1353,8 +1353,8 @@ state 50
 state 51
 
     (23) expression -> expression OR expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
+    (15) expression -> expression . PLUS term
+    (16) expression -> expression . MINUS term
     (23) expression -> expression . OR expression
     (24) expression -> expression . AND expression
     (25) expression -> expression . EQ expression
@@ -1403,8 +1403,8 @@ state 51
 state 52
 
     (24) expression -> expression AND expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
+    (15) expression -> expression . PLUS term
+    (16) expression -> expression . MINUS term
     (23) expression -> expression . OR expression
     (24) expression -> expression . AND expression
     (25) expression -> expression . EQ expression
@@ -1453,8 +1453,8 @@ state 52
 state 53
 
     (25) expression -> expression EQ expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
+    (15) expression -> expression . PLUS term
+    (16) expression -> expression . MINUS term
     (23) expression -> expression . OR expression
     (24) expression -> expression . AND expression
     (25) expression -> expression . EQ expression
@@ -1503,8 +1503,8 @@ state 53
 state 54
 
     (26) expression -> expression NEQ expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
+    (15) expression -> expression . PLUS term
+    (16) expression -> expression . MINUS term
     (23) expression -> expression . OR expression
     (24) expression -> expression . AND expression
     (25) expression -> expression . EQ expression
@@ -1553,8 +1553,8 @@ state 54
 state 55
 
     (27) expression -> expression LT expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
+    (15) expression -> expression . PLUS term
+    (16) expression -> expression . MINUS term
     (23) expression -> expression . OR expression
     (24) expression -> expression . AND expression
     (25) expression -> expression . EQ expression
@@ -1603,8 +1603,8 @@ state 55
 state 56
 
     (28) expression -> expression GT expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
+    (15) expression -> expression . PLUS term
+    (16) expression -> expression . MINUS term
     (23) expression -> expression . OR expression
     (24) expression -> expression . AND expression
     (25) expression -> expression . EQ expression
@@ -1653,8 +1653,8 @@ state 56
 state 57
 
     (29) expression -> expression LTE expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
+    (15) expression -> expression . PLUS term
+    (16) expression -> expression . MINUS term
     (23) expression -> expression . OR expression
     (24) expression -> expression . AND expression
     (25) expression -> expression . EQ expression
@@ -1703,8 +1703,8 @@ state 57
 state 58
 
     (30) expression -> expression GTE expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
+    (15) expression -> expression . PLUS term
+    (16) expression -> expression . MINUS term
     (23) expression -> expression . OR expression
     (24) expression -> expression . AND expression
     (25) expression -> expression . EQ expression
@@ -1752,44 +1752,44 @@ state 58
 
 state 59
 
-    (18) term -> term MULTIPLY factor .
+    (17) term -> term MULTIPLY factor .
 
-    MULTIPLY        reduce using rule 18 (term -> term MULTIPLY factor .)
-    DIVIDE          reduce using rule 18 (term -> term MULTIPLY factor .)
-    SEMICOLON       reduce using rule 18 (term -> term MULTIPLY factor .)
-    PLUS            reduce using rule 18 (term -> term MULTIPLY factor .)
-    MINUS           reduce using rule 18 (term -> term MULTIPLY factor .)
-    OR              reduce using rule 18 (term -> term MULTIPLY factor .)
-    AND             reduce using rule 18 (term -> term MULTIPLY factor .)
-    EQ              reduce using rule 18 (term -> term MULTIPLY factor .)
-    NEQ             reduce using rule 18 (term -> term MULTIPLY factor .)
-    LT              reduce using rule 18 (term -> term MULTIPLY factor .)
-    GT              reduce using rule 18 (term -> term MULTIPLY factor .)
-    LTE             reduce using rule 18 (term -> term MULTIPLY factor .)
-    GTE             reduce using rule 18 (term -> term MULTIPLY factor .)
-    COMMA           reduce using rule 18 (term -> term MULTIPLY factor .)
-    RPAREN          reduce using rule 18 (term -> term MULTIPLY factor .)
+    MULTIPLY        reduce using rule 17 (term -> term MULTIPLY factor .)
+    DIVIDE          reduce using rule 17 (term -> term MULTIPLY factor .)
+    SEMICOLON       reduce using rule 17 (term -> term MULTIPLY factor .)
+    PLUS            reduce using rule 17 (term -> term MULTIPLY factor .)
+    MINUS           reduce using rule 17 (term -> term MULTIPLY factor .)
+    OR              reduce using rule 17 (term -> term MULTIPLY factor .)
+    AND             reduce using rule 17 (term -> term MULTIPLY factor .)
+    EQ              reduce using rule 17 (term -> term MULTIPLY factor .)
+    NEQ             reduce using rule 17 (term -> term MULTIPLY factor .)
+    LT              reduce using rule 17 (term -> term MULTIPLY factor .)
+    GT              reduce using rule 17 (term -> term MULTIPLY factor .)
+    LTE             reduce using rule 17 (term -> term MULTIPLY factor .)
+    GTE             reduce using rule 17 (term -> term MULTIPLY factor .)
+    COMMA           reduce using rule 17 (term -> term MULTIPLY factor .)
+    RPAREN          reduce using rule 17 (term -> term MULTIPLY factor .)
 
 
 state 60
 
-    (19) term -> term DIVIDE factor .
+    (18) term -> term DIVIDE factor .
 
-    MULTIPLY        reduce using rule 19 (term -> term DIVIDE factor .)
-    DIVIDE          reduce using rule 19 (term -> term DIVIDE factor .)
-    SEMICOLON       reduce using rule 19 (term -> term DIVIDE factor .)
-    PLUS            reduce using rule 19 (term -> term DIVIDE factor .)
-    MINUS           reduce using rule 19 (term -> term DIVIDE factor .)
-    OR              reduce using rule 19 (term -> term DIVIDE factor .)
-    AND             reduce using rule 19 (term -> term DIVIDE factor .)
-    EQ              reduce using rule 19 (term -> term DIVIDE factor .)
-    NEQ             reduce using rule 19 (term -> term DIVIDE factor .)
-    LT              reduce using rule 19 (term -> term DIVIDE factor .)
-    GT              reduce using rule 19 (term -> term DIVIDE factor .)
-    LTE             reduce using rule 19 (term -> term DIVIDE factor .)
-    GTE             reduce using rule 19 (term -> term DIVIDE factor .)
-    COMMA           reduce using rule 19 (term -> term DIVIDE factor .)
-    RPAREN          reduce using rule 19 (term -> term DIVIDE factor .)
+    MULTIPLY        reduce using rule 18 (term -> term DIVIDE factor .)
+    DIVIDE          reduce using rule 18 (term -> term DIVIDE factor .)
+    SEMICOLON       reduce using rule 18 (term -> term DIVIDE factor .)
+    PLUS            reduce using rule 18 (term -> term DIVIDE factor .)
+    MINUS           reduce using rule 18 (term -> term DIVIDE factor .)
+    OR              reduce using rule 18 (term -> term DIVIDE factor .)
+    AND             reduce using rule 18 (term -> term DIVIDE factor .)
+    EQ              reduce using rule 18 (term -> term DIVIDE factor .)
+    NEQ             reduce using rule 18 (term -> term DIVIDE factor .)
+    LT              reduce using rule 18 (term -> term DIVIDE factor .)
+    GT              reduce using rule 18 (term -> term DIVIDE factor .)
+    LTE             reduce using rule 18 (term -> term DIVIDE factor .)
+    GTE             reduce using rule 18 (term -> term DIVIDE factor .)
+    COMMA           reduce using rule 18 (term -> term DIVIDE factor .)
+    RPAREN          reduce using rule 18 (term -> term DIVIDE factor .)
 
 
 state 61

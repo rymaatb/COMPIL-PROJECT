@@ -208,20 +208,78 @@ def p_factor_number(t):
 # T → F
 # F → ( E )
 # F → num
+
+quadruplets = []  #list to stock quadruplets
+temp_counter = 0   # compteur pour les var temporaires
+def new_temp():
+    """Génère un nouveau nom de var temp"""
+    global temp_counter
+    temp_counter += 1
+    return f"T{temp_counter}"
+
+# Routine pour vérifier la compatibilité des types
+def check_type_compatibility(type1, type2, operator):
+    if type1 == type2:
+        return type1  # Compatible, retourne le type
+    if {type1, type2} == {"int", "float"}:
+        return "float"  # Conversion implicite vers float
+    print(f"Erreur : Types incompatibles pour l'opération '{operator}' : {type1} et {type2}")
+    return None
+
 def p_binary_operators(p):
     '''expression : expression PLUS term
                   | expression MINUS term
        term       : term MULTIPLY factor
                   | term DIVIDE factor'''
-    if p[2] == '+':
-        p[0] = p[1] + p[3]
-    elif p[2] == '-':
-        p[0] = p[1] - p[3]
-    elif p[2] == '*':
-        p[0] = p[1] * p[3]
-    elif p[2] == '/':
-        p[0] = p[1] / p[3]
-        
+    global quadruplets  # Liste globale pour stocker les quadruplets
+
+    # Vérification des types des opérandes
+    type1 = get_variable_type(p[1])
+    type2 = get_variable_type(p[3])
+
+    # Vérifier si les types sont compatibles
+    result_type = check_type_compatibility(type1, type2, p[2])
+    if result_type is None:
+        p[0] = None  # Erreur de type
+        return
+
+    # Générer une nouvelle variable temporaire pour le résultat
+    temp_var = new_temp()
+
+    # Ajouter le quadruplet
+    quadruplets.append((p[2], p[1], p[3], temp_var))
+
+    # Associer la variable temporaire au résultat
+    p[0] = temp_var
+
+
+# Fonction pour récupérer le type d'une variable ou d'une constante
+def get_variable_type(value):
+    if isinstance(value, int):
+        return "int"
+    elif isinstance(value, float):
+        return "float"
+    elif isinstance(value, str):  # Si c'est un ID, chercher dans la table des symboles
+        for entry in symbol_table:
+            if entry[0] == value:  # entry[0] = Name
+                return entry[1]  # entry[1] = Type
+    return None  # Si le type n'est pas trouvé
+
+#affectation
+def p_statement_assignment(t):
+    'statement : ID EQUALS expression SEMICOLON'
+    var_name = t[1]
+    # Récupérer le type de la variable
+    var_type = get_variable_type(var_name)  
+    expr_type = get_variable_type(t[3])  # Type de l'expression à affecter
+    # Vérifier la compatibilité des types
+    result_type = check_type_compatibility(var_type, expr_type, "=")
+    if result_type is None:
+        print(f"Erreur d'affectation : incompatible entre {var_type} et {expr_type}")
+        return
+    quadruplets.append(("=", t[3], None, var_name))  # Affectation simple
+    update_symbol_table(var_name, t[3])  # Mettre à jour la table des symboles avec la nouvelle valeur
+
 
 # E → T
 def p_expression_term(t):
@@ -353,4 +411,58 @@ if __name__ == '__main__':
         parse_statement(stmt)
         print("\nSymbol Table:")
         display_symbol_table()
+        print("\nQuadruplets:")
+        display_quadruplets()
         print("-" * 40)
+
+
+def get_variable_value(variable_name):
+    for entry in symbol_table:
+        name, var_type, scope, address, value, additional_info = entry
+        if name == variable_name:
+            return value  # Correct index for value is 4
+    print(f"Erreur : La variable '{variable_name}' n'est pas déclarée ou initialisée.")
+    return None  # Si la variable n'est pas trouvée, retourner None (erreur)
+
+
+
+
+# Fonction de vérification de la sémantique 
+#Vérification des variables non déclarées ou non initialisées
+#Vérification des types d'expressions pour les opérateurs arithmétiques
+def semantic_analysis():
+    # Fonction qui analyse la table des symboles
+    print("\n*** Début de l'analyse sémantique pour les opérations arithmétiques ***")
+    
+    # Vérification des opérations arithmétiques +, -, *, /
+    for quad in quadruplets:
+        operator, operand1, operand2, result = quad
+        
+        # Se concentrer uniquement sur les opérations arithmétiques
+        if operator in ['+', '-', '*', '/']:
+            # Vérification des types des opérandes
+            type1 = get_variable_type(operand1)
+            type2 = get_variable_type(operand2)
+            
+            # Gestion de la division par zéro
+            if operator == '/' and get_variable_value(operand2) == 0:
+                print(f"Erreur : Division par zéro dans l'opération '{operand1} {operator} {operand2}'")
+            
+            # Vérification de la compatibilité des types
+            if type1 == type2:
+                print(f"Opération '{operator}' entre {operand1} ({type1}) et {operand2} ({type2}) est correcte.")
+            elif type1 == 'float' or type2 == 'float':
+                print(f"Opération '{operator}' entre {operand1} ({type1}) et {operand2} ({type2}) est correcte (conversion implicite vers 'float').")
+            else:
+                print(f"Erreur de type : Les opérandes '{operand1}' ({type1}) et '{operand2}' ({type2}) sont incompatibles pour l'opération '{operator}'")
+    
+    print("\n*** Fin de l'analyse sémantique pour les opérations arithmétiques ***")
+
+
+quadruplets = [
+    ('+', 'a', 'b', 'result1'),  # a + b
+    ('-', 'x', 'y', 'result2'),  # x - y
+    ('*', 'a', '2.0', 'result3'),  # a * 2.0
+    ('/', 'b', '0', 'result4'),  # Division par zéro
+    ('/', 'x', 'z', 'result5')   # x / z (vérification des types)
+]
