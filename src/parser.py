@@ -93,6 +93,7 @@ lexer = lex.lex()
 
 start = 'statements'
 
+quadruples = []  # Liste globale pour stocker les quadruplets
 
 # Symbol table as an array of dictionaries
 symbol_table = []
@@ -134,16 +135,23 @@ def p_statement(t):
                  | array_assignment
                  | type declaration_list SEMICOLON
                  | const_declaration'''
-    
 
 def p_simple_assignment(t):
     '''simple_assignment : ID EQUALS expression SEMICOLON'''
     var_name = t[1]
-    expr_value=t[3]
+    expr_value = t[3]
     expr_type = type(expr_value).__name__  # Déterminer le type de l'expression
+
+    # Ajout à la table des symboles
     add_to_symbol_table(var_name, expr_type, "global", expr_value, "Affectation simple")
     update_symbol_table(var_name, expr_value)
-   
+
+    # Génère un quadruplet pour l'affectation
+    quadruples.append(('ASSIGN', expr_value, '-', var_name))
+    print(f"Quadruplet généré : {quadruples[-1]}")
+
+    t[0] = var_name  # Retourne le nom de la variable affectée
+
 
 
 def p_const_declaration(t):
@@ -301,8 +309,15 @@ def p_array_access(t):
     for entry in symbol_table:
         if entry[0] == var_name and isinstance(entry[4], list):  # Vérifie que c'est un tableau
             if isinstance(index, int) and 0 <= index < len(entry[4]):
+                if entry[4][index] is None:  # Vérifie si la valeur est non initialisée
+                    print(f"Avertissement : Accès à une valeur non initialisée dans '{var_name}[{index}]'.")
                 t[0] = entry[4][index]
                 print(f"Valeur récupérée : {t[0]} de {var_name}[{index}]")
+                 # Génère un quadruplet
+                temp_var = f'T{len(quadruples) + 1}'  # Génère une variable temporaire
+                quadruples.append(('LOAD', f'{var_name}[{index}]', '-', temp_var))
+                print(f"Quadruplet généré : {quadruples[-1]}")
+                t[0] = temp_var  # Retourne la variable temporaire
                 return
             else:
                 print(f"Erreur : Indice hors limites pour '{var_name}'.")
@@ -310,24 +325,45 @@ def p_array_access(t):
                 return
     print(f"Erreur : Tableau '{var_name}' non déclaré.")
     t[0] = None
-
-
 def p_array_assignment(t):
     'array_assignment : ID LBRACKET expression RBRACKET EQUALS expression SEMICOLON'
     var_name, index, value = t[1], t[3], t[6]
     print(f"Affectation de tableau : {var_name}[{index}] = {value}")
     for entry in symbol_table:
-        if entry[0] == var_name and isinstance(entry[4], list):
+        if entry[0] == var_name and isinstance(entry[4], list):  # Vérifie que c'est un tableau
             if isinstance(index, int) and 0 <= index < len(entry[4]):
+                # Vérifie la compatibilité des types
+                expected_type = entry[1]  # Type attendu
+                if expected_type == 'INTEGER' and not isinstance(value, int):
+                    print(f"Erreur : Type incorrect pour '{var_name}[{index}]'. Attendu : INTEGER, reçu : {type(value).__name__}.")
+                    return
+                elif expected_type == 'FLOAT' and not isinstance(value, float):
+                    print(f"Erreur : Type incorrect pour '{var_name}[{index}]'. Attendu : FLOAT, reçu : {type(value).__name__}.")
+                    return
+                elif expected_type == 'CHAR' and not isinstance(value, str):
+                    print(f"Erreur : Type incorrect pour '{var_name}[{index}]'. Attendu : CHAR, reçu : {type(value).__name__}.")
+                    return
+                # Met à jour la valeur si tout est correct
                 entry[4][index] = value
+
+                print(f"Tableau '{var_name}' mis à jour : {entry[4]}")
+                 # Génère un quadruplet
+                quadruples.append(('ASSIGN', value, '-', f'{var_name}[{index}]'))
+                print(f"Quadruplet généré : {quadruples[-1]}")
                 return
             else:
                 print(f"Erreur : Indice hors limites pour '{var_name}'.")
                 return
     print(f"Erreur : Tableau '{var_name}' non déclaré.")
 
-
 parser = yacc.yacc()
+
+
+def display_quadruples():
+    headers = ["Opération", "Opérande 1", "Opérande 2", "Résultat"]
+    print(tabulate(quadruples, headers=headers, tablefmt="grid"))
+
+
 
 
 # Test the parser
@@ -341,16 +377,16 @@ def display_symbol_table():
 
 
 expressions = [
-    "INTEGER Matrix[3];",      # Déclaration de tableau
-    "Matrix[2] = 3.14;",       # Affectation de FLOAT
-    "CHAR Arr[5];",         # Déclaration valide
-    "Arr[0] =  B;",            # Affectation d'entier
-    "X = Arr[0];",             # Accès à un tableau
-    "FLOAT Invalid[-1];",      # Taille négative (Erreur attendue)
+    "INTEGER X;",
+    "X = 42;",
+    "FLOAT Y;",
+    "Y = 3.14;"
 ]
 for stmt in expressions:
     print(f"Parsing statement: {stmt}")
     parse_statement(stmt)
-    display_symbol_table()
     print("-" * 40)
+
+# Affiche les quadruplets
+display_quadruples()
 
