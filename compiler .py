@@ -470,7 +470,7 @@ def p_epsilon(t):
     'epsilon :'
     pass
 
-# Routine sémantique pour D
+# Routine sémantique pour A
 def A():
     global quadruplets, qc, t0, sauve_BG,step
     # Générer l'incrémentation du compteur et le branchement
