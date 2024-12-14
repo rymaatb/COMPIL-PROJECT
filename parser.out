@@ -1,0 +1,575 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    COLON
+    COMMENT
+    DECLARATION
+    DIVIDE
+    ELSE
+    EQ
+    FOR
+    GT
+    GTE
+    IF
+    INSTRUCTION
+    LBRACE
+    LPAREN
+    LT
+    LTE
+    MINUS
+    MULTIPLY
+    NEQ
+    NUMBER
+    PLUS
+    RBRACE
+    RPAREN
+    VAR_GLOBAL
+
+Grammar
+
+Rule 0     S' -> statement
+Rule 1     statement -> type declaration_list SEMICOLON
+Rule 2     statement -> CONST type ID EQUALS expression SEMICOLON
+Rule 3     declaration_list -> declaration
+Rule 4     declaration_list -> declaration COMMA declaration_list
+Rule 5     declaration -> ID
+Rule 6     declaration -> ID EQUALS expression
+Rule 7     statement -> ID EQUALS expression SEMICOLON
+Rule 8     type -> INT_TYPE
+Rule 9     type -> FLOAT_TYPE
+Rule 10    type -> BOOL_TYPE
+Rule 11    type -> CHAR_TYPE
+Rule 12    factor -> INT
+Rule 13    factor -> FLOAT
+Rule 14    factor -> CHAR
+Rule 15    factor -> BOOL
+Rule 16    expression -> expression OR term
+Rule 17    expression -> term
+Rule 18    term -> term AND factor
+Rule 19    term -> factor
+Rule 20    factor -> ID
+Rule 21    factor -> TRUE
+Rule 22    factor -> FALSE
+Rule 23    factor -> NOT ID
+
+Terminals, with rules where they appear
+
+AND                  : 18
+BOOL                 : 15
+BOOL_TYPE            : 10
+CHAR                 : 14
+CHAR_TYPE            : 11
+COLON                : 
+COMMA                : 4
+COMMENT              : 
+CONST                : 2
+DECLARATION          : 
+DIVIDE               : 
+ELSE                 : 
+EQ                   : 
+EQUALS               : 2 6 7
+FALSE                : 22
+FLOAT                : 13
+FLOAT_TYPE           : 9
+FOR                  : 
+GT                   : 
+GTE                  : 
+ID                   : 2 5 6 7 20 23
+IF                   : 
+INSTRUCTION          : 
+INT                  : 12
+INT_TYPE             : 8
+LBRACE               : 
+LPAREN               : 
+LT                   : 
+LTE                  : 
+MINUS                : 
+MULTIPLY             : 
+NEQ                  : 
+NOT                  : 23
+NUMBER               : 
+OR                   : 16
+PLUS                 : 
+RBRACE               : 
+RPAREN               : 
+SEMICOLON            : 1 2 7
+TRUE                 : 21
+VAR_GLOBAL           : 
+error                : 
+
+Nonterminals, with rules where they appear
+
+declaration          : 3 4
+declaration_list     : 1 4
+expression           : 2 6 7 16
+factor               : 18 19
+statement            : 0
+term                 : 16 17 18
+type                 : 1 2
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . statement
+    (1) statement -> . type declaration_list SEMICOLON
+    (2) statement -> . CONST type ID EQUALS expression SEMICOLON
+    (7) statement -> . ID EQUALS expression SEMICOLON
+    (8) type -> . INT_TYPE
+    (9) type -> . FLOAT_TYPE
+    (10) type -> . BOOL_TYPE
+    (11) type -> . CHAR_TYPE
+
+    CONST           shift and go to state 3
+    ID              shift and go to state 4
+    INT_TYPE        shift and go to state 5
+    FLOAT_TYPE      shift and go to state 6
+    BOOL_TYPE       shift and go to state 7
+    CHAR_TYPE       shift and go to state 8
+
+    statement                      shift and go to state 1
+    type                           shift and go to state 2
+
+state 1
+
+    (0) S' -> statement .
+
+
+
+state 2
+
+    (1) statement -> type . declaration_list SEMICOLON
+    (3) declaration_list -> . declaration
+    (4) declaration_list -> . declaration COMMA declaration_list
+    (5) declaration -> . ID
+    (6) declaration -> . ID EQUALS expression
+
+    ID              shift and go to state 11
+
+    declaration_list               shift and go to state 9
+    declaration                    shift and go to state 10
+
+state 3
+
+    (2) statement -> CONST . type ID EQUALS expression SEMICOLON
+    (8) type -> . INT_TYPE
+    (9) type -> . FLOAT_TYPE
+    (10) type -> . BOOL_TYPE
+    (11) type -> . CHAR_TYPE
+
+    INT_TYPE        shift and go to state 5
+    FLOAT_TYPE      shift and go to state 6
+    BOOL_TYPE       shift and go to state 7
+    CHAR_TYPE       shift and go to state 8
+
+    type                           shift and go to state 12
+
+state 4
+
+    (7) statement -> ID . EQUALS expression SEMICOLON
+
+    EQUALS          shift and go to state 13
+
+
+state 5
+
+    (8) type -> INT_TYPE .
+
+    ID              reduce using rule 8 (type -> INT_TYPE .)
+
+
+state 6
+
+    (9) type -> FLOAT_TYPE .
+
+    ID              reduce using rule 9 (type -> FLOAT_TYPE .)
+
+
+state 7
+
+    (10) type -> BOOL_TYPE .
+
+    ID              reduce using rule 10 (type -> BOOL_TYPE .)
+
+
+state 8
+
+    (11) type -> CHAR_TYPE .
+
+    ID              reduce using rule 11 (type -> CHAR_TYPE .)
+
+
+state 9
+
+    (1) statement -> type declaration_list . SEMICOLON
+
+    SEMICOLON       shift and go to state 14
+
+
+state 10
+
+    (3) declaration_list -> declaration .
+    (4) declaration_list -> declaration . COMMA declaration_list
+
+    SEMICOLON       reduce using rule 3 (declaration_list -> declaration .)
+    COMMA           shift and go to state 15
+
+
+state 11
+
+    (5) declaration -> ID .
+    (6) declaration -> ID . EQUALS expression
+
+    COMMA           reduce using rule 5 (declaration -> ID .)
+    SEMICOLON       reduce using rule 5 (declaration -> ID .)
+    EQUALS          shift and go to state 16
+
+
+state 12
+
+    (2) statement -> CONST type . ID EQUALS expression SEMICOLON
+
+    ID              shift and go to state 17
+
+
+state 13
+
+    (7) statement -> ID EQUALS . expression SEMICOLON
+    (16) expression -> . expression OR term
+    (17) expression -> . term
+    (18) term -> . term AND factor
+    (19) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (20) factor -> . ID
+    (21) factor -> . TRUE
+    (22) factor -> . FALSE
+    (23) factor -> . NOT ID
+
+    INT             shift and go to state 22
+    FLOAT           shift and go to state 23
+    CHAR            shift and go to state 24
+    BOOL            shift and go to state 25
+    ID              shift and go to state 18
+    TRUE            shift and go to state 26
+    FALSE           shift and go to state 27
+    NOT             shift and go to state 28
+
+    expression                     shift and go to state 19
+    term                           shift and go to state 20
+    factor                         shift and go to state 21
+
+state 14
+
+    (1) statement -> type declaration_list SEMICOLON .
+
+    $end            reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
+
+
+state 15
+
+    (4) declaration_list -> declaration COMMA . declaration_list
+    (3) declaration_list -> . declaration
+    (4) declaration_list -> . declaration COMMA declaration_list
+    (5) declaration -> . ID
+    (6) declaration -> . ID EQUALS expression
+
+    ID              shift and go to state 11
+
+    declaration                    shift and go to state 10
+    declaration_list               shift and go to state 29
+
+state 16
+
+    (6) declaration -> ID EQUALS . expression
+    (16) expression -> . expression OR term
+    (17) expression -> . term
+    (18) term -> . term AND factor
+    (19) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (20) factor -> . ID
+    (21) factor -> . TRUE
+    (22) factor -> . FALSE
+    (23) factor -> . NOT ID
+
+    INT             shift and go to state 22
+    FLOAT           shift and go to state 23
+    CHAR            shift and go to state 24
+    BOOL            shift and go to state 25
+    ID              shift and go to state 18
+    TRUE            shift and go to state 26
+    FALSE           shift and go to state 27
+    NOT             shift and go to state 28
+
+    expression                     shift and go to state 30
+    term                           shift and go to state 20
+    factor                         shift and go to state 21
+
+state 17
+
+    (2) statement -> CONST type ID . EQUALS expression SEMICOLON
+
+    EQUALS          shift and go to state 31
+
+
+state 18
+
+    (20) factor -> ID .
+
+    AND             reduce using rule 20 (factor -> ID .)
+    SEMICOLON       reduce using rule 20 (factor -> ID .)
+    OR              reduce using rule 20 (factor -> ID .)
+    COMMA           reduce using rule 20 (factor -> ID .)
+
+
+state 19
+
+    (7) statement -> ID EQUALS expression . SEMICOLON
+    (16) expression -> expression . OR term
+
+    SEMICOLON       shift and go to state 32
+    OR              shift and go to state 33
+
+
+state 20
+
+    (17) expression -> term .
+    (18) term -> term . AND factor
+
+    SEMICOLON       reduce using rule 17 (expression -> term .)
+    OR              reduce using rule 17 (expression -> term .)
+    COMMA           reduce using rule 17 (expression -> term .)
+    AND             shift and go to state 34
+
+
+state 21
+
+    (19) term -> factor .
+
+    AND             reduce using rule 19 (term -> factor .)
+    SEMICOLON       reduce using rule 19 (term -> factor .)
+    OR              reduce using rule 19 (term -> factor .)
+    COMMA           reduce using rule 19 (term -> factor .)
+
+
+state 22
+
+    (12) factor -> INT .
+
+    AND             reduce using rule 12 (factor -> INT .)
+    SEMICOLON       reduce using rule 12 (factor -> INT .)
+    OR              reduce using rule 12 (factor -> INT .)
+    COMMA           reduce using rule 12 (factor -> INT .)
+
+
+state 23
+
+    (13) factor -> FLOAT .
+
+    AND             reduce using rule 13 (factor -> FLOAT .)
+    SEMICOLON       reduce using rule 13 (factor -> FLOAT .)
+    OR              reduce using rule 13 (factor -> FLOAT .)
+    COMMA           reduce using rule 13 (factor -> FLOAT .)
+
+
+state 24
+
+    (14) factor -> CHAR .
+
+    AND             reduce using rule 14 (factor -> CHAR .)
+    SEMICOLON       reduce using rule 14 (factor -> CHAR .)
+    OR              reduce using rule 14 (factor -> CHAR .)
+    COMMA           reduce using rule 14 (factor -> CHAR .)
+
+
+state 25
+
+    (15) factor -> BOOL .
+
+    AND             reduce using rule 15 (factor -> BOOL .)
+    SEMICOLON       reduce using rule 15 (factor -> BOOL .)
+    OR              reduce using rule 15 (factor -> BOOL .)
+    COMMA           reduce using rule 15 (factor -> BOOL .)
+
+
+state 26
+
+    (21) factor -> TRUE .
+
+    AND             reduce using rule 21 (factor -> TRUE .)
+    SEMICOLON       reduce using rule 21 (factor -> TRUE .)
+    OR              reduce using rule 21 (factor -> TRUE .)
+    COMMA           reduce using rule 21 (factor -> TRUE .)
+
+
+state 27
+
+    (22) factor -> FALSE .
+
+    AND             reduce using rule 22 (factor -> FALSE .)
+    SEMICOLON       reduce using rule 22 (factor -> FALSE .)
+    OR              reduce using rule 22 (factor -> FALSE .)
+    COMMA           reduce using rule 22 (factor -> FALSE .)
+
+
+state 28
+
+    (23) factor -> NOT . ID
+
+    ID              shift and go to state 35
+
+
+state 29
+
+    (4) declaration_list -> declaration COMMA declaration_list .
+
+    SEMICOLON       reduce using rule 4 (declaration_list -> declaration COMMA declaration_list .)
+
+
+state 30
+
+    (6) declaration -> ID EQUALS expression .
+    (16) expression -> expression . OR term
+
+    COMMA           reduce using rule 6 (declaration -> ID EQUALS expression .)
+    SEMICOLON       reduce using rule 6 (declaration -> ID EQUALS expression .)
+    OR              shift and go to state 33
+
+
+state 31
+
+    (2) statement -> CONST type ID EQUALS . expression SEMICOLON
+    (16) expression -> . expression OR term
+    (17) expression -> . term
+    (18) term -> . term AND factor
+    (19) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (20) factor -> . ID
+    (21) factor -> . TRUE
+    (22) factor -> . FALSE
+    (23) factor -> . NOT ID
+
+    INT             shift and go to state 22
+    FLOAT           shift and go to state 23
+    CHAR            shift and go to state 24
+    BOOL            shift and go to state 25
+    ID              shift and go to state 18
+    TRUE            shift and go to state 26
+    FALSE           shift and go to state 27
+    NOT             shift and go to state 28
+
+    expression                     shift and go to state 36
+    term                           shift and go to state 20
+    factor                         shift and go to state 21
+
+state 32
+
+    (7) statement -> ID EQUALS expression SEMICOLON .
+
+    $end            reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+
+
+state 33
+
+    (16) expression -> expression OR . term
+    (18) term -> . term AND factor
+    (19) term -> . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (20) factor -> . ID
+    (21) factor -> . TRUE
+    (22) factor -> . FALSE
+    (23) factor -> . NOT ID
+
+    INT             shift and go to state 22
+    FLOAT           shift and go to state 23
+    CHAR            shift and go to state 24
+    BOOL            shift and go to state 25
+    ID              shift and go to state 18
+    TRUE            shift and go to state 26
+    FALSE           shift and go to state 27
+    NOT             shift and go to state 28
+
+    term                           shift and go to state 37
+    factor                         shift and go to state 21
+
+state 34
+
+    (18) term -> term AND . factor
+    (12) factor -> . INT
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (20) factor -> . ID
+    (21) factor -> . TRUE
+    (22) factor -> . FALSE
+    (23) factor -> . NOT ID
+
+    INT             shift and go to state 22
+    FLOAT           shift and go to state 23
+    CHAR            shift and go to state 24
+    BOOL            shift and go to state 25
+    ID              shift and go to state 18
+    TRUE            shift and go to state 26
+    FALSE           shift and go to state 27
+    NOT             shift and go to state 28
+
+    factor                         shift and go to state 38
+
+state 35
+
+    (23) factor -> NOT ID .
+
+    AND             reduce using rule 23 (factor -> NOT ID .)
+    SEMICOLON       reduce using rule 23 (factor -> NOT ID .)
+    OR              reduce using rule 23 (factor -> NOT ID .)
+    COMMA           reduce using rule 23 (factor -> NOT ID .)
+
+
+state 36
+
+    (2) statement -> CONST type ID EQUALS expression . SEMICOLON
+    (16) expression -> expression . OR term
+
+    SEMICOLON       shift and go to state 39
+    OR              shift and go to state 33
+
+
+state 37
+
+    (16) expression -> expression OR term .
+    (18) term -> term . AND factor
+
+    SEMICOLON       reduce using rule 16 (expression -> expression OR term .)
+    OR              reduce using rule 16 (expression -> expression OR term .)
+    COMMA           reduce using rule 16 (expression -> expression OR term .)
+    AND             shift and go to state 34
+
+
+state 38
+
+    (18) term -> term AND factor .
+
+    AND             reduce using rule 18 (term -> term AND factor .)
+    SEMICOLON       reduce using rule 18 (term -> term AND factor .)
+    OR              reduce using rule 18 (term -> term AND factor .)
+    COMMA           reduce using rule 18 (term -> term AND factor .)
+
+
+state 39
+
+    (2) statement -> CONST type ID EQUALS expression SEMICOLON .
+
+    $end            reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
+
