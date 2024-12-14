@@ -366,6 +366,23 @@ def p_statement_if(t):
             print("Else if condition is false, executing ELSE block")
            # t[0] = t[13]  # Exécute le bloc ELSE (instructions à l'intérieur)
 
+
+
+
+quadruplets = []
+qc = 0
+sauve_BG = 0
+temp_count = 0
+step = 0
+
+# Function to generate a new temporary variable
+def new_temp():
+    global temp_count
+    temp_name = f"t{temp_count}"
+    temp_count += 1
+    return temp_name
+t0=new_temp()
+
 # Bloc de code entre accolades
 def p_block(t):
     'block : LBRACE statements RBRACE'
@@ -380,25 +397,35 @@ def p_statements(t):
         t[0] = [t[1]] + t[2]
 
 #start of for loop
+
 def p_initialisation(t):
     'initialisation : ID EQUALS INT'
+    global quadruplets, qc,t0, sauve_BG,step
     if len(t) < 4:
         print('syntaxic error')
     else:
      t[0] = (t[1], t[3])
      var_name = t[1]
      update_symbol_table(var_name,t[3])
+     quadruplets.append((t_EQUALS,t[1],None,t0))
+     variable = t[1]
+     qc+=1
+     
+
 def p_step(t):
     '''step : INT
             | ID'''
+    global quadruplets, qc, sauve_BG,step
     if isinstance(t[1],int):
         t[0] = t[1]
+        step = t[1]
     elif isinstance(t[1],str):
         var_name = t[1]
         for entry in symbol_table:
          if entry[0] == var_name:  # entry[0] is the 'Name' field
             if entry[4] is not None:  # entry[4] is the 'Value' field
                 t[0] = entry[4]
+                step=t[0]
             else:
                 print(f"Error: Variable '{var_name}' not initialized.")
                 t[0] = 0
@@ -406,12 +433,52 @@ def p_step(t):
     else:
          print(f"Error: Variable '{var_name}' not declared.")
          t[0] = 0
-
+def p_BorneSup(t):
+    'BorneSup : ID'
+    global quadruplets, qc, sauve_BG,step
+    var_name = t[1]
+    for entry in symbol_table:
+        if entry[0] == var_name:  # entry[0] is the 'Name' field
+          if entry[1] == "int":
+            if entry[4] is not None:  # entry[4] is the 'Value' field
+                
+                quadruplets.append(('BG',None,entry[4],t[0]))
+                t[0] = entry[4]
+                sauve_BG = qc
+                qc = qc +1
+            else:
+                print(f"Error: Variable '{var_name}' not initialized.")
+                t[0] = 0
+            return
+          else:
+            print(f"Error: Variable '{var_name}' is not a integer.")
+        
+    print(f"Error: Variable '{var_name}' not declared.")
+    t[0] = 0   
     
 def p_statement_FORloop(t):
-    'statement : FOR LPAREN initialisation COLON step COLON factor RPAREN block'
-    t[0] = ('statement',t[3],t[5],t[7],t[9])
+ # FOR(i =0 A :2 B :n C){ i=i+1 ;} D
+    'statement : FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block A'
+    t[0] = ('statement',t[3],t[5],t[7],t[9],t[10])
 
+def p_A(t):
+    'A : epsilon'
+    A()
+
+# Règle pour epsilon
+def p_epsilon(t):
+    'epsilon :'
+    pass
+
+# Routine sémantique pour D
+def A():
+    global quadruplets, qc, t0, sauve_BG,step
+    # Générer l'incrémentation du compteur et le branchement
+    quadruplets.append((t_PLUS,t0,step,t0))
+    qc += 1
+    quadruplets.append(('BR',sauve_BG,None,None))
+    qc += 1
+   
 def p_error(p):
     if p:
         print(f"Syntax error at token {p.type}, line {p.lineno}")
@@ -441,16 +508,21 @@ if __name__ == '__main__':
         "DECLARATION{int i, n = 2;} INSTRUCTION{ for(i=0 : 1 : n){ i = i + 1;} }"
      ]
     stm = [
-        "int i, n = 2;",
-        "for(i =0 : 4 : n){ i = i + 1;}",
-        "for(i =0 : 1 : n){ }",
-        "for(i  : 1 : n){ i = i + 1;}"
+        "int i, n = 3;",
+        "for(i =0 : 1 : n){ i = i + 1;}",
     ]
+    for quad in quadruplets:
+          print(f"{quadruplets}")
+    print("-" * 40)
     for line in stm:#prm:
        print(f"Parsing: {line}")
        #parse_program(line)
        parse_statement(line)
        #parser_statement_debug(line)
-       print("-" * 40)
+       #print("-" * 40)
        display_symbol_table()
+       for quad in quadruplets:
+          print(f"{quad}")
+          #print("-" * 40)
+       print("-" * 40)
     
