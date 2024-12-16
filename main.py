@@ -264,7 +264,137 @@ def p_factor_number(t):
         t[0] = -t[3]  
           
 
+#  *********************TABLE*****************************
+def p_statements(t):
+    '''statements : statement
+                  | statement statements '''
+    if len(t) == 2 :
+        t[0] = [t[1]]
+    else:
+        t[0] = [t[1]] + t[2]
+
+def p_statement(t):
+    '''statement : simple_assignment
+                 | array_declarationTab
+                 | array_assignment
+                 | type declarationTab_listTab SEMICOLON
+                 | const_declarationTab'''
+
+def p_simple_assignment(t):
+    '''simple_assignment : ID EQUALS expressionTab SEMICOLON'''
+    var_name = t[1]
+    expr_value = t[3]
+    expr_type = type(expr_value).__name__  # Déterminer le type de l'expressionTab
+
+    # Ajout à la table des symboles
+    add_to_symbol_table(var_name, expr_type, "global", expr_value, "Affectation simple")
+    update_symbol_table(var_name, expr_value)
+
+    # Génère un quadruplet pour l'affectation
+    quadruples.append(('ASSIGN', expr_value, '-', var_name))
+
+    t[0] = var_name  # Retourne le nom de la variable affectée
+
+def p_const_declarationTab(t):
+    '''const_declarationTab : CONST type ID EQUALS expressionTab SEMICOLON'''
+    var_type, var_name, value = t[2], t[3], t[5]
+    print(f"Déclaration constante : {var_name} = {value} (type : {var_type})")
+    add_to_symbol_table(var_name, var_type, "global", value, "constant")
+  
+def p_array_declarationTab(t):
+    'array_declarationTab : type ID LBRACKET INTEGER RBRACKET SEMICOLON'
+    var_type, var_name, size = t[1], t[2], t[4]
+    if size <= 0:
+        print(f"Erreur : Taille invalide pour le tableau '{var_name}'.")
+    else:
+        value = [None] * size
+        add_to_symbol_table(var_name, var_type, "global", value, f"Tableau de taille {size}")
+           # Génération du quadruplet ADEC
+    quadruplet = ("ADEC", var_name, size, None)  # Aucun résultat spécifique dans la 4e colonne
+    quadruples.append(quadruplet)
      
+
+def p_declarationTab_listTab(t):
+    '''declarationTab_listTab : declarationTab
+                        | declarationTab COMMA declarationTab_listTab'''
+    if len(t) == 2:
+        t[0] = [t[1]]
+    else:
+        t[0] = [t[1]] + t[3]
+        
+def p_declarationTab(t):
+    '''declarationTab : ID
+                   | ID EQUALS expressionTab
+                   | ID LBRACKET INTEGER RBRACKET'''
+    if len(t) == 2:
+        t[0] = (t[1], None)
+    elif len(t) == 4:
+        t[0] = (t[1], t[3])    
+    else:
+        size = t[3]
+        if size <= 0:
+            print(f"Erreur : Taille invalide pour '{t[1]}'.")
+            t[0] = (t[1], None)
+        else:
+            t[0] = (t[1], [None] * size)  # Tableau
+def p_expressionTab(t):
+    '''expressionTab : ID
+                  | FLOAT
+                  | INTEGER
+                  | CHAR'''
+    
+    t[0] = t[1]
+
+def p_array_access(t):
+    'factor : ID LBRACKET expressionTab RBRACKET'
+    var_name, index = t[1], t[3]
+    for entry in symbol_table:
+        if entry[0] == var_name and isinstance(entry[4], list):  # Vérifie que c'est un tableau
+            if isinstance(index, int) and 0 <= index < len(entry[4]):
+                if entry[4][index] is None:  # Vérifie si la valeur est non initialisée
+                    print(f"Avertissement : Accès à une valeur non initialisée dans '{var_name}[{index}]'.")
+                t[0] = entry[4][index]
+                value = get_variable_value(var_name)[index]
+                 # Génère un quadruplet
+                temp_var = new_temp();
+                quadruples.append(('=', f'{var_name}[{index}]', value, temp_var))
+                t[0] = temp_var  # Retourne la variable temporaire
+                return
+            else:
+                print(f"Erreur : Indice hors limites pour '{var_name}'.")
+                t[0] = None
+                return
+    print(f"Erreur : Tableau '{var_name}' non déclaré.")
+    t[0] = None
+
+def p_array_assignment(t):
+    'array_assignment : ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON'
+    var_name, index, value = t[1], t[3], t[6]
+    for entry in symbol_table:
+        if entry[0] == var_name and isinstance(entry[4], list):  # Vérifie que c'est un tableau
+            if isinstance(index, int) and 0 <= index < len(entry[4]):
+                # Vérifie la compatibilité des types
+                expected_type = entry[1]  # Type attendu
+                if expected_type == 'INTEGER' and not isinstance(value, int):
+                    print(f"Erreur : Type incorrect pour '{var_name}[{index}]'. Attendu : INTEGER, reçu : {type(value).__name__}.")
+                    return
+                elif expected_type == 'FLOAT' and not isinstance(value, float):
+                    print(f"Erreur : Type incorrect pour '{var_name}[{index}]'. Attendu : FLOAT, reçu : {type(value).__name__}.")
+                    return
+                elif expected_type == 'CHAR' and not isinstance(value, str):
+                    print(f"Erreur : Type incorrect pour '{var_name}[{index}]'. Attendu : CHAR, reçu : {type(value).__name__}.")
+                    return
+                # Met à jour la valeur si tout est correct
+                entry[4][index] = value
+                quadruples.append(('=',value, None, f'{var_name}[{index}]' ))
+
+                
+                return
+            else:
+                print(f"Erreur : Indice hors limites pour '{var_name}'.")
+                return
+    print(f"Erreur : Tableau '{var_name}' non déclaré.")
+
 # END of var declaration
 
 # ****************************Routine to verify compatiblity ************
@@ -391,16 +521,21 @@ def display_symbol_table():
 # Examples of usage
 if __name__ == '__main__':
     expressions = [
-        "FLOAT n = (+5.63) ;",
+        # "FLOAT n = (+5.63) ;",
         # "CHAR j = 'i' ;",
         # "INTEGER c = -4  ;",
         # "bool b = false ;",
-        "bool a = true  ;",
-        "bool m = false;",
+        # "bool a = true  ;",
+        # "bool m = false;",
         # "bool n = b && a  ;",
         # "bool f = false;",
         # "bool z = f || a   ;",
-        " m = ! a;",
+        # " m = ! a;",
+        "INTEGER Matrix[3];"    ,
+        "FLOAT Ab[1] ;",
+        "Matrix[3]=5;",
+        "Matrix[2]=5;",
+        "INTEGER x =Matrix[2];"
     ]
     for stmt in expressions:
         print(f"Parsing statement: {stmt}")

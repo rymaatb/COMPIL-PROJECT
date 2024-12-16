@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'AND BOOL BOOL_TYPE CHAR CHAR_TYPE COLON COMMA COMMENT CONST DECLARATION DIVIDE ELSE EQ EQUALS FALSE FLOAT FLOAT_TYPE FOR GT GTE ID IF INSTRUCTION INTEGER INT_TYPE LBRACKET LPAREN LT LTE MINUS MULTIPLY NEQ NOT NUMBER OR PLUS RBRACKET RPAREN SEMICOLON TRUE VAR_GLOBALstatement : type declaration_list SEMICOLON\n| CONST type ID EQUALS expression SEMICOLONdeclaration_list : declaration\n| declaration COMMA declaration_listdeclaration : ID\n| ID EQUALS expressionstatement : ID EQUALS expression SEMICOLONtype : INT_TYPE\n| FLOAT_TYPE\n| BOOL_TYPE\n| CHAR_TYPEfactor : INTEGER\n| FLOAT\n| CHAR\n| BOOL\n| MINUS factor\n| PLUS factor\n| LPAREN INTEGER RPAREN\n| LPAREN FLOAT RPAREN\n| LPAREN MINUS FLOAT RPAREN\nexpression : expression OR term\n| termterm : term AND factor \n| factorfactor : ID\n| TRUE\n| FALSE\n| NOT ID'
+_lr_signature = 'AND BOOL BOOL_TYPE CHAR CHAR_TYPE COLON COMMA COMMENT CONST DECLARATION DIVIDE ELSE EQ EQUALS FALSE FLOAT FLOAT_TYPE FOR GT GTE ID IF INSTRUCTION INTEGER INT_TYPE LBRACKET LPAREN LT LTE MINUS MULTIPLY NEQ NOT NUMBER OR PLUS RBRACKET RPAREN SEMICOLON TRUE VAR_GLOBALstatement : type declaration_list SEMICOLON\n| CONST type ID EQUALS expression SEMICOLONdeclaration_list : declaration\n| declaration COMMA declaration_listdeclaration : ID\n| ID EQUALS expressionstatement : ID EQUALS expression SEMICOLONtype : INT_TYPE\n| FLOAT_TYPE\n| BOOL_TYPE\n| CHAR_TYPEfactor : INTEGER\n| FLOAT\n| CHAR\n| BOOL\n| MINUS factor\n| PLUS factor\n| LPAREN INTEGER RPAREN\n| LPAREN FLOAT RPAREN\n| LPAREN MINUS FLOAT RPAREN\nstatements : statement\n| statement statements statement : simple_assignment\n| array_declarationTab\n| array_assignment\n| type declarationTab_listTab SEMICOLON\n| const_declarationTabsimple_assignment : ID EQUALS expressionTab SEMICOLONconst_declarationTab : CONST type ID EQUALS expressionTab SEMICOLONarray_declarationTab : type ID LBRACKET INTEGER RBRACKET SEMICOLONdeclarationTab_listTab : declarationTab\n| declarationTab COMMA declarationTab_listTabdeclarationTab : ID\n| ID EQUALS expressionTab\n| ID LBRACKET INTEGER RBRACKETexpressionTab : ID\n| FLOAT\n| INTEGER\n| CHARfactor : ID LBRACKET expressionTab RBRACKETarray_assignment : ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLONexpression : expression OR term\n| termterm : term AND factor \n| factorfactor : ID\n| TRUE\n| FALSE\n| NOT ID'
     
-_lr_action_items = {'CONST':([0,],[3,]),'ID':([0,2,5,6,7,8,12,13,15,16,26,27,31,34,36,37,],[4,11,-8,-9,-10,-11,17,18,11,18,18,18,43,18,18,18,]),'INT_TYPE':([0,3,],[5,5,]),'FLOAT_TYPE':([0,3,],[6,6,]),'BOOL_TYPE':([0,3,],[7,7,]),'CHAR_TYPE':([0,3,],[8,8,]),'$end':([1,14,35,50,],[0,-1,-7,-2,]),'EQUALS':([4,11,17,],[13,16,34,]),'SEMICOLON':([9,10,11,18,19,20,21,22,23,24,25,29,30,32,33,38,39,43,44,45,46,47,48,51,],[14,-3,-5,-25,35,-22,-24,-12,-13,-14,-15,-26,-27,-4,-6,-16,-17,-28,50,-21,-23,-18,-19,-20,]),'COMMA':([10,11,18,20,21,22,23,24,25,29,30,33,38,39,43,45,46,47,48,51,],[15,-5,-25,-22,-24,-12,-13,-14,-15,-26,-27,-6,-16,-17,-28,-21,-23,-18,-19,-20,]),'INTEGER':([13,16,26,27,28,34,36,37,],[22,22,22,22,40,22,22,22,]),'FLOAT':([13,16,26,27,28,34,36,37,42,],[23,23,23,23,41,23,23,23,49,]),'CHAR':([13,16,26,27,34,36,37,],[24,24,24,24,24,24,24,]),'BOOL':([13,16,26,27,34,36,37,],[25,25,25,25,25,25,25,]),'MINUS':([13,16,26,27,28,34,36,37,],[26,26,26,26,42,26,26,26,]),'PLUS':([13,16,26,27,34,36,37,],[27,27,27,27,27,27,27,]),'LPAREN':([13,16,26,27,34,36,37,],[28,28,28,28,28,28,28,]),'TRUE':([13,16,26,27,34,36,37,],[29,29,29,29,29,29,29,]),'FALSE':([13,16,26,27,34,36,37,],[30,30,30,30,30,30,30,]),'NOT':([13,16,26,27,34,36,37,],[31,31,31,31,31,31,31,]),'AND':([18,20,21,22,23,24,25,29,30,38,39,43,45,46,47,48,51,],[-25,37,-24,-12,-13,-14,-15,-26,-27,-16,-17,-28,37,-23,-18,-19,-20,]),'OR':([18,19,20,21,22,23,24,25,29,30,33,38,39,43,44,45,46,47,48,51,],[-25,36,-22,-24,-12,-13,-14,-15,-26,-27,36,-16,-17,-28,36,-21,-23,-18,-19,-20,]),'RPAREN':([40,41,49,],[47,48,51,]),}
+_lr_action_items = {'CONST':([0,],[3,]),'ID':([0,2,9,10,11,12,18,19,20,24,25,26,37,38,42,55,56,58,60,73,74,84,],[4,15,-8,-9,-10,-11,27,28,43,28,52,54,65,65,70,28,43,65,65,65,43,43,]),'INT_TYPE':([0,3,],[9,9,]),'FLOAT_TYPE':([0,3,],[10,10,]),'BOOL_TYPE':([0,3,],[11,11,]),'CHAR_TYPE':([0,3,],[12,12,]),'$end':([1,5,6,7,8,21,22,57,59,85,87,88,93,],[0,-23,-24,-25,-27,-1,-26,-7,-28,-30,-2,-29,-41,]),'EQUALS':([4,15,27,52,54,71,],[19,24,55,73,74,84,]),'LBRACKET':([4,15,28,54,65,],[20,23,56,75,56,]),'SEMICOLON':([13,14,15,16,17,28,29,30,31,32,33,34,35,36,40,41,43,45,46,47,49,50,51,52,53,54,61,62,63,64,65,66,70,72,76,77,79,80,81,82,89,90,91,92,],[21,22,-5,-3,-31,-36,57,59,-43,-13,-12,-14,-45,-15,-47,-48,-36,-37,-38,-39,-6,-34,-4,-5,-32,-33,-16,-12,-13,-14,-46,-17,-49,85,87,88,-42,-44,-18,-19,-40,-20,93,-35,]),'COMMA':([15,16,17,28,31,32,33,34,35,36,40,41,43,45,46,47,49,50,52,54,61,62,63,64,65,66,70,72,79,80,81,82,89,90,92,],[-5,25,26,-36,-43,-13,-12,-14,-45,-15,-47,-48,-36,-37,-38,-39,-6,-34,-5,-33,-16,-12,-13,-14,-46,-17,-49,-35,-42,-44,-18,-19,-40,-20,-35,]),'FLOAT':([19,20,24,37,38,39,55,56,58,60,69,73,74,84,],[32,45,32,63,63,68,32,45,63,63,83,63,45,45,]),'INTEGER':([19,20,23,24,37,38,39,55,56,58,60,73,74,75,84,],[33,46,48,33,62,62,67,33,46,62,62,62,46,86,46,]),'CHAR':([19,20,24,37,38,55,56,58,60,73,74,84,],[34,47,34,64,64,34,47,64,64,64,47,47,]),'BOOL':([19,24,37,38,55,58,60,73,],[36,36,36,36,36,36,36,36,]),'MINUS':([19,24,37,38,39,55,58,60,73,],[37,37,37,37,69,37,37,37,37,]),'PLUS':([19,24,37,38,55,58,60,73,],[38,38,38,38,38,38,38,38,]),'LPAREN':([19,24,37,38,55,58,60,73,],[39,39,39,39,39,39,39,39,]),'TRUE':([19,24,37,38,55,58,60,73,],[40,40,40,40,40,40,40,40,]),'FALSE':([19,24,37,38,55,58,60,73,],[41,41,41,41,41,41,41,41,]),'NOT':([19,24,37,38,55,58,60,73,],[42,42,42,42,42,42,42,42,]),'AND':([28,31,32,33,34,35,36,40,41,61,62,63,64,65,66,70,79,80,81,82,89,90,],[-46,60,-13,-12,-14,-45,-15,-47,-48,-16,-12,-13,-14,-46,-17,-49,60,-44,-18,-19,-40,-20,]),'OR':([28,29,31,32,33,34,35,36,40,41,49,61,62,63,64,65,66,70,76,79,80,81,82,89,90,],[-46,58,-43,-13,-12,-14,-45,-15,-47,-48,58,-16,-12,-13,-14,-46,-17,-49,58,-42,-44,-18,-19,-40,-20,]),'RBRACKET':([43,44,45,46,47,48,78,86,],[-36,71,-37,-38,-39,72,89,92,]),'RPAREN':([67,68,83,],[81,82,90,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'statement':([0,],[1,]),'type':([0,3,],[2,12,]),'declaration_list':([2,15,],[9,32,]),'declaration':([2,15,],[10,10,]),'expression':([13,16,34,],[19,33,44,]),'term':([13,16,34,36,],[20,20,20,45,]),'factor':([13,16,26,27,34,36,37,],[21,21,38,39,21,21,46,]),}
+_lr_goto_items = {'statement':([0,],[1,]),'type':([0,3,],[2,18,]),'simple_assignment':([0,],[5,]),'array_declarationTab':([0,],[6,]),'array_assignment':([0,],[7,]),'const_declarationTab':([0,],[8,]),'declaration_list':([2,25,],[13,51,]),'declarationTab_listTab':([2,26,],[14,53,]),'declaration':([2,25,],[16,16,]),'declarationTab':([2,26,],[17,17,]),'expression':([19,24,55,73,],[29,49,76,49,]),'expressionTab':([19,20,24,55,56,74,84,],[30,44,50,77,78,50,91,]),'term':([19,24,55,58,73,],[31,31,31,79,31,]),'factor':([19,24,37,38,55,58,60,73,],[35,35,61,66,35,35,80,35,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,32 +27,53 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> statement","S'",1,None,None,None),
-  ('statement -> type declaration_list SEMICOLON','statement',3,'p_statement_declaration','logic.py',168),
-  ('statement -> CONST type ID EQUALS expression SEMICOLON','statement',6,'p_statement_declaration','logic.py',169),
-  ('declaration_list -> declaration','declaration_list',1,'p_declaration_list','logic.py',203),
-  ('declaration_list -> declaration COMMA declaration_list','declaration_list',3,'p_declaration_list','logic.py',204),
-  ('declaration -> ID','declaration',1,'p_declaration','logic.py',214),
-  ('declaration -> ID EQUALS expression','declaration',3,'p_declaration','logic.py',215),
-  ('statement -> ID EQUALS expression SEMICOLON','statement',4,'p_statement_assignment','logic.py',224),
-  ('type -> INT_TYPE','type',1,'p_type','logic.py',233),
-  ('type -> FLOAT_TYPE','type',1,'p_type','logic.py',234),
-  ('type -> BOOL_TYPE','type',1,'p_type','logic.py',235),
-  ('type -> CHAR_TYPE','type',1,'p_type','logic.py',236),
-  ('factor -> INTEGER','factor',1,'p_factor_number','logic.py',240),
-  ('factor -> FLOAT','factor',1,'p_factor_number','logic.py',241),
-  ('factor -> CHAR','factor',1,'p_factor_number','logic.py',242),
-  ('factor -> BOOL','factor',1,'p_factor_number','logic.py',243),
-  ('factor -> MINUS factor','factor',2,'p_factor_number','logic.py',244),
-  ('factor -> PLUS factor','factor',2,'p_factor_number','logic.py',245),
-  ('factor -> LPAREN INTEGER RPAREN','factor',3,'p_factor_number','logic.py',246),
-  ('factor -> LPAREN FLOAT RPAREN','factor',3,'p_factor_number','logic.py',247),
-  ('factor -> LPAREN MINUS FLOAT RPAREN','factor',4,'p_factor_number','logic.py',248),
-  ('expression -> expression OR term','expression',3,'p_expression_el','logic.py',288),
-  ('expression -> term','expression',1,'p_expression_el','logic.py',289),
-  ('term -> term AND factor','term',3,'p_term_tl','logic.py',301),
-  ('term -> factor','term',1,'p_term_tl','logic.py',302),
-  ('factor -> ID','factor',1,'p_factor_fl','logic.py',312),
-  ('factor -> TRUE','factor',1,'p_factor_fl','logic.py',313),
-  ('factor -> FALSE','factor',1,'p_factor_fl','logic.py',314),
-  ('factor -> NOT ID','factor',2,'p_factor_fl','logic.py',315),
+  ('statement -> type declaration_list SEMICOLON','statement',3,'p_statement_declaration','main.py',168),
+  ('statement -> CONST type ID EQUALS expression SEMICOLON','statement',6,'p_statement_declaration','main.py',169),
+  ('declaration_list -> declaration','declaration_list',1,'p_declaration_list','main.py',203),
+  ('declaration_list -> declaration COMMA declaration_list','declaration_list',3,'p_declaration_list','main.py',204),
+  ('declaration -> ID','declaration',1,'p_declaration','main.py',214),
+  ('declaration -> ID EQUALS expression','declaration',3,'p_declaration','main.py',215),
+  ('statement -> ID EQUALS expression SEMICOLON','statement',4,'p_statement_assignment','main.py',224),
+  ('type -> INT_TYPE','type',1,'p_type','main.py',233),
+  ('type -> FLOAT_TYPE','type',1,'p_type','main.py',234),
+  ('type -> BOOL_TYPE','type',1,'p_type','main.py',235),
+  ('type -> CHAR_TYPE','type',1,'p_type','main.py',236),
+  ('factor -> INTEGER','factor',1,'p_factor_number','main.py',240),
+  ('factor -> FLOAT','factor',1,'p_factor_number','main.py',241),
+  ('factor -> CHAR','factor',1,'p_factor_number','main.py',242),
+  ('factor -> BOOL','factor',1,'p_factor_number','main.py',243),
+  ('factor -> MINUS factor','factor',2,'p_factor_number','main.py',244),
+  ('factor -> PLUS factor','factor',2,'p_factor_number','main.py',245),
+  ('factor -> LPAREN INTEGER RPAREN','factor',3,'p_factor_number','main.py',246),
+  ('factor -> LPAREN FLOAT RPAREN','factor',3,'p_factor_number','main.py',247),
+  ('factor -> LPAREN MINUS FLOAT RPAREN','factor',4,'p_factor_number','main.py',248),
+  ('statements -> statement','statements',1,'p_statements','main.py',269),
+  ('statements -> statement statements','statements',2,'p_statements','main.py',270),
+  ('statement -> simple_assignment','statement',1,'p_statement','main.py',277),
+  ('statement -> array_declarationTab','statement',1,'p_statement','main.py',278),
+  ('statement -> array_assignment','statement',1,'p_statement','main.py',279),
+  ('statement -> type declarationTab_listTab SEMICOLON','statement',3,'p_statement','main.py',280),
+  ('statement -> const_declarationTab','statement',1,'p_statement','main.py',281),
+  ('simple_assignment -> ID EQUALS expressionTab SEMICOLON','simple_assignment',4,'p_simple_assignment','main.py',284),
+  ('const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON','const_declarationTab',6,'p_const_declarationTab','main.py',299),
+  ('array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON','array_declarationTab',6,'p_array_declarationTab','main.py',305),
+  ('declarationTab_listTab -> declarationTab','declarationTab_listTab',1,'p_declarationTab_listTab','main.py',318),
+  ('declarationTab_listTab -> declarationTab COMMA declarationTab_listTab','declarationTab_listTab',3,'p_declarationTab_listTab','main.py',319),
+  ('declarationTab -> ID','declarationTab',1,'p_declarationTab','main.py',326),
+  ('declarationTab -> ID EQUALS expressionTab','declarationTab',3,'p_declarationTab','main.py',327),
+  ('declarationTab -> ID LBRACKET INTEGER RBRACKET','declarationTab',4,'p_declarationTab','main.py',328),
+  ('expressionTab -> ID','expressionTab',1,'p_expressionTab','main.py',341),
+  ('expressionTab -> FLOAT','expressionTab',1,'p_expressionTab','main.py',342),
+  ('expressionTab -> INTEGER','expressionTab',1,'p_expressionTab','main.py',343),
+  ('expressionTab -> CHAR','expressionTab',1,'p_expressionTab','main.py',344),
+  ('factor -> ID LBRACKET expressionTab RBRACKET','factor',4,'p_array_access','main.py',349),
+  ('array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON','array_assignment',7,'p_array_assignment','main.py',371),
+  ('expression -> expression OR term','expression',3,'p_expression_el','main.py',417),
+  ('expression -> term','expression',1,'p_expression_el','main.py',418),
+  ('term -> term AND factor','term',3,'p_term_tl','main.py',428),
+  ('term -> factor','term',1,'p_term_tl','main.py',429),
+  ('factor -> ID','factor',1,'p_factor_fl','main.py',439),
+  ('factor -> TRUE','factor',1,'p_factor_fl','main.py',440),
+  ('factor -> FALSE','factor',1,'p_factor_fl','main.py',441),
+  ('factor -> NOT ID','factor',2,'p_factor_fl','main.py',442),
 ]
