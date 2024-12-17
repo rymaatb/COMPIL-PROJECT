@@ -105,6 +105,7 @@ lexer = lex.lex()
 quadruples = []
 temp_count = 0
 label_counter = 0 
+quad_counter = 0
 # Function to generate a new temporary variable
 def new_temp():
     global temp_count
@@ -117,7 +118,13 @@ def new_label():
     global label_counter
     label_counter += 1
     return f"L{label_counter}"
+def increment_quad_counter(value):
+    global quad_counter  # Declare that you are modifying the global variable
+    quad_counter += value
 
+def get_counter():
+    """Returns the current value of the counter."""
+    return quad_counter  
 # *********************************************Symbol table *********************************
 symbol_table = []
 
@@ -411,15 +418,40 @@ def R0_dec(var_type, value):
 
 
 # ******************************LOGIC RULE****************************
-
+FL = {
+    "name": "",
+    "type": "",  
+}
+TL = {
+    "name": "",
+    "type": "",  
+}
+EL = {
+    "name": "",
+    "type": "",  
+}
 # EL rule: EL → EL or TL {R7} | TL{R8}
 def p_expression_el(t):
     '''expression : expression OR term
                   | term'''
     if len(t) == 4:
+        if t[1]==None:
+            print("1 inis")
+            print(EL['name'])
+            print(TL['name'])
+            print(FL['name'])
+            t[1]=TL['name']
+        if t[3]==None:
+            t[3]=TL['name']
         R7(t)   
+        if t[0]==None:
+            t[0]=EL['name']
+
+ 
+
 
     else:
+        R8(t)
         t[0] = t[1]
 
 
@@ -428,9 +460,15 @@ def p_term_tl(t):
     '''term : term AND factor 
             | factor'''
     if len(t) == 4:
+        if t[1]==None:
+            t[1]=TL['name']
+
         R5(t)
         
     else:
+        if t[1]=='None':
+            t[1]=FL['name']
+        R6(t)
         t[0] = t[1]
 
 
@@ -441,19 +479,26 @@ def p_factor_fl(t):
               | FALSE
               | NOT ID'''
     if len(t) == 2:
-        t[0] = t[1]
+        if t[1] == True :
+            R2(t)
+        elif t[1] ==False:
+            R3(t)
+        else:
+
+            R1(t)
+            t[0] = t[1]
+        
     else:
         R4(t)
-        true_label = new_label()
-        end_label = new_label()
-        tem = new_temp()
-        quadruples.append(('BNZ',true_label, t[2],None ))
-        quadruples.append(('=',1,None ,tem))
-        quadruples.append(('BR',end_label, None,None ))
-        quadruples.append(('=',0, None,tem ))
+        if t[0]==None:
+            t[0]=FL['name']
+
+        
+
 
 
 #************************************************** Routine****************************
+
 def raise_semantic_error(var_name, message):
     print(f"{var_name} {message}")
     raise SyntaxError(f"Semantic Error: Variable '{var_name}' {message}")
@@ -463,42 +508,86 @@ def check_boolean(var_name):
     if find_in_symbol_table(var_name,"global")==False:
         raise_semantic_error(var_name, "is not declared.")
     if  (findType_in_symbol_table(var_name))!="bool":
-        print(findType_in_symbol_table(var_name))
         raise_semantic_error(var_name, "must be of type boolean.")
 
-def R7(t):
-    if t[1] !=False and t[1] !=True:
-        check_boolean(t[1])  # Check the first operand 
-    if t[3] !=False and t[3] !=True:
-        check_boolean(t[3])  # Check the second operand
-    true_label = new_label()
-    true2_label = new_label()
-    end_label = new_label()
-    tem = new_temp()
-    quadruples.append(('BNZ',true_label, t[1],None ))
-    quadruples.append(('BNZ',true2_label, t[3],None ))
-    quadruples.append(('=',0,None ,tem))
-    quadruples.append(('BR',end_label, None,None ))
-    quadruples.append(('=',1, None,tem ))
-    
+def R1(t):
+        check_boolean(t[1])  # Check the first operand
+        FL['name']=t[1]
+        FL['type']=findType_in_symbol_table(t[1])
+
+
+def R2(t):
+    FL['name']=False
+    FL['type']='bool'
+def R3(t):
+    FL['name']=True
+    FL['type']='bool'
+
+
 def R4(t):
-    check_boolean(t[2])  
-    
-def R5(t):
-    if t[1] !=False and t[1] !=True:
-        check_boolean(t[1])  # Check the first operand 
-    if t[3] !=False and t[3] !=True:
-        check_boolean(t[3])  # Check the second operand
-    false_label = new_label()
-    false2_label = new_label()
-    end_label = new_label()
+    check_boolean(t[2])
     tem = new_temp()
-    quadruples.append(('BN',false_label, t[1],None ))
-    quadruples.append(('BN',false2_label, t[3],None ))
+    quadruples.append(('BNZ',get_counter() +3, t[2],None ))
+    increment_quad_counter(1) 
     quadruples.append(('=',1,None ,tem))
-    quadruples.append(('BR',end_label, None,None ))
-    quadruples.append(('=',0, None,tem ))
+    increment_quad_counter(1) 
+    quadruples.append(('BR',get_counter() +2, None,None ))
+    increment_quad_counter(1) 
+    quadruples.append(('=',0, None,tem ))  
+    increment_quad_counter(1)
+    FL['name']=tem
+    FL['type']='bool'
+
+
+
+def R5(t):
+
+    if( TL['type']=='' or FL['type']=='' or TL['type']=='bool' and FL['type']=='bool'):
+        tem = new_temp()
+        quadruples.append(('BZ',get_counter() +4, t[1],None ))
+        increment_quad_counter(1)   
+        quadruples.append(('BZ',get_counter() +3, t[3],None ))
+        increment_quad_counter(1)   
+        quadruples.append(('=',1,None ,tem))
+        increment_quad_counter(1)   
+        quadruples.append(('BR',get_counter() +2, None,None ))
+        increment_quad_counter(1)   
+        quadruples.append(('=',0, None,tem ))
+        increment_quad_counter(1)   
+        TL['name']=tem
+        TL['type']='bool'
+    else:
+        raise_semantic_error( TL['type'],"Incompatiblity of type.")
+
+
+  
+def R6(t):
+        FL['name']=FL['name']
+        FL['type']=FL['type']
+
     
+
+
+def R7(t):
+
+    tem = new_temp()
+    quadruples.append(('BNZ', get_counter() +4 , t[1],None ))
+    increment_quad_counter(1)   
+    quadruples.append(('BNZ', get_counter() + 3, t[3],None ))
+    increment_quad_counter(1)   
+    quadruples.append(('=',0,None ,tem))
+    increment_quad_counter(1)   
+    quadruples.append(('BR',get_counter() + 2, None,None ))
+    increment_quad_counter(1)   
+    quadruples.append(('=',1, None,tem ))
+    increment_quad_counter(1)  
+    EL['name']=tem
+    EL['type']='bool'
+
+def R8(t):
+        EL['name']=TL['name']
+        EL['type']=TL['type']
+
 
      
 # Build the parser
@@ -524,18 +613,17 @@ if __name__ == '__main__':
         # "FLOAT n = (+5.63) ;",
         # "CHAR j = 'i' ;",
         # "INTEGER c = -4  ;",
-        # "bool b = false ;",
-        # "bool a = true  ;",
-        # "bool m = false;",
+        "bool b = false ;",
+        "bool a = true  ;",
         # "bool n = b && a  ;",
-        # "bool f = false;",
-        # "bool z = f || a   ;",
+        "bool f = b || !a && !b;",
+        # "bool z = f || a && b ;",
         # " m = ! a;",
-        "INTEGER Matrix[3];"    ,
-        "FLOAT Ab[1] ;",
-        "Matrix[3]=5;",
-        "Matrix[2]=5;",
-        "INTEGER x =Matrix[2];"
+        # "INTEGER Matrix[3];"    ,
+        # "FLOAT Ab[1] ;",
+        # "Matrix[3]=5;",
+        # "Matrix[2]=5;",
+        # "INTEGER x =Matrix[2];"
     ]
     for stmt in expressions:
         print(f"Parsing statement: {stmt}")
@@ -543,7 +631,7 @@ if __name__ == '__main__':
         print("\nSymbol Table:")
         display_symbol_table()
         print("-" * 40)
-        quads = parse_statement(stmt)
-        for q in quads:
+        # quads = parse_statement(stmt)
+        for q in quadruples:
             print(q)
         print("-" * 30)
