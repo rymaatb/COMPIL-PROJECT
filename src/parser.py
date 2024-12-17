@@ -122,6 +122,7 @@ def update_symbol_table(name, value):
 
 
 
+
 def p_statements(t):
     '''statements : statement
                   | statement statements '''
@@ -132,25 +133,12 @@ def p_statements(t):
 def p_statement(t):
     '''statement : simple_assignment
                  | array_declaration
+                  | declaration_assignment 
                  | array_assignment
                  | type declaration_list SEMICOLON
                  | const_declaration'''
 
-def p_simple_assignment(t):
-    '''simple_assignment : ID EQUALS expression SEMICOLON'''
-    var_name = t[1]
-    expr_value = t[3]
-    expr_type = type(expr_value).__name__  # Déterminer le type de l'expression
 
-    # Ajout à la table des symboles
-    add_to_symbol_table(var_name, expr_type, "global", expr_value, "Affectation simple")
-    update_symbol_table(var_name, expr_value)
-
-    # Génère un quadruplet pour l'affectation
-    quadruples_list.append(('ASSIGN', expr_value, '-', var_name))
-    print(f"Quadruplet généré : {quadruples_list[-1]}")
-
-    t[0] = var_name  # Retourne le nom de la variable affectée
 
 
 
@@ -308,22 +296,16 @@ def p_factor_id(t):
     print(f"Error: Variable '{var_name}' not declared.")
     t[0] = 0
 
-
 def p_array_access(t):
     'factor : ID LBRACKET expression RBRACKET'
     var_name, index = t[1], t[3]
     for entry in symbol_table:
-        if entry[0] == var_name and isinstance(entry[4], list):  # Vérifie que c'est un tableau
+        if entry[0] == var_name and isinstance(entry[4], list):  # Vérifie si c'est un tableau
             if isinstance(index, int) and 0 <= index < len(entry[4]):
-                if entry[4][index] is None:  # Vérifie si la valeur est non initialisée
+                if entry[4][index] is None:
                     print(f"Avertissement : Accès à une valeur non initialisée dans '{var_name}[{index}]'.")
-                t[0] = entry[4][index]
-                print(f"Valeur récupérée : {t[0]} de {var_name}[{index}]")
-                 # Génère un quadruplet
-                temp_var = f'T{len(quadruples_list) + 1}'  # Génère une variable temporaire
-                quadruples_list.append(('SUBS', f'{var_name}[{index}]', '-', temp_var))
-                print(f"Quadruplet généré : {quadruples_list[-1]}")
-                t[0] = temp_var  # Retourne la variable temporaire
+                t[0] = ('ARRAY_ACCESS', var_name, index)  # Retourne les informations nécessaires pour l'affectation
+                print(f"Accès tableau détecté : {t[0]}")
                 return
             else:
                 print(f"Erreur : Indice hors limites pour '{var_name}'.")
@@ -333,15 +315,42 @@ def p_array_access(t):
     t[0] = None
 
 
+def p_variable_assignment(t):
+    '''simple_assignment : ID EQUALS expression SEMICOLON'''
+    var_name = t[1]
+    expr_value = t[3]  # Récupération de la partie droite de l'affectation
+
+    # Vérifie si expr_value est une case de tableau
+    if isinstance(expr_value, tuple) and len(expr_value) == 3 and expr_value[0] == 'ARRAY_ACCESS':
+        array_name, index = expr_value[1], expr_value[2]
+        expr_value = f"{array_name}[{index}]"  # Formater comme accès tableau
+        print(f"Accès tableau détecté : {expr_value}")
+    
+    # Génération du quadruplet
+    quadruple = ('=', expr_value, 'NONE', var_name)
+    quadruples_list.append(quadruple)
+    print(f"Quadruplet généré : {quadruple}")
+
+    # Mise à jour de la table des symboles
+    for entry in symbol_table:
+        if entry[0] == var_name:
+            entry[4] = expr_value
+            print(f"Variable '{var_name}' mise à jour avec : {expr_value}")
+            return
+    print(f"Erreur : Variable '{var_name}' non déclarée.")
+
+
 
 def p_array_assignment(t):
     'array_assignment : ID LBRACKET expression RBRACKET EQUALS expression SEMICOLON'
     var_name, index, value = t[1], t[3], t[6]
+
+    # Rechercher le tableau dans la table des symboles
     for entry in symbol_table:
         if entry[0] == var_name and isinstance(entry[4], list):  # Vérifie que c'est un tableau
             if isinstance(index, int) and 0 <= index < len(entry[4]):
-                # Vérifie la compatibilité des types
-                expected_type = entry[1]  # Type attendu
+                # Vérifie la compatibilité des types avant de procéder
+                expected_type = entry[1]  # Type attendu du tableau
                 if expected_type == 'INTEGER' and not isinstance(value, int):
                     print(f"Erreur : Type incorrect pour '{var_name}[{index}]'. Attendu : INTEGER, reçu : {type(value).__name__}.")
                     return
@@ -351,17 +360,42 @@ def p_array_assignment(t):
                 elif expected_type == 'CHAR' and not isinstance(value, str):
                     print(f"Erreur : Type incorrect pour '{var_name}[{index}]'. Attendu : CHAR, reçu : {type(value).__name__}.")
                     return
-                # Met à jour la valeur si tout est correct
+
+                # Mise à jour de la valeur dans le tableau
                 entry[4][index] = value
-                
-                print(f"Affectation de tableau : {var_name}[{index}] = {value}")
+
+                # Générer un quadruplet pour l'affectation
+                quadruple = ('=', value, 'NONE', f'{var_name}[{index}]')
+                quadruples_list.append(quadruple)
+                print(f"Quadruplet généré : {quadruple}")
                 print(f"Tableau '{var_name}' mis à jour : {entry[4]}")
-                
                 return
             else:
                 print(f"Erreur : Indice hors limites pour '{var_name}'.")
                 return
+
     print(f"Erreur : Tableau '{var_name}' non déclaré.")
+
+def p_declaration_assignment(t):
+    '''declaration_assignment : type ID EQUALS expression SEMICOLON'''
+    var_type, var_name, value = t[1], t[2], t[4]
+
+    # Vérifiez si la valeur est un accès à un tableau
+    if isinstance(value, tuple) and value[0] == 'ARRAY_ACCESS':  # Cas d'accès tableau
+        array_name, index = value[1], value[2]
+        value = f"{array_name}[{index}]"
+        print(f"Accès tableau détecté : {value}")
+
+    # Ajout à la table des symboles
+    add_to_symbol_table(var_name, var_type, "global", value, "Déclaration et affectation")
+    print(f"Variable déclarée : {var_name} avec valeur : {value}")
+
+    # Génération du quadruplet
+    quadruple = ('=', value, 'NONE', var_name)
+    quadruples_list.append(quadruple)
+    print(f"Quadruplet généré : {quadruple}")
+
+
 
 parser = yacc.yacc()
 
@@ -381,10 +415,10 @@ def display_symbol_table():
 
 
 expressions = [
- "INTEGER Matrix[3];"    ,
- "FLOAT Ab[1] ;",
- "Matrix[3]=5;",
- "X=Matrix[2];"
+ "INTEGER Matrix[3];",
+ "Matrix[2] = 2;",
+ " INTEGER X = Matrix[2];"
+ 
  ]
 for stmt in expressions:
     print(f"Parsing statement: {stmt}")
@@ -392,4 +426,7 @@ for stmt in expressions:
     print("-" * 40)
 
 
- 
+# Affichage des quadruplets
+print("\nQuadruplets générés :")
+for quad in quadruples_list:
+    print(quad)
