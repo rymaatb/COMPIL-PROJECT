@@ -402,15 +402,15 @@ def p_statements(t):
 
 #**********************************************************start of for loop*********************************************************************
 
-#  FOR(i =0 A :2 B :n C){ i=i+1 ;} D
 #'statement : FOR LPAREN initialisation A COLON step B COLON BorneSup C RPAREN block D'
 def p_statement_FORloop(t):
- # FOR(i =0 A :2 B :n C){ i=i+1 ;} D
+    #statement --> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block {D}
     'statement : FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block '
     t[0] = ('statement',t[3],t[5],t[7],t[9])
     D(t)
     
 def p_initialisation(t):
+    #initialisation --> ID EQUALS INT {A}
     'initialisation : ID EQUALS INT'
     if len(t) < 4:
         print('syntaxic error')
@@ -419,6 +419,7 @@ def p_initialisation(t):
      A(t)
 
 def p_step(t):
+    #step --> INT {B} | ID {B}
     '''step : INT
             | ID'''
     if isinstance(t[1],int):
@@ -439,6 +440,7 @@ def p_step(t):
          t[0] = 0   
 
 def p_BorneSup(t):
+    #BorneSup --> ID {C}
     'BorneSup : ID'
     var_name = t[1]
     for entry in symbol_table:
