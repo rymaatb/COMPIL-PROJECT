@@ -1,5 +1,6 @@
 import ply.lex as lex
 import ply.yacc as yacc
+import sys
 # to print a table 
 from tabulate import tabulate
 
@@ -368,84 +369,84 @@ def p_statement_if(t):
 
 
 
-
+# *********************************************Quadruplets *****************************************************
 quadruplets = []
+temp_count = 0
+label_counter = 0
 qc = 0
 sauve_BG = 0
-temp_count = 0
-step = 0
-
+step = 0 
+var_iter = None
 # Function to generate a new temporary variable
 def new_temp():
     global temp_count
     temp_name = f"t{temp_count}"
     temp_count += 1
     return temp_name
-t0=new_temp()
+
+def new_label():
+    """Generate a new label."""
+    global label_counter
+    label_counter += 1
+    return f"L{label_counter}"
 
 # Bloc de code entre accolades
-def p_block(t):
-    'block : LBRACE statements RBRACE'
-    t[0] = t[2]  # Le bloc contient une ou plusieurs instructions
 
 def p_statements(t):
     '''statements : statement
-                  | statement statements '''
+                  | statements statement  '''
     if len(t) == 2 :
         t[0] = [t[1]]
     else:
-        t[0] = [t[1]] + t[2]
+        t[0] = t[1] + [t[2]]
 
-#start of for loop
+#**********************************************************start of for loop*********************************************************************
 
+#  FOR(i =0 A :2 B :n C){ i=i+1 ;} D
+#'statement : FOR LPAREN initialisation A COLON step B COLON BorneSup C RPAREN block D'
+def p_statement_FORloop(t):
+ # FOR(i =0 A :2 B :n C){ i=i+1 ;} D
+    'statement : FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block '
+    t[0] = ('statement',t[3],t[5],t[7],t[9])
+    D(t)
+    
 def p_initialisation(t):
     'initialisation : ID EQUALS INT'
-    global quadruplets, qc,t0, sauve_BG,step
     if len(t) < 4:
         print('syntaxic error')
     else:
      t[0] = (t[1], t[3])
-     var_name = t[1]
-     update_symbol_table(var_name,t[3])
-     quadruplets.append((t_EQUALS,t[1],None,t0))
-     variable = t[1]
-     qc+=1
-     
+     A(t)
 
 def p_step(t):
     '''step : INT
             | ID'''
-    global quadruplets, qc, sauve_BG,step
     if isinstance(t[1],int):
         t[0] = t[1]
-        step = t[1]
+        B(t)
     elif isinstance(t[1],str):
         var_name = t[1]
         for entry in symbol_table:
          if entry[0] == var_name:  # entry[0] is the 'Name' field
             if entry[4] is not None:  # entry[4] is the 'Value' field
                 t[0] = entry[4]
-                step=t[0]
             else:
                 print(f"Error: Variable '{var_name}' not initialized.")
                 t[0] = 0
             return
     else:
          print(f"Error: Variable '{var_name}' not declared.")
-         t[0] = 0
+         t[0] = 0   
+
 def p_BorneSup(t):
     'BorneSup : ID'
-    global quadruplets, qc, sauve_BG,step
     var_name = t[1]
     for entry in symbol_table:
         if entry[0] == var_name:  # entry[0] is the 'Name' field
           if entry[1] == "int":
             if entry[4] is not None:  # entry[4] is the 'Value' field
-                
-                quadruplets.append(('BG',None,entry[4],t[0]))
                 t[0] = entry[4]
-                sauve_BG = qc
-                qc = qc +1
+                C(t)
             else:
                 print(f"Error: Variable '{var_name}' not initialized.")
                 t[0] = 0
@@ -455,35 +456,91 @@ def p_BorneSup(t):
         
     print(f"Error: Variable '{var_name}' not declared.")
     t[0] = 0   
-    
-def p_statement_FORloop(t):
- # FOR(i =0 A :2 B :n C){ i=i+1 ;} D
-    'statement : FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block A'
-    t[0] = ('statement',t[3],t[5],t[7],t[9],t[10])
 
-def p_A(t):
-    'A : epsilon'
-    A()
-
-# Règle pour epsilon
-def p_epsilon(t):
-    'epsilon :'
-    pass
-
-# Routine sémantique pour A
-def A():
-    global quadruplets, qc, t0, sauve_BG,step
-    # Générer l'incrémentation du compteur et le branchement
-    quadruplets.append((t_PLUS,t0,step,t0))
-    qc += 1
-    quadruplets.append(('BR',sauve_BG,None,None))
-    qc += 1
+def p_block(t):
+    'block : LBRACE statements RBRACE'
+    t[0] = t[2] 
    
-def p_error(p):
-    if p:
-        print(f"Syntax error at token {p.type}, line {p.lineno}")
+#************************************************** Routines********************************************
+
+# Routine semantique A : Initialisation de la variable de boucle
+def A(t):
+    global quadruplets, qc,var_iter
+    var_name = t[1]  # Nom de la variable
+    var_iter = var_name
+    var_value = t[3]  # Valeur initiale
+    update_symbol_table(var_name,var_value)
+    # Vérifier que la variable et la valeur initiale existent
+    if not isinstance(var_value, int):
+        raise_semantic_error(var_name, "a une valeur d'initialisation invalide.")
+    
+    # Générer le quadruplet d'initialisation
+    quadruplets.append(('=', var_value, None, var_name))
+    qc += 1
+    print(f"Routine A : Initialisation '{var_name}' = {var_value}")
+
+# Routine semantique B : Gestion du pas de la boucle
+def B(t):
+    global quadruplets, qc, step
+    step = t[1]  # Valeur du pas
+    if not isinstance(step, int) or step <= 0:
+        raise_semantic_error("step", "doit etre un entier positif non nul.")
+    
+    print(f"Routine B : Pas de la boucle valide : step = {step}")
+
+# Routine semantique C : Gestion de la borne superieure
+def C(t):
+    global quadruplets, qc, sauve_BG,step
+    if isinstance(t[1],str):
+        var_name = t[1]
+        for entry in symbol_table:
+         if entry[0] == var_name:  # entry[0] is the 'Name' field
+            if entry[4] is not None:  # entry[4] is the 'Value' field
+                t[0] = entry[4]
+                borne_sup = t[0]  # Valeur de la borne supérieure   
+                if not isinstance(borne_sup, int):
+                     raise_semantic_error("borne supérieure", "doit etre un entier valide.")
+               
+                # Sauvegarder l'étiquette de début de la boucle
+                sauve_BG = qc
+                # Générer la condition de comparaison
+                fin= new_label()
+                quadruplets.append(('BG',fin ,var_iter, var_name))
+                qc += 1
+                print(f"Routine C : Borne superieure validee : {step} < {borne_sup}")
+            else:
+                print(f"Error: Variable '{var_name}' not initialized.")
+                t[0] = 0
+            return
     else:
-        print("Syntax error at EOF")
+         print(f"Error: Variable '{var_name}' not declared.")
+         t[0] = 0   
+
+# Routine semantique D : Incrementation et branchement
+def D(t):
+    global quadruplets, qc, sauve_BG, step,var_iter
+    # Générer l'incrémentation
+    t0 = new_temp()
+    quadruplets.append(('+', var_iter, step, t0))
+    qc += 1
+    quadruplets.append(('=', t0, None, var_iter))
+    qc += 1
+
+    # Retourner au début de la boucle
+    statFor = new_label()
+    quadruplets.append(('BR', statFor, None, None))
+    qc += 1
+
+    print(f"Routine D : Incrementation et branchement de '{var_iter}' avec step = {step}")
+
+def raise_semantic_error(var_name, message):
+    print(f"{var_name} {message}")
+    raise SyntaxError(f"Semantic Error: Variable '{var_name}' {message}")
+
+
+#***************************************************************************************************************
+
+
 
 
 # Build the parser
@@ -508,21 +565,20 @@ if __name__ == '__main__':
         "DECLARATION{int i, n = 2;} INSTRUCTION{ for(i=0 : 1 : n){ i = i + 1;} }"
      ]
     stm = [
-        "int i, n = 3;",
-        "for(i =0 : 1 : n){ i = i + 1;}",
+        "int i, n = 9,j=0;",
+        "for(i =3 : 1 : n){ j = j + 1; j = j * 2;}",
     ]
-    for quad in quadruplets:
-          print(f"{quadruplets}")
-    print("-" * 40)
-    for line in stm:#prm:
-       print(f"Parsing: {line}")
+    with open("testFOR.txt","w") as file:
+        sys.stdout = file
+        for quad in quadruplets:
+              print(f"{quadruplets}")
+        print("-" * 40)
+        for line in stm:#prm:
+            print(f"Parsing: {line}")
        #parse_program(line)
-       parse_statement(line)
+            parse_statement(line)
        #parser_statement_debug(line)
-       #print("-" * 40)
-       display_symbol_table()
-       for quad in quadruplets:
-          print(f"{quad}")
-          #print("-" * 40)
-       print("-" * 40)
-    
+            display_symbol_table()
+            for quad in quadruplets:
+              print(f"{quad}")
+            print("-" * 40)

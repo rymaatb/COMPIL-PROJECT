@@ -48,16 +48,14 @@ Rule 35    factor -> ID
 Rule 36    statement -> IF LPAREN expression RPAREN block ELSE block
 Rule 37    statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block
 Rule 38    statement -> IF LPAREN expression RPAREN block
-Rule 39    block -> LBRACE statements RBRACE
-Rule 40    statements -> statement
-Rule 41    statements -> statement statements
+Rule 39    statements -> statement
+Rule 40    statements -> statements statement
+Rule 41    statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
 Rule 42    initialisation -> ID EQUALS INT
 Rule 43    step -> INT
 Rule 44    step -> ID
 Rule 45    BorneSup -> ID
-Rule 46    statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block A
-Rule 47    A -> epsilon
-Rule 48    epsilon -> <empty>
+Rule 46    block -> LBRACE statements RBRACE
 
 Terminals, with rules where they appear
 
@@ -66,7 +64,7 @@ BOOL                 : 15
 BOOL_TYPE            : 10
 CHAR                 : 14
 CHAR_TYPE            : 11
-COLON                : 46 46
+COLON                : 41 41
 COMMA                : 4
 COMMENT              : 
 CONST                : 2
@@ -77,7 +75,7 @@ EQ                   : 25
 EQUALS               : 2 6 7 42
 FLOAT                : 13
 FLOAT_TYPE           : 9
-FOR                  : 46
+FOR                  : 41
 GT                   : 28
 GTE                  : 30
 ID                   : 2 5 6 7 35 42 44 45
@@ -85,8 +83,8 @@ IF                   : 36 37 37 38
 INSTRUCTION          : 
 INT                  : 12 42 43
 INT_TYPE             : 8
-LBRACE               : 39
-LPAREN               : 32 36 37 37 38 46
+LBRACE               : 46
+LPAREN               : 32 36 37 37 38 41
 LT                   : 27
 LTE                  : 29
 MINUS                : 17
@@ -96,27 +94,25 @@ NOT                  : 31
 NUMBER               : 22 33
 OR                   : 23
 PLUS                 : 16
-RBRACE               : 39
-RPAREN               : 32 36 37 37 38 46
+RBRACE               : 46
+RPAREN               : 32 36 37 37 38 41
 SEMICOLON            : 1 2 7
 VAR_GLOBAL           : 
 error                : 
 
 Nonterminals, with rules where they appear
 
-A                    : 46
-BorneSup             : 46
-block                : 36 36 37 37 37 38 46
+BorneSup             : 41
+block                : 36 36 37 37 37 38 41
 comparison           : 34
 declaration          : 3 4
 declaration_list     : 1 4
-epsilon              : 47
 expression           : 2 6 7 16 17 23 23 24 24 25 25 26 26 27 27 28 28 29 29 30 30 31 32 36 37 37 38
 factor               : 18 19 21
-initialisation       : 46
-statement            : 40 41 0
-statements           : 39 41
-step                 : 46
+initialisation       : 41
+statement            : 39 40 0
+statements           : 40 46
+step                 : 41
 term                 : 16 17 18 19 20
 type                 : 1 2
 
@@ -131,7 +127,7 @@ state 0
     (36) statement -> . IF LPAREN expression RPAREN block ELSE block
     (37) statement -> . IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block
     (38) statement -> . IF LPAREN expression RPAREN block
-    (46) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block A
+    (41) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
     (8) type -> . INT_TYPE
     (9) type -> . FLOAT_TYPE
     (10) type -> . BOOL_TYPE
@@ -201,7 +197,7 @@ state 5
 
 state 6
 
-    (46) statement -> FOR . LPAREN initialisation COLON step COLON BorneSup RPAREN block A
+    (41) statement -> FOR . LPAREN initialisation COLON step COLON BorneSup RPAREN block
 
     LPAREN          shift and go to state 17
 
@@ -355,7 +351,7 @@ state 16
 
 state 17
 
-    (46) statement -> FOR LPAREN . initialisation COLON step COLON BorneSup RPAREN block A
+    (41) statement -> FOR LPAREN . initialisation COLON step COLON BorneSup RPAREN block
     (42) initialisation -> . ID EQUALS INT
 
     ID              shift and go to state 36
@@ -367,6 +363,7 @@ state 18
     (1) statement -> type declaration_list SEMICOLON .
 
     $end            reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
+    RBRACE          reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
     CONST           reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
     ID              reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
     IF              reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
@@ -375,7 +372,6 @@ state 18
     FLOAT_TYPE      reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
     BOOL_TYPE       reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
     CHAR_TYPE       reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
-    RBRACE          reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
 
 
 state 19
@@ -805,7 +801,7 @@ state 34
 
 state 35
 
-    (46) statement -> FOR LPAREN initialisation . COLON step COLON BorneSup RPAREN block A
+    (41) statement -> FOR LPAREN initialisation . COLON step COLON BorneSup RPAREN block
 
     COLON           shift and go to state 56
 
@@ -899,6 +895,7 @@ state 40
     (7) statement -> ID EQUALS expression SEMICOLON .
 
     $end            reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+    RBRACE          reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     CONST           reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     ID              reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     IF              reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
@@ -907,7 +904,6 @@ state 40
     FLOAT_TYPE      reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     BOOL_TYPE       reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     CHAR_TYPE       reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
-    RBRACE          reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
 
 
 state 41
@@ -1432,7 +1428,7 @@ state 55
     (36) statement -> IF LPAREN expression RPAREN . block ELSE block
     (37) statement -> IF LPAREN expression RPAREN . block ELSE IF LPAREN expression RPAREN block ELSE block
     (38) statement -> IF LPAREN expression RPAREN . block
-    (39) block -> . LBRACE statements RBRACE
+    (46) block -> . LBRACE statements RBRACE
 
     LBRACE          shift and go to state 73
 
@@ -1440,7 +1436,7 @@ state 55
 
 state 56
 
-    (46) statement -> FOR LPAREN initialisation COLON . step COLON BorneSup RPAREN block A
+    (41) statement -> FOR LPAREN initialisation COLON . step COLON BorneSup RPAREN block
     (43) step -> . INT
     (44) step -> . ID
 
@@ -2000,6 +1996,7 @@ state 72
 
     ELSE            shift and go to state 79
     $end            reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
+    RBRACE          reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
     CONST           reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
     ID              reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
     IF              reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
@@ -2008,21 +2005,20 @@ state 72
     FLOAT_TYPE      reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
     BOOL_TYPE       reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
     CHAR_TYPE       reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
-    RBRACE          reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
 
 
 state 73
 
-    (39) block -> LBRACE . statements RBRACE
-    (40) statements -> . statement
-    (41) statements -> . statement statements
+    (46) block -> LBRACE . statements RBRACE
+    (39) statements -> . statement
+    (40) statements -> . statements statement
     (1) statement -> . type declaration_list SEMICOLON
     (2) statement -> . CONST type ID EQUALS expression SEMICOLON
     (7) statement -> . ID EQUALS expression SEMICOLON
     (36) statement -> . IF LPAREN expression RPAREN block ELSE block
     (37) statement -> . IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block
     (38) statement -> . IF LPAREN expression RPAREN block
-    (46) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block A
+    (41) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
     (8) type -> . INT_TYPE
     (9) type -> . FLOAT_TYPE
     (10) type -> . BOOL_TYPE
@@ -2043,7 +2039,7 @@ state 73
 
 state 74
 
-    (46) statement -> FOR LPAREN initialisation COLON step . COLON BorneSup RPAREN block A
+    (41) statement -> FOR LPAREN initialisation COLON step . COLON BorneSup RPAREN block
 
     COLON           shift and go to state 82
 
@@ -2074,6 +2070,7 @@ state 78
     (2) statement -> CONST type ID EQUALS expression SEMICOLON .
 
     $end            reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
+    RBRACE          reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
     CONST           reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
     ID              reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
     IF              reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
@@ -2082,14 +2079,13 @@ state 78
     FLOAT_TYPE      reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
     BOOL_TYPE       reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
     CHAR_TYPE       reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
-    RBRACE          reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
 
 
 state 79
 
     (36) statement -> IF LPAREN expression RPAREN block ELSE . block
     (37) statement -> IF LPAREN expression RPAREN block ELSE . IF LPAREN expression RPAREN block ELSE block
-    (39) block -> . LBRACE statements RBRACE
+    (46) block -> . LBRACE statements RBRACE
 
     IF              shift and go to state 83
     LBRACE          shift and go to state 73
@@ -2098,30 +2094,21 @@ state 79
 
 state 80
 
-    (39) block -> LBRACE statements . RBRACE
-
-    RBRACE          shift and go to state 85
-
-
-state 81
-
-    (40) statements -> statement .
-    (41) statements -> statement . statements
-    (40) statements -> . statement
-    (41) statements -> . statement statements
+    (46) block -> LBRACE statements . RBRACE
+    (40) statements -> statements . statement
     (1) statement -> . type declaration_list SEMICOLON
     (2) statement -> . CONST type ID EQUALS expression SEMICOLON
     (7) statement -> . ID EQUALS expression SEMICOLON
     (36) statement -> . IF LPAREN expression RPAREN block ELSE block
     (37) statement -> . IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block
     (38) statement -> . IF LPAREN expression RPAREN block
-    (46) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block A
+    (41) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
     (8) type -> . INT_TYPE
     (9) type -> . FLOAT_TYPE
     (10) type -> . BOOL_TYPE
     (11) type -> . CHAR_TYPE
 
-    RBRACE          reduce using rule 40 (statements -> statement .)
+    RBRACE          shift and go to state 85
     CONST           shift and go to state 3
     ID              shift and go to state 4
     IF              shift and go to state 5
@@ -2131,13 +2118,27 @@ state 81
     BOOL_TYPE       shift and go to state 9
     CHAR_TYPE       shift and go to state 10
 
-    statement                      shift and go to state 81
-    statements                     shift and go to state 86
+    statement                      shift and go to state 86
     type                           shift and go to state 2
+
+state 81
+
+    (39) statements -> statement .
+
+    RBRACE          reduce using rule 39 (statements -> statement .)
+    CONST           reduce using rule 39 (statements -> statement .)
+    ID              reduce using rule 39 (statements -> statement .)
+    IF              reduce using rule 39 (statements -> statement .)
+    FOR             reduce using rule 39 (statements -> statement .)
+    INT_TYPE        reduce using rule 39 (statements -> statement .)
+    FLOAT_TYPE      reduce using rule 39 (statements -> statement .)
+    BOOL_TYPE       reduce using rule 39 (statements -> statement .)
+    CHAR_TYPE       reduce using rule 39 (statements -> statement .)
+
 
 state 82
 
-    (46) statement -> FOR LPAREN initialisation COLON step COLON . BorneSup RPAREN block A
+    (41) statement -> FOR LPAREN initialisation COLON step COLON . BorneSup RPAREN block
     (45) BorneSup -> . ID
 
     ID              shift and go to state 88
@@ -2156,6 +2157,7 @@ state 84
     (36) statement -> IF LPAREN expression RPAREN block ELSE block .
 
     $end            reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
+    RBRACE          reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
     CONST           reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
     ID              reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
     IF              reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
@@ -2164,36 +2166,43 @@ state 84
     FLOAT_TYPE      reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
     BOOL_TYPE       reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
     CHAR_TYPE       reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
-    RBRACE          reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
 
 
 state 85
 
-    (39) block -> LBRACE statements RBRACE .
+    (46) block -> LBRACE statements RBRACE .
 
-    ELSE            reduce using rule 39 (block -> LBRACE statements RBRACE .)
-    $end            reduce using rule 39 (block -> LBRACE statements RBRACE .)
-    CONST           reduce using rule 39 (block -> LBRACE statements RBRACE .)
-    ID              reduce using rule 39 (block -> LBRACE statements RBRACE .)
-    IF              reduce using rule 39 (block -> LBRACE statements RBRACE .)
-    FOR             reduce using rule 39 (block -> LBRACE statements RBRACE .)
-    INT_TYPE        reduce using rule 39 (block -> LBRACE statements RBRACE .)
-    FLOAT_TYPE      reduce using rule 39 (block -> LBRACE statements RBRACE .)
-    BOOL_TYPE       reduce using rule 39 (block -> LBRACE statements RBRACE .)
-    CHAR_TYPE       reduce using rule 39 (block -> LBRACE statements RBRACE .)
-    RBRACE          reduce using rule 39 (block -> LBRACE statements RBRACE .)
+    ELSE            reduce using rule 46 (block -> LBRACE statements RBRACE .)
+    $end            reduce using rule 46 (block -> LBRACE statements RBRACE .)
+    RBRACE          reduce using rule 46 (block -> LBRACE statements RBRACE .)
+    CONST           reduce using rule 46 (block -> LBRACE statements RBRACE .)
+    ID              reduce using rule 46 (block -> LBRACE statements RBRACE .)
+    IF              reduce using rule 46 (block -> LBRACE statements RBRACE .)
+    FOR             reduce using rule 46 (block -> LBRACE statements RBRACE .)
+    INT_TYPE        reduce using rule 46 (block -> LBRACE statements RBRACE .)
+    FLOAT_TYPE      reduce using rule 46 (block -> LBRACE statements RBRACE .)
+    BOOL_TYPE       reduce using rule 46 (block -> LBRACE statements RBRACE .)
+    CHAR_TYPE       reduce using rule 46 (block -> LBRACE statements RBRACE .)
 
 
 state 86
 
-    (41) statements -> statement statements .
+    (40) statements -> statements statement .
 
-    RBRACE          reduce using rule 41 (statements -> statement statements .)
+    RBRACE          reduce using rule 40 (statements -> statements statement .)
+    CONST           reduce using rule 40 (statements -> statements statement .)
+    ID              reduce using rule 40 (statements -> statements statement .)
+    IF              reduce using rule 40 (statements -> statements statement .)
+    FOR             reduce using rule 40 (statements -> statements statement .)
+    INT_TYPE        reduce using rule 40 (statements -> statements statement .)
+    FLOAT_TYPE      reduce using rule 40 (statements -> statements statement .)
+    BOOL_TYPE       reduce using rule 40 (statements -> statements statement .)
+    CHAR_TYPE       reduce using rule 40 (statements -> statements statement .)
 
 
 state 87
 
-    (46) statement -> FOR LPAREN initialisation COLON step COLON BorneSup . RPAREN block A
+    (41) statement -> FOR LPAREN initialisation COLON step COLON BorneSup . RPAREN block
 
     RPAREN          shift and go to state 90
 
@@ -2249,8 +2258,8 @@ state 89
 
 state 90
 
-    (46) statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN . block A
-    (39) block -> . LBRACE statements RBRACE
+    (41) statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN . block
+    (46) block -> . LBRACE statements RBRACE
 
     LBRACE          shift and go to state 73
 
@@ -2285,86 +2294,51 @@ state 91
 
 state 92
 
-    (46) statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block . A
-    (47) A -> . epsilon
-    (48) epsilon -> .
+    (41) statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .
 
-    $end            reduce using rule 48 (epsilon -> .)
-    CONST           reduce using rule 48 (epsilon -> .)
-    ID              reduce using rule 48 (epsilon -> .)
-    IF              reduce using rule 48 (epsilon -> .)
-    FOR             reduce using rule 48 (epsilon -> .)
-    INT_TYPE        reduce using rule 48 (epsilon -> .)
-    FLOAT_TYPE      reduce using rule 48 (epsilon -> .)
-    BOOL_TYPE       reduce using rule 48 (epsilon -> .)
-    CHAR_TYPE       reduce using rule 48 (epsilon -> .)
-    RBRACE          reduce using rule 48 (epsilon -> .)
+    $end            reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    RBRACE          reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    CONST           reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    ID              reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    IF              reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    FOR             reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    INT_TYPE        reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    FLOAT_TYPE      reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    BOOL_TYPE       reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    CHAR_TYPE       reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
 
-    A                              shift and go to state 94
-    epsilon                        shift and go to state 95
 
 state 93
 
     (37) statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN . block ELSE block
-    (39) block -> . LBRACE statements RBRACE
+    (46) block -> . LBRACE statements RBRACE
+
+    LBRACE          shift and go to state 73
+
+    block                          shift and go to state 94
+
+state 94
+
+    (37) statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block . ELSE block
+
+    ELSE            shift and go to state 95
+
+
+state 95
+
+    (37) statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE . block
+    (46) block -> . LBRACE statements RBRACE
 
     LBRACE          shift and go to state 73
 
     block                          shift and go to state 96
 
-state 94
-
-    (46) statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block A .
-
-    $end            reduce using rule 46 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block A .)
-    CONST           reduce using rule 46 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block A .)
-    ID              reduce using rule 46 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block A .)
-    IF              reduce using rule 46 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block A .)
-    FOR             reduce using rule 46 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block A .)
-    INT_TYPE        reduce using rule 46 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block A .)
-    FLOAT_TYPE      reduce using rule 46 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block A .)
-    BOOL_TYPE       reduce using rule 46 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block A .)
-    CHAR_TYPE       reduce using rule 46 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block A .)
-    RBRACE          reduce using rule 46 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block A .)
-
-
-state 95
-
-    (47) A -> epsilon .
-
-    $end            reduce using rule 47 (A -> epsilon .)
-    CONST           reduce using rule 47 (A -> epsilon .)
-    ID              reduce using rule 47 (A -> epsilon .)
-    IF              reduce using rule 47 (A -> epsilon .)
-    FOR             reduce using rule 47 (A -> epsilon .)
-    INT_TYPE        reduce using rule 47 (A -> epsilon .)
-    FLOAT_TYPE      reduce using rule 47 (A -> epsilon .)
-    BOOL_TYPE       reduce using rule 47 (A -> epsilon .)
-    CHAR_TYPE       reduce using rule 47 (A -> epsilon .)
-    RBRACE          reduce using rule 47 (A -> epsilon .)
-
-
 state 96
-
-    (37) statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block . ELSE block
-
-    ELSE            shift and go to state 97
-
-
-state 97
-
-    (37) statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE . block
-    (39) block -> . LBRACE statements RBRACE
-
-    LBRACE          shift and go to state 73
-
-    block                          shift and go to state 98
-
-state 98
 
     (37) statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .
 
     $end            reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
+    RBRACE          reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
     CONST           reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
     ID              reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
     IF              reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
@@ -2373,7 +2347,6 @@ state 98
     FLOAT_TYPE      reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
     BOOL_TYPE       reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
     CHAR_TYPE       reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
-    RBRACE          reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
 
 WARNING: 
 WARNING: Conflicts:
