@@ -293,8 +293,8 @@ def p_statements(t):
         t[0] = [t[1]] + t[2]
 
 def p_statement(t):
-    '''statement : simple_assignment
-                 | array_declarationTab
+    '''statement : array_declarationTab 
+                 
                    | declaration_assignment 
                  | array_assignment
                  | type declarationTab_listTab SEMICOLON
@@ -428,36 +428,7 @@ def p_declaration_assignment(t):
 
 
 
-def p_variable_assignment(t):
-    '''simple_assignment : ID EQUALS expression SEMICOLON'''
-    var_name = t[1]
-    '''declaration_assignment : type ID EQUALS expression SEMICOLON'''
-    var_type, var_name, value = t[1], t[2], t[4]
-
-    # Si la valeur est un accès tableau
-    if isinstance(value, tuple) and value[0] == 'ARRAY_ACCESS':  # Vérifie si c'est une case tableau
-        array_name, index = value[1], value[2]
-        source = f"{array_name}[{index}]"  # Format pour le quadruplet
-        
-        # Obtenir la valeur réelle de la case tableau
-        for entry in symbol_table:
-            if entry[0] == array_name and isinstance(entry[4], list):  # Vérifie que c'est un tableau
-                if isinstance(index, int) and 0 <= index < len(entry[4]):
-                    value = entry[4][index]  # Récupère la valeur réelle
-                    break
-        print(f"Accès tableau détecté : {source} avec valeur réelle : {value}")
-    else:
-        source = value  # Si ce n'est pas un tableau, la source est l'expression elle-même
-
-    # Ajout à la table des symboles
-    add_to_symbol_table(var_name, var_type, "global", value, "Déclaration et affectation")
-    print(f"Variable déclarée : {var_name} avec valeur : {value}")
-
-    # Génération du quadruplet
-    quadruple = ('=', source, 'NONE', var_name)
-    quadruples.append(quadruple)
-    print(f"Quadruplet généré : {quadruple}")
-
+   
 # END of var declaration
 
 # ****************************Routine to verify compatiblity ************
