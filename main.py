@@ -276,24 +276,10 @@ def p_statements(t):
 def p_statement(t):
     '''statement : simple_assignment
                  | array_declarationTab
+                   | declaration_assignment 
                  | array_assignment
                  | type declarationTab_listTab SEMICOLON
                  | const_declarationTab'''
-
-def p_simple_assignment(t):
-    '''simple_assignment : ID EQUALS expressionTab SEMICOLON'''
-    var_name = t[1]
-    expr_value = t[3]
-    expr_type = type(expr_value).__name__  # Déterminer le type de l'expressionTab
-
-    # Ajout à la table des symboles
-    add_to_symbol_table(var_name, expr_type, "global", expr_value, "Affectation simple")
-    update_symbol_table(var_name, expr_value)
-
-    # Génère un quadruplet pour l'affectation
-    quadruples.append(('ASSIGN', expr_value, '-', var_name))
-
-    t[0] = var_name  # Retourne le nom de la variable affectée
 
 def p_const_declarationTab(t):
     '''const_declarationTab : CONST type ID EQUALS expressionTab SEMICOLON'''
@@ -346,26 +332,52 @@ def p_expressionTab(t):
     t[0] = t[1]
 
 def p_array_access(t):
-    'factor : ID LBRACKET expressionTab RBRACKET'
+    '''factor : ID LBRACKET expressionTab RBRACKET'''
     var_name, index = t[1], t[3]
+    
     for entry in symbol_table:
-        if entry[0] == var_name and isinstance(entry[4], list):  # Vérifie que c'est un tableau
-            if isinstance(index, int) and 0 <= index < len(entry[4]):
-                if entry[4][index] is None:  # Vérifie si la valeur est non initialisée
-                    print(f"Avertissement : Accès à une valeur non initialisée dans '{var_name}[{index}]'.")
-                t[0] = entry[4][index]
-                value = get_variable_value(var_name)[index]
-                 # Génère un quadruplet
-                temp_var = new_temp();
-                quadruples.append(('=', f'{var_name}[{index}]', value, temp_var))
-                t[0] = temp_var  # Retourne la variable temporaire
+        if entry[0] == var_name and isinstance(entry[4], list):  # Vérifier si c'est un tableau
+            if 0 <= index < len(entry[4]):  # Vérifier l'indice
+                value = entry[4][index]  # Récupérer la valeur réelle
+                t[0] = value  # Mettre la valeur réelle (et non un tuple)
+                print(f"Accès tableau détecté : {var_name}[{index}] = {value}")
                 return
             else:
                 print(f"Erreur : Indice hors limites pour '{var_name}'.")
-                t[0] = None
                 return
-    print(f"Erreur : Tableau '{var_name}' non déclaré.")
+    print(f"Erreur : Tableau '{var_name}' non déclaré ou accès non valide.")
     t[0] = None
+
+
+def p_variable_assignment_with_array_access(t):
+    '''simple_assignment : ID EQUALS array_access SEMICOLON'''
+    
+    var_name = t[1]  # La variable à gauche de l'affectation (X)
+    expr_value = t[3]  # La valeur à droite de l'affectation (M[2])
+    
+    # On appelle la fonction p_array_access pour récupérer la valeur de l'élément du tableau
+    p_array_access(expr_value)  # Cette fonction modifie t[0] avec la valeur du tableau si l'accès est valide
+    
+    # Vérification si l'accès au tableau a été effectué correctement
+    if expr_value[0] is not None:
+        value_to_assign = expr_value[0]  # La valeur récupérée du tableau
+        print(f"Affectation : {var_name} = {value_to_assign}")
+        
+        # Générer le quadruplet pour l'affectation
+        quadruplet = ('=', value_to_assign, 'NONE', var_name)
+        quadruples.append(quadruplet)
+        print(f"Quadruplet généré : {quadruplet}")
+        
+        # Mettre à jour la table des symboles avec la valeur de l'assignation
+        for entry in symbol_table:
+            if entry[0] == var_name:
+                entry[4] = value_to_assign  # Met à jour la variable avec la valeur du tableau
+                print(f"Variable '{var_name}' mise à jour avec : {value_to_assign}")
+                return
+        print(f"Erreur : Variable '{var_name}' non déclarée.")
+    else:
+        print(f"Erreur : Expression '{expr_value}' n'est pas un accès valide à un tableau.")
+
 
 def p_array_assignment(t):
     'array_assignment : ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON'
@@ -394,6 +406,26 @@ def p_array_assignment(t):
                 print(f"Erreur : Indice hors limites pour '{var_name}'.")
                 return
     print(f"Erreur : Tableau '{var_name}' non déclaré.")
+
+def p_declaration_assignment(t):
+    '''declaration_assignment : type ID EQUALS expressionTab SEMICOLON'''
+    var_type, var_name, value = t[1], t[2], t[4]
+
+    # Vérifiez si la valeur est un accès à un tableau
+    if isinstance(value, tuple) and value[0] == 'ARRAY_ACCESS':  # Cas d'accès tableau
+        array_name, index = value[1], value[2]
+        value = f"{array_name}[{index}]"
+        print(f"Accès tableau détecté : {value}")
+
+    # Ajout à la table des symboles
+    add_to_symbol_table(var_name, var_type, "global", value, "Déclaration et affectation")
+    print(f"Variable déclarée : {var_name} avec valeur : {value}")
+
+    # Génération du quadruplet
+    quadruple = ('=', value, 'NONE', var_name)
+    quadruples.append(quadruple)
+    print(f"Quadruplet généré : {quadruple}")
+
 
 # END of var declaration
 
@@ -531,11 +563,10 @@ if __name__ == '__main__':
         # "bool f = false;",
         # "bool z = f || a   ;",
         # " m = ! a;",
-        "INTEGER Matrix[3];"    ,
-        "FLOAT Ab[1] ;",
-        "Matrix[3]=5;",
-        "Matrix[2]=5;",
-        "INTEGER x =Matrix[2];"
+         "INTEGER Matrix[3];",
+        "Matrix[2] = 2;",
+        " INTEGER X = Matrix[2];"
+ 
     ]
     for stmt in expressions:
         print(f"Parsing statement: {stmt}")
