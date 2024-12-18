@@ -180,40 +180,57 @@ def update_symbol_table(name, value):
 def p_statement_declaration(t):
     '''statement : type declaration_list SEMICOLON
                  | CONST type ID EQUALS expression SEMICOLON'''
-    scope = "global"  
-    
+    scope = "global"  # Par défaut, le scope est global
+
     try:
         if t[1] == 'const':
-            # Constant declaration
-            var_type = t[2]
-            var_name = t[3]
-            value = t[5]
-             # Convert integer to float if the type is FLOAT because Py consider -nb as integer
-            if var_type == 'FLOAT' and isinstance(value, int):
-                value = float(value)
-                
+            # Déclaration de constante
+            var_type, var_name, value = t[2], t[3], t[5]
+
             # Type checking
             if not R0_dec(var_type, value):
-
-                raise SyntaxError(f" Type mismatch: Cannot assign value '{value}' to constant of type '{var_type}' at lign'{get_line()}'.")
+                raise SyntaxError(f"Type mismatch: Cannot assign value '{value}' to constant of type '{var_type}' at line {get_line()}.")
 
             add_to_symbol_table(var_name, var_type, scope, value, "constant")
+            print(f"Constante déclarée : {var_name} avec valeur : {value}")
+
         else:
-            # Multiple variable declarations
+            # Déclaration de variables multiples
             var_type = t[1]
             for var_name, value in t[2]:
-                # Convert integer to float if the type is FLOAT
-                if var_type == 'FLOAT' and isinstance(value, int):
-                    value = float(value)
-                if var_type=='bool' and isinstance(value, str) and value.startswith("t"):
-                    print("") # si on a un temporaire on fait l'affectation son verifier 
-                elif value is not None and not R0_dec(var_type, value):
+                if isinstance(value, tuple) and value[0] == 'ARRAY_ACCESS':  # Vérifie l'accès tableau
+                    array_name, index = value[1], value[2]
+                    source = f"{array_name}[{index}]"
 
-                    raise SyntaxError(f"Type mismatch: Cannot assign value '{value}' to variable '{var_name}' of type '{var_type}' at lign'{get_line()}.")
+                    # Obtenir la valeur réelle de la case tableau
+                    for entry in symbol_table:
+                        if entry[0] == array_name and isinstance(entry[4], list):  # Vérifie que c'est bien un tableau
+                            if isinstance(index, int) and 0 <= index < len(entry[4]):
+                                value = entry[4][index]  # Récupère la valeur réelle
+                                break
+                    else:
+                        raise SyntaxError(f"Index '{index}' out of bounds for array '{array_name}' at line {get_line()}.")
+
+                    print(f"Accès tableau détecté : {source} avec valeur réelle : {value}")
+                else:
+                    source = value  # Si ce n'est pas un tableau, on traite l'expression comme source directe
+
+                # Vérification du type
+                if value is not None and not R0_dec(var_type, value):
+                    raise SyntaxError(f"Type mismatch: Cannot assign value '{value}' to variable '{var_name}' of type '{var_type}' at line {get_line()}.")
+
+                # Ajout à la table des symboles
                 add_to_symbol_table(var_name, var_type, scope, value)
+                print(f"Variable déclarée : {var_name} avec valeur : {value}")
+
+                # Génération du quadruplet
+                quadruple = ('=', source, 'NONE', var_name)
+                quadruples.append(quadruple)
+                print(f"Quadruplet généré : {quadruple}")
+
     except SyntaxError as e:
-        print(f"Error: {e}")
-        sys.exit(1)  # Stops execution of the program on error
+        print(f"Erreur : {e}")
+        sys.exit(1)  # Arrête l'exécution en cas d'erreur
 
 # int a, b = value, c;
 def p_declaration_list(t):
@@ -240,10 +257,46 @@ def p_declaration(t):
 
 # updating variable , ID= exp(arth or logic or comparison);
 def p_statement_assignment(t):
-    'statement : ID EQUALS expression SEMICOLON'
-    var_name = t[1]
-    # quadruples.append(('=', var_name, None, t[1]))  
-    update_symbol_table(var_name, t[3])
+    '''statement : ID EQUALS expression SEMICOLON'''
+    
+    var_name = t[1]  # Le nom de la variable
+    expression_value = t[3]  # La valeur ou l'expression du côté droit
+
+    # Cas 1: L'expression est un simple identifiant (variable)
+    if not isinstance(expression_value, tuple):
+        # Si l'expression droite est une variable simple (non un accès tableau), on l'affecte directement
+        update_symbol_table(var_name, expression_value)
+        print(f"Variable '{var_name}' affectée avec valeur : {expression_value}")
+
+        # Génération du quadruplet pour une variable simple
+        quadruple = ('=', expression_value, None, var_name)  # Ici on garde la forme du quadruplet pour une variable simple
+        quadruples.append(quadruple)
+        print(f"Quadruplet généré : {quadruple}")
+
+    # Cas 2: L'expression est un accès à une case de tableau
+    elif isinstance(expression_value, tuple) and expression_value[0] == 'ARRAY_ACCESS': 
+        # Vérifie si l'expression droite est un accès tableau
+        array_name, index = expression_value[1], expression_value[2]
+        source = f"{array_name}[{index}]"
+
+        # Obtenir la valeur réelle de la case tableau
+        for entry in symbol_table:
+            if entry[0] == array_name and isinstance(entry[4], list):  # Vérifie que c'est bien un tableau
+                if isinstance(index, int) and 0 <= index < len(entry[4]):
+                    expression_value = entry[4][index]  # Récupère la valeur réelle
+                    break
+        else:
+            raise SyntaxError(f"Index '{index}' out of bounds for array '{array_name}' at line {get_line()}.")
+
+        print(f"Accès tableau détecté : {source} avec valeur réelle : {expression_value}")
+
+        # Mise à jour de la table des symboles avec la valeur obtenue de l'accès au tableau
+        update_symbol_table(var_name, expression_value)
+        print(f"Variable '{var_name}' affectée avec valeur de tableau : {expression_value}")
+         # Génération du quadruplet pour un accès à une case de tableau
+        quadruple = ('=', source, 'NONE', var_name)  # Ici on garde la forme du quadruplet pour l'accès au tableau
+        quadruples.append(quadruple)
+        print(f"Quadruplet généré : {quadruple}")
 
 
 
@@ -293,9 +346,8 @@ def p_statements(t):
         t[0] = [t[1]] + t[2]
 
 def p_statement(t):
-    '''statement : array_declarationTab 
-                 
-                   | declaration_assignment 
+    '''statement :  array_declarationTab
+               
                  | array_assignment
                  | type declarationTab_listTab SEMICOLON
                  | const_declarationTab'''
@@ -398,37 +450,7 @@ def p_array_assignment(t):
                 print(f"Erreur : Indice hors limites pour '{var_name}'.")
                 return
     print(f"Erreur : Tableau '{var_name}' non déclaré.")
-def p_declaration_assignment(t):
-    '''declaration_assignment : type ID EQUALS expression SEMICOLON'''
-    var_type, var_name, value = t[1], t[2], t[4]
 
-    # Si la valeur est un accès tableau
-    if isinstance(value, tuple) and value[0] == 'ARRAY_ACCESS':  # Vérifie si c'est une case tableau
-        array_name, index = value[1], value[2]
-        source = f"{array_name}[{index}]"  # Format pour le quadruplet
-        
-        # Obtenir la valeur réelle de la case tableau
-        for entry in symbol_table:
-            if entry[0] == array_name and isinstance(entry[4], list):  # Vérifie que c'est un tableau
-                if isinstance(index, int) and 0 <= index < len(entry[4]):
-                    value = entry[4][index]  # Récupère la valeur réelle
-                    break
-        print(f"Accès tableau détecté : {source} avec valeur réelle : {value}")
-    else:
-        source = value  # Si ce n'est pas un tableau, la source est l'expression elle-même
-
-    # Ajout à la table des symboles
-    add_to_symbol_table(var_name, var_type, "global", value, "Déclaration et affectation")
-    print(f"Variable déclarée : {var_name} avec valeur : {value}")
-
-    # Génération du quadruplet
-    quadruple = ('=', source, 'NONE', var_name)
-    quadruples.append(quadruple)
-    print(f"Quadruplet généré : {quadruple}")
-
-
-
-   
 # END of var declaration
 
 # ****************************Routine to verify compatiblity ************
@@ -763,7 +785,9 @@ def display_symbol_table():
 # Examples of usage
 if __name__ == '__main__':
     expressions = [
-        "CHAR g = '5'  ;",
+        "CHAR g ;" ,
+         " g = '5'  ;",
+       
         # "INTEGER n = (+5.63) ;",
         # "INTEGER c = 43  ;",
         # "INTEGER d = 5  ;",
@@ -777,7 +801,9 @@ if __name__ == '__main__':
         # " m = ! a;",
          "INTEGER Matrix[3];",
         "Matrix[2] = 2;",
-        " INTEGER X = Matrix[2];"
+        " INTEGER X;",
+         "X = Matrix[2];" 
+        
  
     ]
     for stmt in expressions:
