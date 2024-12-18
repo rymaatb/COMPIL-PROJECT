@@ -295,16 +295,15 @@ def p_factor_id(t):
             return
     print(f"Error: Variable '{var_name}' not declared.")
     t[0] = 0
-
 def p_array_access(t):
     'factor : ID LBRACKET expression RBRACKET'
     var_name, index = t[1], t[3]
     for entry in symbol_table:
-        if entry[0] == var_name and isinstance(entry[4], list):  # Vérifie si c'est un tableau
+        if entry[0] == var_name and isinstance(entry[4], list):  # Vérifie que c'est un tableau
             if isinstance(index, int) and 0 <= index < len(entry[4]):
                 if entry[4][index] is None:
                     print(f"Avertissement : Accès à une valeur non initialisée dans '{var_name}[{index}]'.")
-                t[0] = ('ARRAY_ACCESS', var_name, index)  # Retourne les informations nécessaires pour l'affectation
+                t[0] = ('ARRAY_ACCESS', var_name, index)  # Retourne les informations nécessaires
                 print(f"Accès tableau détecté : {t[0]}")
                 return
             else:
@@ -313,7 +312,6 @@ def p_array_access(t):
                 return
     print(f"Erreur : Tableau '{var_name}' non déclaré.")
     t[0] = None
-
 
 def p_variable_assignment(t):
     '''simple_assignment : ID EQUALS expression SEMICOLON'''
@@ -380,18 +378,27 @@ def p_declaration_assignment(t):
     '''declaration_assignment : type ID EQUALS expression SEMICOLON'''
     var_type, var_name, value = t[1], t[2], t[4]
 
-    # Vérifiez si la valeur est un accès à un tableau
-    if isinstance(value, tuple) and value[0] == 'ARRAY_ACCESS':  # Cas d'accès tableau
+    # Si la valeur est un accès tableau
+    if isinstance(value, tuple) and value[0] == 'ARRAY_ACCESS':  # Vérifie si c'est une case tableau
         array_name, index = value[1], value[2]
-        value = f"{array_name}[{index}]"
-        print(f"Accès tableau détecté : {value}")
+        source = f"{array_name}[{index}]"  # Format pour le quadruplet
+        
+        # Obtenir la valeur réelle de la case tableau
+        for entry in symbol_table:
+            if entry[0] == array_name and isinstance(entry[4], list):  # Vérifie que c'est un tableau
+                if isinstance(index, int) and 0 <= index < len(entry[4]):
+                    value = entry[4][index]  # Récupère la valeur réelle
+                    break
+        print(f"Accès tableau détecté : {source} avec valeur réelle : {value}")
+    else:
+        source = value  # Si ce n'est pas un tableau, la source est l'expression elle-même
 
     # Ajout à la table des symboles
     add_to_symbol_table(var_name, var_type, "global", value, "Déclaration et affectation")
     print(f"Variable déclarée : {var_name} avec valeur : {value}")
 
     # Génération du quadruplet
-    quadruple = ('=', value, 'NONE', var_name)
+    quadruple = ('=', source, 'NONE', var_name)
     quadruples_list.append(quadruple)
     print(f"Quadruplet généré : {quadruple}")
 
