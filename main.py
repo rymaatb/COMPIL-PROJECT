@@ -14,6 +14,7 @@ tokens = (
     'EQ', 'NEQ', 'LT', 'LTE', 'GT', 'GTE', 'AND', 'OR', 'NOT',
     'EQUALS', 'INTEGER','BOOL', 'FLOAT', 'CHAR', 'INT_TYPE', 'FLOAT_TYPE', 'BOOL_TYPE', 'CHAR_TYPE',  'COLON',  
     'IF', 'ELSE', 'FOR',  # Mots-clés du premier code
+    'READ', 'WRITE' # entrees et sorties
 
     
 )
@@ -55,6 +56,10 @@ t_GTE = r'>='
 t_AND = r'&&'
 t_OR = r'\|\|'
 t_NOT = r'!'
+
+# regular expressions for read and write
+t_READ = r'READ'
+t_WRITE = r'WRITE'
 
 # Identifier and constants
 def t_ID(t):
@@ -592,6 +597,128 @@ def R8(t):
         EL['type']=TL['type']
 
 
+# READ 
+def p_read_statement(t):
+    '''statement : READ LPAREN ID RPAREN SEMICOLON
+                 | READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON'''
+    var_name = t[3]
+
+    if len(t) == 6:  # Case: READ(ID)
+        # Normal ID (simple variable read)
+        process_read_var(var_name, None)
+    elif len(t) == 9:  # Case: READ(ID[INTEGER])
+        index = int(t[5])  # Extract the index from t[6]
+        process_read_array(var_name, index)
+    else:
+        print("Unexpected read format.")
+        
+def process_read_var(var_name, index=None):
+    found = False
+    for entry in symbol_table:
+        if entry[0] == var_name:  # Check if variable exists
+            found = True
+            var_type = entry[1]  # Get type from symbol table
+            
+            if var_type == 'CHAR':
+               
+                #entry[4] = value[0] if value else None
+                quadruples.append(('READ', None, None, var_name if index is None else f"{var_name}[{index}]"))
+            
+            elif var_type in ('INTEGER', 'FLOAT'):
+               
+                try:
+                    #entry[4] = int(value) if var_type == 'INTEGER' else float(value)
+                    quadruples.append(('READ', None, None, var_name if index is None else f"{var_name}[{index}]"))
+                except ValueError:
+                    print(f"Error: Invalid {var_type.lower()} input.")
+            else:
+                print(f"Unsupported type '{var_type}' for READ.")
+            break
+
+    if not found:
+        print(f"Error: Variable '{var_name}' not declared.")
+
+def process_read_array(var_name, index):
+    found = False
+    for entry in symbol_table:
+        if entry[0] == var_name and isinstance(entry[4], list):  # Ensure it's an array
+            found = True
+            if 0 <= index < len(entry[4]):
+                var_type = entry[1]
+                if var_type == 'CHAR':
+                  
+                    quadruples.append(('READ', None, None, f"{var_name}[{index}]"))
+                elif var_type in ('INTEGER', 'FLOAT'):
+                   
+                    try:
+                      
+                        quadruples.append(('READ', None, None, f"{var_name}[{index}]"))
+                    except ValueError:
+                        print(f"Error: Invalid {var_type.lower()} input.")
+                else:
+                    print(f"Unsupported type '{var_type}' for READ.")
+            else:
+                print(f"Error: Index {index} out of bounds for array '{var_name}'.")
+            break
+    if not found:
+        print(f"Error: Variable '{var_name}' not declared as an array.")
+
+
+
+
+
+
+# WRITE statement
+def p_write_statement(t):
+    'statement : WRITE LPAREN write_content RPAREN SEMICOLON'
+   
+
+
+def p_write_content_single(t):
+    'write_content : write_item'
+    t[0] = [t[1]]
+
+def p_write_content_multiple(t):
+    'write_content : write_content COMMA write_item'
+    t[0] = t[1] + [t[3]]
+
+def p_write_item(t):
+    '''write_item : ID
+                  | ID LBRACKET INTEGER RBRACKET'''
+    var_name = t[1]
+
+    if len(t) == 2:  # Simple variable (not an array)
+        value = get_variable_value(var_name)
+        if value is not None:
+            t[0] = value
+        else:
+            print(f"Error: Variable '{var_name}' not declared.")
+    else:  # Array access: ID[INTEGER]
+        index = t[3]
+        value = get_array_value(var_name, index)
+        if value is not None:
+            t[0] = value
+
+def get_variable_value(var_name):
+    for entry in symbol_table:
+        if entry[0] == var_name:
+            # Check if it's an array
+            if isinstance(entry[4], list):
+                return None  # Indicates an error
+            return entry[4]  # Return the scalar value
+    return None  # Indicates variable not found
+
+def get_array_value(var_name, index):
+    for entry in symbol_table:
+        if entry[0] == var_name and isinstance(entry[4], list):
+            if 0 <= index < len(entry[4]):
+                return entry[4][index]
+            else:
+                return None  # Indicates index out of bounds
+    return None  # Indicates array not found
+
+
+
      
 # Build the parser
 parser = yacc.yacc()
@@ -626,17 +753,32 @@ if __name__ == '__main__':
         # "INTEGER c = 43  ;",
         # "INTEGER d = 5  ;",
         # "CHAR d = '5'  ;",
-        "bool b = false ;",
-        "bool a = true  ;",
-        "bool c = true  ;",
-        "bool d = true  ;",
-        "bool e = true  ;",
-        "bool f = a && b || c && d || !e;",
+        # "bool b = false ;",
+        # "bool a = true  ;",
+        # "bool c = true  ;",
+        # "bool d = true  ;",
+        # "bool e = true  ;",
+        # "bool f = a && b || c && d || !e;",
         # "INTEGER Matrix[3];"    ,
         # "FLOAT Ab[1] ;",
         # "Matrix[3]=5;",
         # "Matrix[2]=5;",
         # "INTEGER x =Matrix[2];"
+
+         "FLOAT Scores[2];",           # Declare FLOAT array
+    "Scores[0] = 98.5;",          # Write FLOAT value to index 0
+    "Scores[1] = 87.6;",          # Write FLOAT value to index 1
+    
+
+    # --- Read Operations (Valid) ---
+                
+    "READ(Scores[0]);",           # Read FLOAT value from index 0
+    "WRITE(Scores[1]);",          # Write FLOAT value to index 1
+    "FLOAT A;",
+    "A = Scores[0];", 
+     "READ(Maroua);"   , 
+     "WRITE(Undefined);",
+   
     ]
     for stmt in expressions:
         print(f"Parsing statement: {stmt}")
