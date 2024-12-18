@@ -1,6 +1,6 @@
 import ply.lex as lex
 import ply.yacc as yacc
-
+import sys
 from tabulate import tabulate
 
 
@@ -68,7 +68,7 @@ def t_ID(t):
 
 
 def t_FLOAT(t):
-    r'\d+\.\d+'
+    r'[+-]?\d+\.\d+'
     t.value = float(t.value)
     
     return t
@@ -80,7 +80,7 @@ def t_INTEGER(t):
 
 
 def t_CHAR(t):
-    r"'.'"
+    r"\'(.)\'" 
     t.value = t.value[1]
     return t
 
@@ -97,6 +97,7 @@ t_ignore = ' \t'
 # Handle errors
 def t_error(t):
     print(f"Illegal character '{t.value[0]}' at line {t.lineno}")
+    sys.exit(1)
     t.lexer.skip(1)
 
 # Build the lexer
@@ -119,7 +120,7 @@ def new_label():
     label_counter += 1
     return f"L{label_counter}"
 def increment_quad_counter(value):
-    global quad_counter  # Declare that you are modifying the global variable
+    global quad_counter  
     quad_counter += value
 
 def get_counter():
@@ -188,7 +189,8 @@ def p_statement_declaration(t):
                 
             # Type checking
             if not R0_dec(var_type, value):
-                raise SyntaxError(f"Type mismatch: Cannot assign value '{value}' to constant of type '{var_type}'.")
+
+                raise SyntaxError(f" Type mismatch: Cannot assign value '{value}' to constant of type '{var_type}' at lign'{get_line()}'.")
 
             add_to_symbol_table(var_name, var_type, scope, value, "constant")
         else:
@@ -198,12 +200,15 @@ def p_statement_declaration(t):
                 # Convert integer to float if the type is FLOAT
                 if var_type == 'FLOAT' and isinstance(value, int):
                     value = float(value)
-                    
-                if value is not None and not R0_dec(var_type, value):
-                    raise SyntaxError(f"Type mismatch: Cannot assign value '{value}' to variable '{var_name}' of type '{var_type}'.")
+                if var_type=='bool' and isinstance(value, str) and value.startswith("t"):
+                    print("") # si on a un temporaire on fait l'affectation son verifier 
+                elif value is not None and not R0_dec(var_type, value):
+
+                    raise SyntaxError(f"Type mismatch: Cannot assign value '{value}' to variable '{var_name}' of type '{var_type}' at lign'{get_line()}.")
                 add_to_symbol_table(var_name, var_type, scope, value)
     except SyntaxError as e:
         print(f"Error: {e}")
+        sys.exit(1)  # Stops execution of the program on error
 
 # int a, b = value, c;
 def p_declaration_list(t):
@@ -222,8 +227,10 @@ def p_declaration(t):
                    | ID EQUALS expression'''
     if len(t) == 2:
         t[0] = (t[1], None)  # Variable without initialization
+
     else:
         t[0] = (t[1], t[3])  # Variable with initialization
+
 
 
 # updating variable , ID= exp(arth or logic or comparison);
@@ -436,10 +443,6 @@ def p_expression_el(t):
                   | term'''
     if len(t) == 4:
         if t[1]==None:
-            print("1 inis")
-            print(EL['name'])
-            print(TL['name'])
-            print(FL['name'])
             t[1]=TL['name']
         if t[3]==None:
             t[3]=TL['name']
@@ -593,11 +596,19 @@ def R8(t):
 # Build the parser
 parser = yacc.yacc()
 
+line_co =0
+def increment_line_counter():
+    global line_co  
+    line_co += 1
+
+def get_line():
+    return line_co  
 # Test the parser
 def parse_statement(statement):
     global quadruples, temp_count
-    quadruples = []  # Reset quadruples for each statement
+    quadruples = []  
     temp_count = 0  
+    increment_line_counter()
     parser.parse(statement)
     return quadruples
     
@@ -610,15 +621,17 @@ def display_symbol_table():
 # Examples of usage
 if __name__ == '__main__':
     expressions = [
-        # "FLOAT n = (+5.63) ;",
-        # "CHAR j = 'i' ;",
-        # "INTEGER c = -4  ;",
+        "CHAR g = '5'  ;",
+        # "INTEGER n = (+5.63) ;",
+        # "INTEGER c = 43  ;",
+        # "INTEGER d = 5  ;",
+        # "CHAR d = '5'  ;",
         "bool b = false ;",
         "bool a = true  ;",
-        # "bool n = b && a  ;",
-        "bool f = b || !a && !b;",
-        # "bool z = f || a && b ;",
-        # " m = ! a;",
+        "bool c = true  ;",
+        "bool d = true  ;",
+        "bool e = true  ;",
+        "bool f = a && b || c && d || !e;",
         # "INTEGER Matrix[3];"    ,
         # "FLOAT Ab[1] ;",
         # "Matrix[3]=5;",
