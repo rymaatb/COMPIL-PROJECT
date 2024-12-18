@@ -357,18 +357,14 @@ def process_read_var(var_name, index=None):
             var_type = entry[1]  # Get type from symbol table
             
             if var_type == 'CHAR':
-                if index is not None:
-                    print(f"Enter a string for '{var_name}[{index}]' (max {len(entry[4])} chars): ")
-                else:
-                    print(f"Enter a single char value for '{var_name}': ")
-                value = input().strip()
-                entry[4] = value[0] if value else None
+               
+                #entry[4] = value[0] if value else None
                 quadruplets.append(('READ', None, None, var_name if index is None else f"{var_name}[{index}]"))
             
             elif var_type in ('INTEGER', 'FLOAT'):
-                value = input(f"Enter {var_type.lower()} value for '{var_name}': ")
+               
                 try:
-                    entry[4] = int(value) if var_type == 'INTEGER' else float(value)
+                    #entry[4] = int(value) if var_type == 'INTEGER' else float(value)
                     quadruplets.append(('READ', None, None, var_name if index is None else f"{var_name}[{index}]"))
                 except ValueError:
                     print(f"Error: Invalid {var_type.lower()} input.")
@@ -387,14 +383,12 @@ def process_read_array(var_name, index):
             if 0 <= index < len(entry[4]):
                 var_type = entry[1]
                 if var_type == 'CHAR':
-                    print(f"Enter a string for '{var_name}[{index}]' (max {len(entry[4])} chars): ")
-                    input_string = input().strip()
-                    entry[4][index] = input_string[:1] if input_string else None
+                  
                     quadruplets.append(('READ', None, None, f"{var_name}[{index}]"))
                 elif var_type in ('INTEGER', 'FLOAT'):
-                    value = input(f"Enter {var_type.lower()} value for '{var_name}[{index}]': ")
+                   
                     try:
-                        entry[4][index] = int(value) if var_type == 'INTEGER' else float(value)
+                      
                         quadruplets.append(('READ', None, None, f"{var_name}[{index}]"))
                     except ValueError:
                         print(f"Error: Invalid {var_type.lower()} input.")
@@ -416,7 +410,7 @@ def p_write_statement(t):
     'statement : WRITE LPAREN write_content RPAREN SEMICOLON'
     for content in t[3]:
         # Print the value
-        print(content, end=' ')
+        #print(content, end=' ')
         # Add a quadruplet for each write operation
         quadruplets.append(('WRITE', None, None, content))
     print()  # For a newline after writing
@@ -498,8 +492,7 @@ expressions = [
     
 
     # --- Read Operations (Valid) ---
-    "Char Letter='A';",
-    "READ(Word);",                 # Read CHAR value
+                
     "READ(Scores[0]);",           # Read FLOAT value from index 0
     "WRITE(Scores[1]);",          # Write FLOAT value to index 1
     "FLOAT A;",
