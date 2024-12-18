@@ -330,6 +330,9 @@ def p_expressionTab(t):
                   | CHAR'''
     
     t[0] = t[1]
+
+
+
 def p_array_access(t):
     'factor : ID LBRACKET expression RBRACKET'
     var_name, index = t[1], t[3]
