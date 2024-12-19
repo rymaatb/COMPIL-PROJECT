@@ -179,6 +179,7 @@ def p_statement_declaration(t):
     
     try:
         if t[1] == 'const':
+            print(t[1])
             # Constant declaration
             var_type = t[2]
             var_name = t[3]
@@ -621,22 +622,23 @@ def display_symbol_table():
 # Examples of usage
 if __name__ == '__main__':
     expressions = [
-        "CHAR g = '5'  ;",
+        # "const INTEGER n = 5  ;",
         # "INTEGER n = (+5.63) ;",
         # "INTEGER c = 43  ;",
         # "INTEGER d = 5  ;",
         # "CHAR d = '5'  ;",
+        "INTEGER Matrix[3];"    ,
+        "FLOAT Ab[1] ;",
+        "Matrix[3]=5;",
+        "Matrix[2]=5;",
         "bool b = false ;",
         "bool a = true  ;",
         "bool c = true  ;",
         "bool d = true  ;",
         "bool e = true  ;",
         "bool f = a && b || c && d || !e;",
-        # "INTEGER Matrix[3];"    ,
-        # "FLOAT Ab[1] ;",
-        # "Matrix[3]=5;",
-        # "Matrix[2]=5;",
         # "INTEGER x =Matrix[2];"
+
     ]
     for stmt in expressions:
         print(f"Parsing statement: {stmt}")
