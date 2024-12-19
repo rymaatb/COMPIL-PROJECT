@@ -783,45 +783,18 @@ def p_initialisation(t):
      A(t)
 
 def p_step(t):
-    #step --> INT {B} | ID {B}
+    #step --> INT {B} | ID {B1}
     '''step : INTEGER
             | ID'''
     if isinstance(t[1],int):
-        t[0] = t[1]
         B(t)
     elif isinstance(t[1],str):
-        var_name = t[1]
-        for entry in symbol_table:
-         if entry[0] == var_name:  # entry[0] is the 'Name' field
-            if entry[4] is not None:  # entry[4] is the 'Value' field
-                t[0] = entry[4]
-            else:
-                print(f"Error: Variable '{var_name}' not initialized.")
-                t[0] = 0
-            return
-    else:
-         print(f"Error: Variable '{var_name}' not declared.")
-         t[0] = 0   
-
+        B1(t)
+        
 def p_BorneSup(t):
     #BorneSup --> ID {C}
     'BorneSup : ID'
-    var_name = t[1]
-    for entry in symbol_table:
-        if entry[0] == var_name:  # entry[0] is the 'Name' field
-          if entry[1] == "int":
-            if entry[4] is not None:  # entry[4] is the 'Value' field
-                t[0] = entry[4]
-                C(t)
-            else:
-                print(f"Error: Variable '{var_name}' not initialized.")
-                t[0] = 0
-            return
-          else:
-            print(f"Error: Variable '{var_name}' is not a integer.")
-        
-    print(f"Error: Variable '{var_name}' not declared.")
-    t[0] = 0   
+    C(t)
 
 def p_block(t):
     'block : LBRACE statements RBRACE'
@@ -837,52 +810,70 @@ def A(t):
     var_name = t[1]  # Nom de la variable
     var_iter = var_name
     var_value = t[3]  # Valeur initiale
-    update_symbol_table(var_name,var_value)
-    # Vérifier que la variable et la valeur initiale existent
-    if not isinstance(var_value, int):
+    #Check that the variable is integer and declared.
+    if find_in_symbol_table(var_name,"global") == False:
+        raise_semantic_error(var_name, "is not declared.")
+    if  (findType_in_symbol_table(var_name))!="INTEGER":
+        raise_semantic_error(var_name, "must be of type INTEGER.")
+    # check if the initialisation value in an int
+    if R0_dec('INTEGER',var_value) == False:
         raise_semantic_error(var_name, "a une valeur d'initialisation invalide.")
     
+    update_symbol_table(var_name,var_value)
     # Générer le quadruplet d'initialisation
     quadruples.append(('=', var_value, None, var_name))
     increment_quad_counter
     print(f"Routine A : Initialisation '{var_name}' = {var_value}")
 
-# Routine semantique B : Gestion du pas de la boucle
+# Routine semantique B : Gestion du pas de la boucle cas int
 def B(t):
     global quadruples, step
     step = t[1]  # Valeur du pas
     if not isinstance(step, int) or step <= 0:
-        raise_semantic_error("step", "doit etre un entier positif non nul.")
-    
+        raise_semantic_error("step", "must be a positif integer")
+    t[0]=t[1]
+    print(f"Routine B : Pas de la boucle valide : step = {step}")
+
+# Routine semantique B1 : Gestion du pas de la boucle cas id
+def B1(t):
+    global quadruples, step
+    var_name = t[1]
+    #Check that the variable is integer and declared.
+    if find_in_symbol_table(var_name,"global") == False:
+        raise_semantic_error(var_name, "is not declared.")
+    if  (findType_in_symbol_table(var_name))!="INTEGER":
+        raise_semantic_error(var_name, "must be of type INTEGER.")
+    if get_variable_value(var_name) == None :
+        raise_semantic_error(var_name,"is not initialized")
+    elif get_variable_value(var_name) <= 0 :
+        raise_semantic_error(var_name,"must be a positif integer")
+    step = get_variable_value(var_name)
+    t[0] = step
     print(f"Routine B : Pas de la boucle valide : step = {step}")
 
 # Routine semantique C : Gestion de la borne superieure
 def C(t):
     global quadruples, sauve_BG,step
-    if isinstance(t[1],str):
-        var_name = t[1]
-        for entry in symbol_table:
-         if entry[0] == var_name:  # entry[0] is the 'Name' field
-            if entry[4] is not None:  # entry[4] is the 'Value' field
-                t[0] = entry[4]
-                borne_sup = t[0]  # Valeur de la borne supérieure   
-                if not isinstance(borne_sup, int):
-                     raise_semantic_error("borne supérieure", "doit etre un entier valide.")
-               
-                # Sauvegarder l'étiquette de début de la boucle
-                sauve_BG = get_counter
-                # Générer la condition de comparaison
-                fin= new_label()
-                quadruples.append(('BG',fin ,var_iter, var_name))
-                increment_quad_counter
-                print(f"Routine C : Borne superieure validee : {step} < {borne_sup}")
-            else:
-                print(f"Error: Variable '{var_name}' not initialized.")
-                t[0] = 0
-            return
-    else:
-         print(f"Error: Variable '{var_name}' not declared.")
-         t[0] = 0   
+    var_name = t[1]
+    #Check that the variable is integer and declared.
+    if find_in_symbol_table(var_name,"global") == False:
+        raise_semantic_error(var_name, "is not declared.")
+    if  (findType_in_symbol_table(var_name))!="INTEGER":
+        raise_semantic_error(var_name, "must be of type INTEGER.")
+    if get_variable_value(var_name) == None :
+        raise_semantic_error(var_name,"is not initialized")
+    elif get_variable_value(var_name) < step :
+        raise_semantic_error(var_name,"must be at least equal to iteration variable")
+    borne_sup = get_variable_value(var_name)
+    print(f"Routine C : Borne superieure validee : {step} < {borne_sup}")
+    # Sauvegarder l'étiquette de début de la boucle
+    sauve_BG = get_counter
+     # quadruplets
+    fin= new_label()
+    quadruples.append(('BG',fin ,var_iter, var_name))
+    increment_quad_counter
+    
+
 
 # Routine semantique D : Incrementation et branchement
 def D(t):
