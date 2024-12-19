@@ -991,8 +991,9 @@ if __name__ == '__main__':
         "bool d = false  ;",
         "bool e = true  ;",
         "bool f = a && b || c && d || !e;",
-        "INTEGER i, n = 9;",
-        "FOR(i =3 : 1 : n){ m = b && a ; }"
+        "INTEGER j,i, n = 9;",
+        "FOR(i =3 : 1 : n){ m = b && a ; }",
+        "FOR(i =3 : 1 : n){ FOR(j=2 : 2 : n){m = b && a ;} }"
 
     ]
     for stmt in expressions:
