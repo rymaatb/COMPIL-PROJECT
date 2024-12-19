@@ -19,6 +19,7 @@ tokens = (
     
 )
 
+
 # Reserved keywords
 reserved = {
     'IF': 'IF',
@@ -185,7 +186,7 @@ def p_statement_declaration(t):
     '''statement : type declaration_list SEMICOLON
                  | CONST type ID EQUALS expression SEMICOLON'''
     scope = "global"  
-    
+    global quadruples
     try:
         if t[1] == 'CONST':
             print(t[1])
@@ -203,6 +204,8 @@ def p_statement_declaration(t):
                 raise SyntaxError(f" Type mismatch: Cannot assign value '{value}' to constant of type '{var_type}' at lign'{get_line()}'.")
 
             add_to_symbol_table(var_name, var_type, scope, value, "constant")
+            quadruples.append((('=',value, None,var_name )))
+            increment_quad_counter(1)
         else:
             # Multiple variable declarations
             var_type = t[1]
@@ -211,11 +214,14 @@ def p_statement_declaration(t):
                 if var_type == 'FLOAT' and isinstance(value, int):
                     value = float(value)
                 if var_type=='bool' and isinstance(value, str) and value.startswith("t"):
-                    print("") # si on a un temporaire on fait l'affectation son verifier 
+                    print(t[1])
+                    print("gi") # si on a un temporaire on fait l'affectation son verifier 
                 elif value is not None and not R0_dec(var_type, value):
 
                     raise SyntaxError(f"Type mismatch: Cannot assign value '{value}' to variable '{var_name}' of type '{var_type}' at lign'{get_line()}.")
                 add_to_symbol_table(var_name, var_type, scope, value)
+                quadruples.append((('=',value, None,var_name )))
+                increment_quad_counter(1)
     except SyntaxError as e:
         print(f"Error: {e}")
         sys.exit(1)  # Stops execution of the program on error
@@ -305,8 +311,25 @@ def p_statement(t):
                  | type declarationTab_listTab SEMICOLON
                  | const_declarationTab'''
 
+def p_simple_assignment(t):
+    '''simple_assignment : ID EQUALS expressionTab SEMICOLON'''
+    global quadruples
+    var_name = t[1]
+    expr_value = t[3]
+    expr_type = type(expr_value).__name__  # Déterminer le type de l'expressionTab
+
+    # Ajout à la table des symboles
+    add_to_symbol_table(var_name, expr_type, "global", expr_value, "Affectation simple")
+    update_symbol_table(var_name, expr_value)
+
+    # Génère un quadruplet pour l'affectation
+    quadruples.append(('ASSIGN', expr_value, '-', var_name))
+
+    t[0] = var_name  # Retourne le nom de la variable affectée
+
 def p_const_declarationTab(t):
     '''const_declarationTab : CONST type ID EQUALS expressionTab SEMICOLON'''
+    global quadruples
     var_type, var_name, value = t[2], t[3], t[5]
     print(f"Déclaration constante : {var_name} = {value} (type : {var_type})")
     add_to_symbol_table(var_name, var_type, "global", value, "constant")
@@ -360,15 +383,21 @@ def p_expressionTab(t):
 
 
 def p_array_access(t):
-    'factor : ID LBRACKET expression RBRACKET'
+    'factor : ID LBRACKET expressionTab RBRACKET'
+    global quadruples
     var_name, index = t[1], t[3]
     for entry in symbol_table:
         if entry[0] == var_name and isinstance(entry[4], list):  # Vérifie que c'est un tableau
             if isinstance(index, int) and 0 <= index < len(entry[4]):
                 if entry[4][index] is None:
                     print(f"Avertissement : Accès à une valeur non initialisée dans '{var_name}[{index}]'.")
-                t[0] = ('ARRAY_ACCESS', var_name, index)  # Retourne les informations nécessaires
-                print(f"Accès tableau détecté : {t[0]}")
+                t[0] = entry[4][index]
+                value = get_variable_value(var_name)[index]
+                 # Génère un quadruplet
+                print(t[1])
+                if  var_name!= t[1]:
+                    quadruples.append((('=',value, None,var_name )))
+                    increment_quad_counter(1)
                 return
             else:
                 print(f"Erreur : Indice hors limites pour '{var_name}'.")
@@ -381,6 +410,7 @@ def p_array_access(t):
 def p_array_assignment(t):
     #global quadruples
     'array_assignment : ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON'
+    global quadruples
     var_name, index, value = t[1], t[3], t[6]
     for entry in symbol_table:
         if entry[0] == var_name and isinstance(entry[4], list):  # Vérifie que c'est un tableau
@@ -512,9 +542,6 @@ def p_expression_el(t):
         if t[0]==None:
             t[0]=EL['name']
 
- 
-
-
     else:
         R8(t)
         t[0] = t[1]
@@ -527,12 +554,16 @@ def p_term_tl(t):
     if len(t) == 4:
         if t[1]==None:
             t[1]=TL['name']
-
+       
         R5(t)
+        if t[0]==None:
+            t[0]=TL['name']
         
     else:
         if t[1]=='None':
             t[1]=FL['name']
+            
+            
         R6(t)
         t[0] = t[1]
 
@@ -549,7 +580,7 @@ def p_factor_fl(t):
         elif t[1] ==False:
             R3(t)
         else:
-
+            
             R1(t)
             t[0] = t[1]
         
@@ -557,6 +588,8 @@ def p_factor_fl(t):
         R4(t)
         if t[0]==None:
             t[0]=FL['name']
+
+            
 
         
 
@@ -579,6 +612,7 @@ def R1(t):
         check_boolean(t[1])  # Check the first operand
         FL['name']=t[1]
         FL['type']=findType_in_symbol_table(t[1])
+        
 
 
 def R2(t):
@@ -622,6 +656,9 @@ def R5(t):
         increment_quad_counter(1)   
         TL['name']=tem
         TL['type']='bool'
+        print(TL['name'])
+
+        
     else:
         raise_semantic_error( TL['type'],"Incompatiblity of type.")
 
@@ -654,132 +691,133 @@ def R8(t):
         EL['name']=TL['name']
         EL['type']=TL['type']
 
+# *********************************************************Read and write *********************************************************
 
 # READ 
-def p_read_statement(t):
-    '''statement : READ LPAREN ID RPAREN SEMICOLON
-                 | READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON'''
-    var_name = t[3]
+# def p_read_statement(t):
+#     '''statement : READ LPAREN ID RPAREN SEMICOLON
+#                  | READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON'''
+#     var_name = t[3]
 
-    if len(t) == 6:  # Case: READ(ID)
-        # Normal ID (simple variable read)
-        process_read_var(var_name, None)
-    elif len(t) == 9:  # Case: READ(ID[INTEGER])
-        index = int(t[5])  # Extract the index from t[6]
-        process_read_array(var_name, index)
-    else:
-        print("Unexpected read format.")
+#     if len(t) == 6:  # Case: READ(ID)
+#         # Normal ID (simple variable read)
+#         process_read_var(var_name, None)
+#     elif len(t) == 9:  # Case: READ(ID[INTEGER])
+#         index = int(t[5])  # Extract the index from t[6]
+#         process_read_array(var_name, index)
+#     else:
+#         print("Unexpected read format.")
         
-def process_read_var(var_name, index=None):
-    global quadruples
-    found = False
-    for entry in symbol_table:
-        if entry[0] == var_name:  # Check if variable exists
-            found = True
-            var_type = entry[1]  # Get type from symbol table
+# def process_read_var(var_name, index=None):
+#     global quadruples
+#     found = False
+#     for entry in symbol_table:
+#         if entry[0] == var_name:  # Check if variable exists
+#             found = True
+#             var_type = entry[1]  # Get type from symbol table
             
-            if var_type == 'CHAR':
+#             if var_type == 'CHAR':
                
-                #entry[4] = value[0] if value else None
-                quadruples.append(('READ', None, None, var_name if index is None else f"{var_name}[{index}]"))
-                increment_quad_counter(1)
+#                 #entry[4] = value[0] if value else None
+#                 quadruples.append(('READ', None, None, var_name if index is None else f"{var_name}[{index}]"))
+#                 increment_quad_counter(1)
             
-            elif var_type in ('INTEGER', 'FLOAT'):
+#             elif var_type in ('INTEGER', 'FLOAT'):
                
-                try:
-                    #entry[4] = int(value) if var_type == 'INTEGER' else float(value)
-                    quadruples.append(('READ', None, None, var_name if index is None else f"{var_name}[{index}]"))
-                    increment_quad_counter(1)
-                except ValueError:
-                    print(f"Error: Invalid {var_type.lower()} input.")
-            else:
-                print(f"Unsupported type '{var_type}' for READ.")
-            break
+#                 try:
+#                     #entry[4] = int(value) if var_type == 'INTEGER' else float(value)
+#                     quadruples.append(('READ', None, None, var_name if index is None else f"{var_name}[{index}]"))
+#                     increment_quad_counter(1)
+#                 except ValueError:
+#                     print(f"Error: Invalid {var_type.lower()} input.")
+#             else:
+#                 print(f"Unsupported type '{var_type}' for READ.")
+#             break
 
-    if not found:
-        print(f"Error: Variable '{var_name}' not declared.")
+#     if not found:
+#         print(f"Error: Variable '{var_name}' not declared.")
 
-def process_read_array(var_name, index):
-    global quadruples
-    found = False
-    for entry in symbol_table:
-        if entry[0] == var_name and isinstance(entry[4], list):  # Ensure it's an array
-            found = True
-            if 0 <= index < len(entry[4]):
-                var_type = entry[1]
-                if var_type == 'CHAR':
+# def process_read_array(var_name, index):
+#     global quadruples
+#     found = False
+#     for entry in symbol_table:
+#         if entry[0] == var_name and isinstance(entry[4], list):  # Ensure it's an array
+#             found = True
+#             if 0 <= index < len(entry[4]):
+#                 var_type = entry[1]
+#                 if var_type == 'CHAR':
                   
-                    quadruples.append(('READ', None, None, f"{var_name}[{index}]"))
-                    increment_quad_counter(1)
-                elif var_type in ('INTEGER', 'FLOAT'):
+#                     quadruples.append(('READ', None, None, f"{var_name}[{index}]"))
+#                     increment_quad_counter(1)
+#                 elif var_type in ('INTEGER', 'FLOAT'):
                    
-                    try:
+#                     try:
                       
-                        quadruples.append(('READ', None, None, f"{var_name}[{index}]"))
-                        increment_quad_counter(1)
-                    except ValueError:
-                        print(f"Error: Invalid {var_type.lower()} input.")
-                else:
-                    print(f"Unsupported type '{var_type}' for READ.")
-            else:
-                print(f"Error: Index {index} out of bounds for array '{var_name}'.")
-            break
-    if not found:
-        print(f"Error: Variable '{var_name}' not declared as an array.")
+#                         quadruples.append(('READ', None, None, f"{var_name}[{index}]"))
+#                         increment_quad_counter(1)
+#                     except ValueError:
+#                         print(f"Error: Invalid {var_type.lower()} input.")
+#                 else:
+#                     print(f"Unsupported type '{var_type}' for READ.")
+#             else:
+#                 print(f"Error: Index {index} out of bounds for array '{var_name}'.")
+#             break
+#     if not found:
+#         print(f"Error: Variable '{var_name}' not declared as an array.")
 
 
 
 
 
 
-# WRITE statement
-def p_write_statement(t):
-    'statement : WRITE LPAREN write_content RPAREN SEMICOLON'
+# # WRITE statement
+# def p_write_statement(t):
+#     'statement : WRITE LPAREN write_content RPAREN SEMICOLON'
    
 
 
-def p_write_content_single(t):
-    'write_content : write_item'
-    t[0] = [t[1]]
+# def p_write_content_single(t):
+#     'write_content : write_item'
+#     t[0] = [t[1]]
 
-def p_write_content_multiple(t):
-    'write_content : write_content COMMA write_item'
-    t[0] = t[1] + [t[3]]
+# def p_write_content_multiple(t):
+#     'write_content : write_content COMMA write_item'
+#     t[0] = t[1] + [t[3]]
 
-def p_write_item(t):
-    '''write_item : ID
-                  | ID LBRACKET INTEGER RBRACKET'''
-    var_name = t[1]
+# def p_write_item(t):
+#     '''write_item : ID
+#                   | ID LBRACKET INTEGER RBRACKET'''
+#     var_name = t[1]
 
-    if len(t) == 2:  # Simple variable (not an array)
-        value = get_variable_value(var_name)
-        if value is not None:
-            t[0] = value
-        else:
-            print(f"Error: Variable '{var_name}' not declared.")
-    else:  # Array access: ID[INTEGER]
-        index = t[3]
-        value = get_array_value(var_name, index)
-        if value is not None:
-            t[0] = value
+#     if len(t) == 2:  # Simple variable (not an array)
+#         value = get_variable_value(var_name)
+#         if value is not None:
+#             t[0] = value
+#         else:
+#             print(f"Error: Variable '{var_name}' not declared.")
+#     else:  # Array access: ID[INTEGER]
+#         index = t[3]
+#         value = get_array_value(var_name, index)
+#         if value is not None:
+#             t[0] = value
 
-def get_variable_value(var_name):
-    for entry in symbol_table:
-        if entry[0] == var_name:
-            # Check if it's an array
-            if isinstance(entry[4], list):
-                return None  # Indicates an error
-            return entry[4]  # Return the scalar value
-    return None  # Indicates variable not found
+# def get_variable_value(var_name):
+#     for entry in symbol_table:
+#         if entry[0] == var_name:
+#             # Check if it's an array
+#             if isinstance(entry[4], list):
+#                 return None  # Indicates an error
+#             return entry[4]  # Return the scalar value
+#     return None  # Indicates variable not found
 
-def get_array_value(var_name, index):
-    for entry in symbol_table:
-        if entry[0] == var_name and isinstance(entry[4], list):
-            if 0 <= index < len(entry[4]):
-                return entry[4][index]
-            else:
-                return None  # Indicates index out of bounds
-    return None  # Indicates array not found
+# def get_array_value(var_name, index):
+#     for entry in symbol_table:
+#         if entry[0] == var_name and isinstance(entry[4], list):
+#             if 0 <= index < len(entry[4]):
+#                 return entry[4][index]
+#             else:
+#                 return None  # Indicates index out of bounds
+#     return None  # Indicates array not found
 
 #**********************************************************START of for loop*********************************************************************
 
@@ -815,7 +853,7 @@ def p_BorneSup(t):
 def p_block(t):
     'block : LBRACE statements RBRACE'
     t[0] = t[2] 
-   
+ 
 #************************************************** Routines********************************************
 sauve_BG = 0
 step = 0 
@@ -906,8 +944,6 @@ def D(t):
     increment_quad_counter(1)
 
     print(f"Routine D : Incrementation et branchement de '{var_iter}' avec step = {step}")
-
-
      
 # Build the parser
 parser = yacc.yacc()
@@ -923,7 +959,6 @@ def get_line():
 def parse_statement(statement):
     global quadruples, temp_count
     quadruples = []  
-    temp_count = 0  
     increment_line_counter()
     parser.parse(statement)
     return quadruples
@@ -937,35 +972,28 @@ def display_symbol_table():
 # Examples of usage
 if __name__ == '__main__':
     expressions = [
-        "CONST INTEGER n = 5  ;",
+        # "CONST INTEGER n = 5  ;",
         # "INTEGER n = (+5.63) ;",#error
         # "INTEGER c = 43  ;",
-        # "INTEGER d = 5  ;",
+        # "INTEGER c = 5  ;",
         # "CHAR d = '5'  ;",
-        # "INTEGER Matrix[3];"    ,
+        "INTEGER Matrix[3];"    ,
         # "FLOAT Ab[1] ;",
         # "Matrix[3]=5;",
-        # "Matrix[2]=5;",
-        # "bool b = false ;",
-        # "bool a = true  ;",
-        # "bool c = true  ;",
-        # "bool d = true  ;",
-        # "bool e = true  ;",
-        # "bool f = a && b || c && d || !e;",
-        # "INTEGER x =Matrix[2];"
-         "bool b = false ;",
-         "bool a = true  ;",
-         "bool m = false;",
-        # "bool n = b && a  ;",
-        # "bool f = false;",
-        # "bool z = f || a   ;",
-        # " m = ! a;",
-        "INTEGER Matrix[3];",
-        "Matrix[2] = 2;",
-        " INTEGER X = Matrix[2];",
+        "Matrix[2]=5;",
+        "Matrix[1]=3;",
+        "INTEGER x =Matrix[2];",
+        "INTEGER y =Matrix[1];",
+        "bool b = false ;",
+        "bool a = true  ;",
+        "bool c = true ;",
+        "bool d = false  ;",
+        "bool d = false  ;",
+        "bool e = true  ;",
+        "bool f = a && b || c && d || !e;",
         "INTEGER i, n = 9;",
         "FOR(i =3 : 1 : n){ m = b && a ; }"
- 
+
     ]
     for stmt in expressions:
         print(f"Parsing statement: {stmt}")

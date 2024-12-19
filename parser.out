@@ -16,7 +16,9 @@ Unused terminals:
     MULTIPLY
     NEQ
     NUMBER
+    READ
     VAR_GLOBAL
+    WRITE
 
 Grammar
 
@@ -62,6 +64,7 @@ Rule 38    expressionTab -> INTEGER
 Rule 39    expressionTab -> CHAR
 Rule 40    factor -> ID LBRACKET expression RBRACKET
 Rule 41    array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON
+<<<<<<< HEAD
 Rule 42    declaration_assignment -> type ID EQUALS expression SEMICOLON
 Rule 43    simple_assignment -> ID EQUALS expression SEMICOLON
 Rule 44    expression -> expression OR term
@@ -85,6 +88,22 @@ Rule 61    step -> INTEGER
 Rule 62    step -> ID
 Rule 63    BorneSup -> ID
 Rule 64    block -> LBRACE statements RBRACE
+=======
+Rule 42    expression -> expression OR term
+Rule 43    expression -> term
+Rule 44    term -> term AND factor
+Rule 45    term -> factor
+Rule 46    factor -> ID
+Rule 47    factor -> TRUE
+Rule 48    factor -> FALSE
+Rule 49    factor -> NOT ID
+Rule 50    statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
+Rule 51    initialisation -> ID EQUALS INTEGER
+Rule 52    step -> INTEGER
+Rule 53    step -> ID
+Rule 54    BorneSup -> ID
+Rule 55    block -> LBRACE statements RBRACE
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
 Terminals, with rules where they appear
 
@@ -93,14 +112,20 @@ BOOL                 : 15
 BOOL_TYPE            : 10
 CHAR                 : 14 39
 CHAR_TYPE            : 11
+<<<<<<< HEAD
 COLON                : 59 59
 COMMA                : 4 32 56
+=======
+COLON                : 50 50
+COMMA                : 4 32
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 COMMENT              : 
 CONST                : 2 29
 DECLARATION          : 
 DIVIDE               : 
 ELSE                 : 
 EQ                   : 
+<<<<<<< HEAD
 EQUALS               : 2 6 7 29 34 41 42 43 60
 FALSE                : 50
 FLOAT                : 13 19 20 37
@@ -116,6 +141,23 @@ INT_TYPE             : 8
 LBRACE               : 64
 LBRACKET             : 30 35 40 41 53 58
 LPAREN               : 18 19 20 52 53 54 59
+=======
+EQUALS               : 2 6 7 28 29 34 41 51
+FALSE                : 48
+FLOAT                : 13 19 20 37
+FLOAT_TYPE           : 9
+FOR                  : 50
+GT                   : 
+GTE                  : 
+ID                   : 2 5 6 7 28 29 30 33 34 35 36 40 41 46 49 51 53 54
+IF                   : 
+INSTRUCTION          : 
+INTEGER              : 12 18 30 35 38 51 52
+INT_TYPE             : 8
+LBRACE               : 55
+LBRACKET             : 30 35 40 41
+LPAREN               : 18 19 20 50
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 LT                   : 
 LTE                  : 
 MINUS                : 16 20
@@ -125,6 +167,7 @@ NOT                  : 51
 NUMBER               : 
 OR                   : 44
 PLUS                 : 17
+<<<<<<< HEAD
 RBRACE               : 64
 RBRACKET             : 30 35 40 41 53 58
 READ                 : 52 53
@@ -133,20 +176,39 @@ SEMICOLON            : 1 2 7 27 29 30 41 42 43 52 53 54
 TRUE                 : 49
 VAR_GLOBAL           : 
 WRITE                : 54
+=======
+RBRACE               : 55
+RBRACKET             : 30 35 40 41
+READ                 : 
+RPAREN               : 18 19 20 50
+SEMICOLON            : 1 2 7 26 28 29 30 41
+TRUE                 : 47
+VAR_GLOBAL           : 
+WRITE                : 
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 error                : 
 
 Nonterminals, with rules where they appear
 
+<<<<<<< HEAD
 BorneSup             : 59
 array_assignment     : 26
 array_declarationTab : 24
 block                : 59
 const_declarationTab : 28
+=======
+BorneSup             : 50
+array_assignment     : 25
+array_declarationTab : 24
+block                : 50
+const_declarationTab : 27
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 declaration          : 3 4
 declarationTab       : 31 32
 declarationTab_listTab : 27 32
 declaration_assignment : 25
 declaration_list     : 1 4
+<<<<<<< HEAD
 expression           : 2 6 7 40 42 43 44
 expressionTab        : 29 34 41 41
 factor               : 16 17 46 47
@@ -159,6 +221,18 @@ term                 : 44 45 46
 type                 : 1 2 27 29 30 42
 write_content        : 54 56
 write_item           : 55 56
+=======
+expression           : 2 6 7 42
+expressionTab        : 28 29 34 40 41 41
+factor               : 16 17 44 45
+initialisation       : 50
+simple_assignment    : 23
+statement            : 21 22 0
+statements           : 22 55
+step                 : 50
+term                 : 42 43 44
+type                 : 1 2 26 29 30
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
 Parsing method: LALR
 
@@ -170,6 +244,7 @@ state 0
     (7) statement -> . ID EQUALS expression SEMICOLON
     (23) statement -> . simple_assignment
     (24) statement -> . array_declarationTab
+<<<<<<< HEAD
     (25) statement -> . declaration_assignment
     (26) statement -> . array_assignment
     (27) statement -> . type declarationTab_listTab SEMICOLON
@@ -178,6 +253,12 @@ state 0
     (53) statement -> . READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON
     (54) statement -> . WRITE LPAREN write_content RPAREN SEMICOLON
     (59) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
+=======
+    (25) statement -> . array_assignment
+    (26) statement -> . type declarationTab_listTab SEMICOLON
+    (27) statement -> . const_declarationTab
+    (50) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
     (8) type -> . INT_TYPE
     (9) type -> . FLOAT_TYPE
     (10) type -> . BOOL_TYPE
@@ -190,6 +271,7 @@ state 0
 
     CONST           shift and go to state 3
     ID              shift and go to state 4
+<<<<<<< HEAD
     READ            shift and go to state 10
     WRITE           shift and go to state 11
     FOR             shift and go to state 12
@@ -197,6 +279,13 @@ state 0
     FLOAT_TYPE      shift and go to state 14
     BOOL_TYPE       shift and go to state 15
     CHAR_TYPE       shift and go to state 16
+=======
+    FOR             shift and go to state 9
+    INT_TYPE        shift and go to state 10
+    FLOAT_TYPE      shift and go to state 11
+    BOOL_TYPE       shift and go to state 12
+    CHAR_TYPE       shift and go to state 13
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     statement                      shift and go to state 1
     type                           shift and go to state 2
@@ -228,12 +317,21 @@ state 2
     (34) declarationTab -> . ID EQUALS expressionTab
     (35) declarationTab -> . ID LBRACKET INTEGER RBRACKET
 
+<<<<<<< HEAD
     ID              shift and go to state 19
 
     declaration_list               shift and go to state 17
     declarationTab_listTab         shift and go to state 18
     declaration                    shift and go to state 20
     declarationTab                 shift and go to state 21
+=======
+    ID              shift and go to state 16
+
+    declaration_list               shift and go to state 14
+    declarationTab_listTab         shift and go to state 15
+    declaration                    shift and go to state 17
+    declarationTab                 shift and go to state 18
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
 state 3
 
@@ -244,12 +342,21 @@ state 3
     (10) type -> . BOOL_TYPE
     (11) type -> . CHAR_TYPE
 
+<<<<<<< HEAD
     INT_TYPE        shift and go to state 13
     FLOAT_TYPE      shift and go to state 14
     BOOL_TYPE       shift and go to state 15
     CHAR_TYPE       shift and go to state 16
 
     type                           shift and go to state 22
+=======
+    INT_TYPE        shift and go to state 10
+    FLOAT_TYPE      shift and go to state 11
+    BOOL_TYPE       shift and go to state 12
+    CHAR_TYPE       shift and go to state 13
+
+    type                           shift and go to state 19
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
 state 4
 
@@ -257,8 +364,13 @@ state 4
     (43) simple_assignment -> ID . EQUALS expression SEMICOLON
     (41) array_assignment -> ID . LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON
 
+<<<<<<< HEAD
     EQUALS          shift and go to state 23
     LBRACKET        shift and go to state 24
+=======
+    EQUALS          shift and go to state 20
+    LBRACKET        shift and go to state 21
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
 
 state 5
@@ -268,8 +380,11 @@ state 5
     $end            reduce using rule 23 (statement -> simple_assignment .)
     CONST           reduce using rule 23 (statement -> simple_assignment .)
     ID              reduce using rule 23 (statement -> simple_assignment .)
+<<<<<<< HEAD
     READ            reduce using rule 23 (statement -> simple_assignment .)
     WRITE           reduce using rule 23 (statement -> simple_assignment .)
+=======
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
     FOR             reduce using rule 23 (statement -> simple_assignment .)
     INT_TYPE        reduce using rule 23 (statement -> simple_assignment .)
     FLOAT_TYPE      reduce using rule 23 (statement -> simple_assignment .)
@@ -285,8 +400,11 @@ state 6
     $end            reduce using rule 24 (statement -> array_declarationTab .)
     CONST           reduce using rule 24 (statement -> array_declarationTab .)
     ID              reduce using rule 24 (statement -> array_declarationTab .)
+<<<<<<< HEAD
     READ            reduce using rule 24 (statement -> array_declarationTab .)
     WRITE           reduce using rule 24 (statement -> array_declarationTab .)
+=======
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
     FOR             reduce using rule 24 (statement -> array_declarationTab .)
     INT_TYPE        reduce using rule 24 (statement -> array_declarationTab .)
     FLOAT_TYPE      reduce using rule 24 (statement -> array_declarationTab .)
@@ -299,6 +417,7 @@ state 7
 
     (25) statement -> declaration_assignment .
 
+<<<<<<< HEAD
     $end            reduce using rule 25 (statement -> declaration_assignment .)
     CONST           reduce using rule 25 (statement -> declaration_assignment .)
     ID              reduce using rule 25 (statement -> declaration_assignment .)
@@ -310,12 +429,24 @@ state 7
     BOOL_TYPE       reduce using rule 25 (statement -> declaration_assignment .)
     CHAR_TYPE       reduce using rule 25 (statement -> declaration_assignment .)
     RBRACE          reduce using rule 25 (statement -> declaration_assignment .)
+=======
+    $end            reduce using rule 25 (statement -> array_assignment .)
+    CONST           reduce using rule 25 (statement -> array_assignment .)
+    ID              reduce using rule 25 (statement -> array_assignment .)
+    FOR             reduce using rule 25 (statement -> array_assignment .)
+    INT_TYPE        reduce using rule 25 (statement -> array_assignment .)
+    FLOAT_TYPE      reduce using rule 25 (statement -> array_assignment .)
+    BOOL_TYPE       reduce using rule 25 (statement -> array_assignment .)
+    CHAR_TYPE       reduce using rule 25 (statement -> array_assignment .)
+    RBRACE          reduce using rule 25 (statement -> array_assignment .)
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
 
 state 8
 
     (26) statement -> array_assignment .
 
+<<<<<<< HEAD
     $end            reduce using rule 26 (statement -> array_assignment .)
     CONST           reduce using rule 26 (statement -> array_assignment .)
     ID              reduce using rule 26 (statement -> array_assignment .)
@@ -327,10 +458,22 @@ state 8
     BOOL_TYPE       reduce using rule 26 (statement -> array_assignment .)
     CHAR_TYPE       reduce using rule 26 (statement -> array_assignment .)
     RBRACE          reduce using rule 26 (statement -> array_assignment .)
+=======
+    $end            reduce using rule 27 (statement -> const_declarationTab .)
+    CONST           reduce using rule 27 (statement -> const_declarationTab .)
+    ID              reduce using rule 27 (statement -> const_declarationTab .)
+    FOR             reduce using rule 27 (statement -> const_declarationTab .)
+    INT_TYPE        reduce using rule 27 (statement -> const_declarationTab .)
+    FLOAT_TYPE      reduce using rule 27 (statement -> const_declarationTab .)
+    BOOL_TYPE       reduce using rule 27 (statement -> const_declarationTab .)
+    CHAR_TYPE       reduce using rule 27 (statement -> const_declarationTab .)
+    RBRACE          reduce using rule 27 (statement -> const_declarationTab .)
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
 
 state 9
 
+<<<<<<< HEAD
     (28) statement -> const_declarationTab .
 
     $end            reduce using rule 28 (statement -> const_declarationTab .)
@@ -344,10 +487,16 @@ state 9
     BOOL_TYPE       reduce using rule 28 (statement -> const_declarationTab .)
     CHAR_TYPE       reduce using rule 28 (statement -> const_declarationTab .)
     RBRACE          reduce using rule 28 (statement -> const_declarationTab .)
+=======
+    (50) statement -> FOR . LPAREN initialisation COLON step COLON BorneSup RPAREN block
+
+    LPAREN          shift and go to state 22
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
 
 state 10
 
+<<<<<<< HEAD
     (52) statement -> READ . LPAREN ID RPAREN SEMICOLON
     (53) statement -> READ . LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON
 
@@ -370,32 +519,47 @@ state 12
 
 state 13
 
+=======
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
     (8) type -> INT_TYPE .
 
     ID              reduce using rule 8 (type -> INT_TYPE .)
 
 
+<<<<<<< HEAD
 state 14
+=======
+state 11
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (9) type -> FLOAT_TYPE .
 
     ID              reduce using rule 9 (type -> FLOAT_TYPE .)
 
 
+<<<<<<< HEAD
 state 15
+=======
+state 12
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (10) type -> BOOL_TYPE .
 
     ID              reduce using rule 10 (type -> BOOL_TYPE .)
 
 
+<<<<<<< HEAD
 state 16
+=======
+state 13
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (11) type -> CHAR_TYPE .
 
     ID              reduce using rule 11 (type -> CHAR_TYPE .)
 
 
+<<<<<<< HEAD
 state 17
 
     (1) statement -> type declaration_list . SEMICOLON
@@ -408,9 +572,23 @@ state 18
     (27) statement -> type declarationTab_listTab . SEMICOLON
 
     SEMICOLON       shift and go to state 29
+=======
+state 14
+
+    (1) statement -> type declaration_list . SEMICOLON
+
+    SEMICOLON       shift and go to state 23
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
 
 state 19
+
+    (26) statement -> type declarationTab_listTab . SEMICOLON
+
+    SEMICOLON       shift and go to state 24
+
+
+state 16
 
     (30) array_declarationTab -> type ID . LBRACKET INTEGER RBRACKET SEMICOLON
     (42) declaration_assignment -> type ID . EQUALS expression SEMICOLON
@@ -422,42 +600,74 @@ state 19
 
   ! reduce/reduce conflict for COMMA resolved using rule 5 (declaration -> ID .)
   ! reduce/reduce conflict for SEMICOLON resolved using rule 5 (declaration -> ID .)
+<<<<<<< HEAD
     LBRACKET        shift and go to state 30
     EQUALS          shift and go to state 31
     COMMA           reduce using rule 5 (declaration -> ID .)
     SEMICOLON       reduce using rule 5 (declaration -> ID .)
+=======
+    LBRACKET        shift and go to state 25
+    COMMA           reduce using rule 5 (declaration -> ID .)
+    SEMICOLON       reduce using rule 5 (declaration -> ID .)
+    EQUALS          shift and go to state 26
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
   ! COMMA           [ reduce using rule 33 (declarationTab -> ID .) ]
   ! SEMICOLON       [ reduce using rule 33 (declarationTab -> ID .) ]
 
 
+<<<<<<< HEAD
 state 20
+=======
+state 17
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (3) declaration_list -> declaration .
     (4) declaration_list -> declaration . COMMA declaration_list
 
     SEMICOLON       reduce using rule 3 (declaration_list -> declaration .)
+<<<<<<< HEAD
     COMMA           shift and go to state 32
 
 
 state 21
+=======
+    COMMA           shift and go to state 27
+
+
+state 18
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (31) declarationTab_listTab -> declarationTab .
     (32) declarationTab_listTab -> declarationTab . COMMA declarationTab_listTab
 
     SEMICOLON       reduce using rule 31 (declarationTab_listTab -> declarationTab .)
+<<<<<<< HEAD
     COMMA           shift and go to state 33
 
 
 state 22
+=======
+    COMMA           shift and go to state 28
+
+
+state 19
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (2) statement -> CONST type . ID EQUALS expression SEMICOLON
     (29) const_declarationTab -> CONST type . ID EQUALS expressionTab SEMICOLON
 
+<<<<<<< HEAD
     ID              shift and go to state 34
 
 
 state 23
+=======
+    ID              shift and go to state 29
+
+
+state 20
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (7) statement -> ID EQUALS . expression SEMICOLON
     (43) simple_assignment -> ID EQUALS . expression SEMICOLON
@@ -480,6 +690,7 @@ state 23
     (50) factor -> . FALSE
     (51) factor -> . NOT ID
 
+<<<<<<< HEAD
     INTEGER         shift and go to state 39
     FLOAT           shift and go to state 40
     CHAR            shift and go to state 41
@@ -497,6 +708,26 @@ state 23
     factor                         shift and go to state 38
 
 state 24
+=======
+    ID              shift and go to state 30
+    FLOAT           shift and go to state 34
+    INTEGER         shift and go to state 35
+    CHAR            shift and go to state 36
+    BOOL            shift and go to state 38
+    MINUS           shift and go to state 39
+    PLUS            shift and go to state 40
+    LPAREN          shift and go to state 41
+    TRUE            shift and go to state 42
+    FALSE           shift and go to state 43
+    NOT             shift and go to state 44
+
+    expression                     shift and go to state 31
+    expressionTab                  shift and go to state 32
+    term                           shift and go to state 33
+    factor                         shift and go to state 37
+
+state 21
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (41) array_assignment -> ID LBRACKET . expressionTab RBRACKET EQUALS expressionTab SEMICOLON
     (36) expressionTab -> . ID
@@ -504,6 +735,7 @@ state 24
     (38) expressionTab -> . INTEGER
     (39) expressionTab -> . CHAR
 
+<<<<<<< HEAD
     ID              shift and go to state 49
     FLOAT           shift and go to state 51
     INTEGER         shift and go to state 52
@@ -542,14 +774,36 @@ state 27
     initialisation                 shift and go to state 58
 
 state 28
+=======
+    ID              shift and go to state 45
+    FLOAT           shift and go to state 47
+    INTEGER         shift and go to state 48
+    CHAR            shift and go to state 49
+
+    expressionTab                  shift and go to state 46
+
+state 22
+
+    (50) statement -> FOR LPAREN . initialisation COLON step COLON BorneSup RPAREN block
+    (51) initialisation -> . ID EQUALS INTEGER
+
+    ID              shift and go to state 51
+
+    initialisation                 shift and go to state 50
+
+state 23
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (1) statement -> type declaration_list SEMICOLON .
 
     $end            reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
     CONST           reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
     ID              reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
+<<<<<<< HEAD
     READ            reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
     WRITE           reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
+=======
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
     FOR             reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
     INT_TYPE        reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
     FLOAT_TYPE      reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
@@ -558,10 +812,15 @@ state 28
     RBRACE          reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
 
 
+<<<<<<< HEAD
 state 29
+=======
+state 24
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (27) statement -> type declarationTab_listTab SEMICOLON .
 
+<<<<<<< HEAD
     $end            reduce using rule 27 (statement -> type declarationTab_listTab SEMICOLON .)
     CONST           reduce using rule 27 (statement -> type declarationTab_listTab SEMICOLON .)
     ID              reduce using rule 27 (statement -> type declarationTab_listTab SEMICOLON .)
@@ -576,14 +835,35 @@ state 29
 
 
 state 30
+=======
+    $end            reduce using rule 26 (statement -> type declarationTab_listTab SEMICOLON .)
+    CONST           reduce using rule 26 (statement -> type declarationTab_listTab SEMICOLON .)
+    ID              reduce using rule 26 (statement -> type declarationTab_listTab SEMICOLON .)
+    FOR             reduce using rule 26 (statement -> type declarationTab_listTab SEMICOLON .)
+    INT_TYPE        reduce using rule 26 (statement -> type declarationTab_listTab SEMICOLON .)
+    FLOAT_TYPE      reduce using rule 26 (statement -> type declarationTab_listTab SEMICOLON .)
+    BOOL_TYPE       reduce using rule 26 (statement -> type declarationTab_listTab SEMICOLON .)
+    CHAR_TYPE       reduce using rule 26 (statement -> type declarationTab_listTab SEMICOLON .)
+    RBRACE          reduce using rule 26 (statement -> type declarationTab_listTab SEMICOLON .)
+
+
+state 25
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (30) array_declarationTab -> type ID LBRACKET . INTEGER RBRACKET SEMICOLON
     (35) declarationTab -> ID LBRACKET . INTEGER RBRACKET
 
+<<<<<<< HEAD
     INTEGER         shift and go to state 60
 
 
 state 31
+=======
+    INTEGER         shift and go to state 52
+
+
+state 26
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (42) declaration_assignment -> type ID EQUALS . expression SEMICOLON
     (6) declaration -> ID EQUALS . expression
@@ -611,6 +891,7 @@ state 31
     (50) factor -> . FALSE
     (51) factor -> . NOT ID
 
+<<<<<<< HEAD
     ID              shift and go to state 61
     FLOAT           shift and go to state 64
     INTEGER         shift and go to state 65
@@ -629,6 +910,26 @@ state 31
     factor                         shift and go to state 38
 
 state 32
+=======
+    ID              shift and go to state 30
+    FLOAT           shift and go to state 34
+    INTEGER         shift and go to state 35
+    CHAR            shift and go to state 36
+    BOOL            shift and go to state 38
+    MINUS           shift and go to state 39
+    PLUS            shift and go to state 40
+    LPAREN          shift and go to state 41
+    TRUE            shift and go to state 42
+    FALSE           shift and go to state 43
+    NOT             shift and go to state 44
+
+    expression                     shift and go to state 53
+    expressionTab                  shift and go to state 54
+    term                           shift and go to state 33
+    factor                         shift and go to state 37
+
+state 27
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (4) declaration_list -> declaration COMMA . declaration_list
     (3) declaration_list -> . declaration
@@ -636,12 +937,21 @@ state 32
     (5) declaration -> . ID
     (6) declaration -> . ID EQUALS expression
 
+<<<<<<< HEAD
     ID              shift and go to state 68
 
     declaration                    shift and go to state 20
     declaration_list               shift and go to state 67
 
 state 33
+=======
+    ID              shift and go to state 56
+
+    declaration                    shift and go to state 17
+    declaration_list               shift and go to state 55
+
+state 28
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (32) declarationTab_listTab -> declarationTab COMMA . declarationTab_listTab
     (31) declarationTab_listTab -> . declarationTab
@@ -650,20 +960,126 @@ state 33
     (34) declarationTab -> . ID EQUALS expressionTab
     (35) declarationTab -> . ID LBRACKET INTEGER RBRACKET
 
+<<<<<<< HEAD
     ID              shift and go to state 70
 
     declarationTab                 shift and go to state 21
     declarationTab_listTab         shift and go to state 69
 
 state 34
+=======
+    ID              shift and go to state 58
+
+    declarationTab                 shift and go to state 18
+    declarationTab_listTab         shift and go to state 57
+
+state 29
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (2) statement -> CONST type ID . EQUALS expression SEMICOLON
     (29) const_declarationTab -> CONST type ID . EQUALS expressionTab SEMICOLON
 
+<<<<<<< HEAD
     EQUALS          shift and go to state 71
+=======
+    EQUALS          shift and go to state 59
+
+
+state 30
+
+    (36) expressionTab -> ID .
+    (40) factor -> ID . LBRACKET expressionTab RBRACKET
+    (46) factor -> ID .
+
+  ! reduce/reduce conflict for SEMICOLON resolved using rule 36 (expressionTab -> ID .)
+  ! reduce/reduce conflict for COMMA resolved using rule 36 (expressionTab -> ID .)
+    SEMICOLON       reduce using rule 36 (expressionTab -> ID .)
+    COMMA           reduce using rule 36 (expressionTab -> ID .)
+    LBRACKET        shift and go to state 60
+    AND             reduce using rule 46 (factor -> ID .)
+    OR              reduce using rule 46 (factor -> ID .)
+
+  ! SEMICOLON       [ reduce using rule 46 (factor -> ID .) ]
+  ! COMMA           [ reduce using rule 46 (factor -> ID .) ]
+
+
+state 31
+
+    (7) statement -> ID EQUALS expression . SEMICOLON
+    (42) expression -> expression . OR term
+
+    SEMICOLON       shift and go to state 61
+    OR              shift and go to state 62
+
+
+state 32
+
+    (28) simple_assignment -> ID EQUALS expressionTab . SEMICOLON
+
+    SEMICOLON       shift and go to state 63
+
+
+state 33
+
+    (43) expression -> term .
+    (44) term -> term . AND factor
+
+    SEMICOLON       reduce using rule 43 (expression -> term .)
+    OR              reduce using rule 43 (expression -> term .)
+    COMMA           reduce using rule 43 (expression -> term .)
+    AND             shift and go to state 64
+
+
+state 34
+
+    (37) expressionTab -> FLOAT .
+    (13) factor -> FLOAT .
+
+  ! reduce/reduce conflict for SEMICOLON resolved using rule 13 (factor -> FLOAT .)
+  ! reduce/reduce conflict for COMMA resolved using rule 13 (factor -> FLOAT .)
+    AND             reduce using rule 13 (factor -> FLOAT .)
+    SEMICOLON       reduce using rule 13 (factor -> FLOAT .)
+    OR              reduce using rule 13 (factor -> FLOAT .)
+    COMMA           reduce using rule 13 (factor -> FLOAT .)
+
+  ! SEMICOLON       [ reduce using rule 37 (expressionTab -> FLOAT .) ]
+  ! COMMA           [ reduce using rule 37 (expressionTab -> FLOAT .) ]
 
 
 state 35
+
+    (38) expressionTab -> INTEGER .
+    (12) factor -> INTEGER .
+
+  ! reduce/reduce conflict for SEMICOLON resolved using rule 12 (factor -> INTEGER .)
+  ! reduce/reduce conflict for COMMA resolved using rule 12 (factor -> INTEGER .)
+    AND             reduce using rule 12 (factor -> INTEGER .)
+    SEMICOLON       reduce using rule 12 (factor -> INTEGER .)
+    OR              reduce using rule 12 (factor -> INTEGER .)
+    COMMA           reduce using rule 12 (factor -> INTEGER .)
+
+  ! SEMICOLON       [ reduce using rule 38 (expressionTab -> INTEGER .) ]
+  ! COMMA           [ reduce using rule 38 (expressionTab -> INTEGER .) ]
+
+
+state 36
+
+    (39) expressionTab -> CHAR .
+    (14) factor -> CHAR .
+
+  ! reduce/reduce conflict for SEMICOLON resolved using rule 14 (factor -> CHAR .)
+  ! reduce/reduce conflict for COMMA resolved using rule 14 (factor -> CHAR .)
+    AND             reduce using rule 14 (factor -> CHAR .)
+    SEMICOLON       reduce using rule 14 (factor -> CHAR .)
+    OR              reduce using rule 14 (factor -> CHAR .)
+    COMMA           reduce using rule 14 (factor -> CHAR .)
+
+  ! SEMICOLON       [ reduce using rule 39 (expressionTab -> CHAR .) ]
+  ! COMMA           [ reduce using rule 39 (expressionTab -> CHAR .) ]
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
+
+
+state 37
 
     (40) factor -> ID . LBRACKET expression RBRACKET
     (48) factor -> ID .
@@ -676,7 +1092,7 @@ state 35
     RBRACKET        reduce using rule 48 (factor -> ID .)
 
 
-state 36
+state 38
 
     (7) statement -> ID EQUALS expression . SEMICOLON
     (43) simple_assignment -> ID EQUALS expression . SEMICOLON
@@ -753,7 +1169,11 @@ state 42
     RBRACKET        reduce using rule 15 (factor -> BOOL .)
 
 
+<<<<<<< HEAD
 state 43
+=======
+state 39
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (16) factor -> MINUS . factor
     (12) factor -> . INTEGER
@@ -771,6 +1191,7 @@ state 43
     (50) factor -> . FALSE
     (51) factor -> . NOT ID
 
+<<<<<<< HEAD
     INTEGER         shift and go to state 39
     FLOAT           shift and go to state 40
     CHAR            shift and go to state 41
@@ -786,6 +1207,23 @@ state 43
     factor                         shift and go to state 76
 
 state 44
+=======
+    INTEGER         shift and go to state 66
+    FLOAT           shift and go to state 67
+    CHAR            shift and go to state 68
+    BOOL            shift and go to state 38
+    MINUS           shift and go to state 39
+    PLUS            shift and go to state 40
+    LPAREN          shift and go to state 41
+    ID              shift and go to state 69
+    TRUE            shift and go to state 42
+    FALSE           shift and go to state 43
+    NOT             shift and go to state 44
+
+    factor                         shift and go to state 65
+
+state 40
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (17) factor -> PLUS . factor
     (12) factor -> . INTEGER
@@ -803,6 +1241,7 @@ state 44
     (50) factor -> . FALSE
     (51) factor -> . NOT ID
 
+<<<<<<< HEAD
     INTEGER         shift and go to state 39
     FLOAT           shift and go to state 40
     CHAR            shift and go to state 41
@@ -818,17 +1257,43 @@ state 44
     factor                         shift and go to state 77
 
 state 45
+=======
+    INTEGER         shift and go to state 66
+    FLOAT           shift and go to state 67
+    CHAR            shift and go to state 68
+    BOOL            shift and go to state 38
+    MINUS           shift and go to state 39
+    PLUS            shift and go to state 40
+    LPAREN          shift and go to state 41
+    ID              shift and go to state 69
+    TRUE            shift and go to state 42
+    FALSE           shift and go to state 43
+    NOT             shift and go to state 44
+
+    factor                         shift and go to state 70
+
+state 41
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (18) factor -> LPAREN . INTEGER RPAREN
     (19) factor -> LPAREN . FLOAT RPAREN
     (20) factor -> LPAREN . MINUS FLOAT RPAREN
 
+<<<<<<< HEAD
     INTEGER         shift and go to state 78
     FLOAT           shift and go to state 79
     MINUS           shift and go to state 80
 
 
 state 46
+=======
+    INTEGER         shift and go to state 71
+    FLOAT           shift and go to state 72
+    MINUS           shift and go to state 73
+
+
+state 42
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (49) factor -> TRUE .
 
@@ -839,7 +1304,11 @@ state 46
     RBRACKET        reduce using rule 49 (factor -> TRUE .)
 
 
+<<<<<<< HEAD
 state 47
+=======
+state 43
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (50) factor -> FALSE .
 
@@ -850,14 +1319,25 @@ state 47
     RBRACKET        reduce using rule 50 (factor -> FALSE .)
 
 
+<<<<<<< HEAD
 state 48
+=======
+state 44
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (51) factor -> NOT . ID
 
+<<<<<<< HEAD
     ID              shift and go to state 81
 
 
 state 49
+=======
+    ID              shift and go to state 74
+
+
+state 45
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (36) expressionTab -> ID .
 
@@ -866,6 +1346,7 @@ state 49
     SEMICOLON       reduce using rule 36 (expressionTab -> ID .)
 
 
+<<<<<<< HEAD
 state 50
 
     (41) array_assignment -> ID LBRACKET expressionTab . RBRACKET EQUALS expressionTab SEMICOLON
@@ -874,6 +1355,16 @@ state 50
 
 
 state 51
+=======
+state 46
+
+    (41) array_assignment -> ID LBRACKET expressionTab . RBRACKET EQUALS expressionTab SEMICOLON
+
+    RBRACKET        shift and go to state 75
+
+
+state 47
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (37) expressionTab -> FLOAT .
 
@@ -882,7 +1373,11 @@ state 51
     SEMICOLON       reduce using rule 37 (expressionTab -> FLOAT .)
 
 
+<<<<<<< HEAD
 state 52
+=======
+state 48
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (38) expressionTab -> INTEGER .
 
@@ -891,7 +1386,11 @@ state 52
     SEMICOLON       reduce using rule 38 (expressionTab -> INTEGER .)
 
 
+<<<<<<< HEAD
 state 53
+=======
+state 49
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (39) expressionTab -> CHAR .
 
@@ -900,6 +1399,7 @@ state 53
     SEMICOLON       reduce using rule 39 (expressionTab -> CHAR .)
 
 
+<<<<<<< HEAD
 state 54
 
     (52) statement -> READ LPAREN ID . RPAREN SEMICOLON
@@ -951,14 +1451,38 @@ state 59
 
 
 state 60
+=======
+state 50
+
+    (50) statement -> FOR LPAREN initialisation . COLON step COLON BorneSup RPAREN block
+
+    COLON           shift and go to state 76
+
+
+state 51
+
+    (51) initialisation -> ID . EQUALS INTEGER
+
+    EQUALS          shift and go to state 77
+
+
+state 52
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (30) array_declarationTab -> type ID LBRACKET INTEGER . RBRACKET SEMICOLON
     (35) declarationTab -> ID LBRACKET INTEGER . RBRACKET
 
+<<<<<<< HEAD
     RBRACKET        shift and go to state 90
 
 
 state 61
+=======
+    RBRACKET        shift and go to state 78
+
+
+state 53
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (36) expressionTab -> ID .
     (40) factor -> ID . LBRACKET expression RBRACKET
@@ -985,12 +1509,20 @@ state 62
   ! shift/reduce conflict for SEMICOLON resolved as shift
     SEMICOLON       shift and go to state 91
     COMMA           reduce using rule 6 (declaration -> ID EQUALS expression .)
+<<<<<<< HEAD
     OR              shift and go to state 74
 
   ! SEMICOLON       [ reduce using rule 6 (declaration -> ID EQUALS expression .) ]
 
 
 state 63
+=======
+    SEMICOLON       reduce using rule 6 (declaration -> ID EQUALS expression .)
+    OR              shift and go to state 62
+
+
+state 54
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (34) declarationTab -> ID EQUALS expressionTab .
 
@@ -998,6 +1530,7 @@ state 63
     SEMICOLON       reduce using rule 34 (declarationTab -> ID EQUALS expressionTab .)
 
 
+<<<<<<< HEAD
 state 64
 
     (37) expressionTab -> FLOAT .
@@ -1047,30 +1580,48 @@ state 66
 
 
 state 67
+=======
+state 55
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (4) declaration_list -> declaration COMMA declaration_list .
 
     SEMICOLON       reduce using rule 4 (declaration_list -> declaration COMMA declaration_list .)
 
 
+<<<<<<< HEAD
 state 68
+=======
+state 56
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (5) declaration -> ID .
     (6) declaration -> ID . EQUALS expression
 
     COMMA           reduce using rule 5 (declaration -> ID .)
     SEMICOLON       reduce using rule 5 (declaration -> ID .)
+<<<<<<< HEAD
     EQUALS          shift and go to state 92
 
 
 state 69
+=======
+    EQUALS          shift and go to state 79
+
+
+state 57
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (32) declarationTab_listTab -> declarationTab COMMA declarationTab_listTab .
 
     SEMICOLON       reduce using rule 32 (declarationTab_listTab -> declarationTab COMMA declarationTab_listTab .)
 
 
+<<<<<<< HEAD
 state 70
+=======
+state 58
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (33) declarationTab -> ID .
     (34) declarationTab -> ID . EQUALS expressionTab
@@ -1078,11 +1629,19 @@ state 70
 
     COMMA           reduce using rule 33 (declarationTab -> ID .)
     SEMICOLON       reduce using rule 33 (declarationTab -> ID .)
+<<<<<<< HEAD
     EQUALS          shift and go to state 93
     LBRACKET        shift and go to state 94
 
 
 state 71
+=======
+    EQUALS          shift and go to state 80
+    LBRACKET        shift and go to state 81
+
+
+state 59
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (2) statement -> CONST type ID EQUALS . expression SEMICOLON
     (29) const_declarationTab -> CONST type ID EQUALS . expressionTab SEMICOLON
@@ -1109,6 +1668,7 @@ state 71
     (50) factor -> . FALSE
     (51) factor -> . NOT ID
 
+<<<<<<< HEAD
     ID              shift and go to state 61
     FLOAT           shift and go to state 64
     INTEGER         shift and go to state 65
@@ -1127,6 +1687,26 @@ state 71
     factor                         shift and go to state 38
 
 state 72
+=======
+    ID              shift and go to state 30
+    FLOAT           shift and go to state 34
+    INTEGER         shift and go to state 35
+    CHAR            shift and go to state 36
+    BOOL            shift and go to state 38
+    MINUS           shift and go to state 39
+    PLUS            shift and go to state 40
+    LPAREN          shift and go to state 41
+    TRUE            shift and go to state 42
+    FALSE           shift and go to state 43
+    NOT             shift and go to state 44
+
+    expression                     shift and go to state 82
+    expressionTab                  shift and go to state 83
+    term                           shift and go to state 33
+    factor                         shift and go to state 37
+
+state 60
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (40) factor -> ID LBRACKET . expression RBRACKET
     (44) expression -> . expression OR term
@@ -1148,6 +1728,7 @@ state 72
     (50) factor -> . FALSE
     (51) factor -> . NOT ID
 
+<<<<<<< HEAD
     INTEGER         shift and go to state 39
     FLOAT           shift and go to state 40
     CHAR            shift and go to state 41
@@ -1165,6 +1746,16 @@ state 72
     factor                         shift and go to state 38
 
 state 73
+=======
+    ID              shift and go to state 45
+    FLOAT           shift and go to state 47
+    INTEGER         shift and go to state 48
+    CHAR            shift and go to state 49
+
+    expressionTab                  shift and go to state 84
+
+state 61
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (7) statement -> ID EQUALS expression SEMICOLON .
     (43) simple_assignment -> ID EQUALS expression SEMICOLON .
@@ -1183,14 +1774,18 @@ state 73
     $end            reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     CONST           reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     ID              reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+<<<<<<< HEAD
     READ            reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     WRITE           reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+=======
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
     FOR             reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     INT_TYPE        reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     FLOAT_TYPE      reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     BOOL_TYPE       reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     CHAR_TYPE       reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     RBRACE          reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+<<<<<<< HEAD
 
   ! $end            [ reduce using rule 43 (simple_assignment -> ID EQUALS expression SEMICOLON .) ]
   ! CONST           [ reduce using rule 43 (simple_assignment -> ID EQUALS expression SEMICOLON .) ]
@@ -1206,6 +1801,11 @@ state 73
 
 
 state 74
+=======
+
+
+state 62
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (44) expression -> expression OR . term
     (46) term -> . term AND factor
@@ -1225,6 +1825,7 @@ state 74
     (50) factor -> . FALSE
     (51) factor -> . NOT ID
 
+<<<<<<< HEAD
     INTEGER         shift and go to state 39
     FLOAT           shift and go to state 40
     CHAR            shift and go to state 41
@@ -1243,6 +1844,41 @@ state 74
 state 75
 
     (46) term -> term AND . factor
+=======
+    INTEGER         shift and go to state 66
+    FLOAT           shift and go to state 67
+    CHAR            shift and go to state 68
+    BOOL            shift and go to state 38
+    MINUS           shift and go to state 39
+    PLUS            shift and go to state 40
+    LPAREN          shift and go to state 41
+    ID              shift and go to state 69
+    TRUE            shift and go to state 42
+    FALSE           shift and go to state 43
+    NOT             shift and go to state 44
+
+    term                           shift and go to state 85
+    factor                         shift and go to state 37
+
+state 63
+
+    (28) simple_assignment -> ID EQUALS expressionTab SEMICOLON .
+
+    $end            reduce using rule 28 (simple_assignment -> ID EQUALS expressionTab SEMICOLON .)
+    CONST           reduce using rule 28 (simple_assignment -> ID EQUALS expressionTab SEMICOLON .)
+    ID              reduce using rule 28 (simple_assignment -> ID EQUALS expressionTab SEMICOLON .)
+    FOR             reduce using rule 28 (simple_assignment -> ID EQUALS expressionTab SEMICOLON .)
+    INT_TYPE        reduce using rule 28 (simple_assignment -> ID EQUALS expressionTab SEMICOLON .)
+    FLOAT_TYPE      reduce using rule 28 (simple_assignment -> ID EQUALS expressionTab SEMICOLON .)
+    BOOL_TYPE       reduce using rule 28 (simple_assignment -> ID EQUALS expressionTab SEMICOLON .)
+    CHAR_TYPE       reduce using rule 28 (simple_assignment -> ID EQUALS expressionTab SEMICOLON .)
+    RBRACE          reduce using rule 28 (simple_assignment -> ID EQUALS expressionTab SEMICOLON .)
+
+
+state 64
+
+    (44) term -> term AND . factor
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
     (12) factor -> . INTEGER
     (13) factor -> . FLOAT
     (14) factor -> . CHAR
@@ -1258,6 +1894,7 @@ state 75
     (50) factor -> . FALSE
     (51) factor -> . NOT ID
 
+<<<<<<< HEAD
     INTEGER         shift and go to state 39
     FLOAT           shift and go to state 40
     CHAR            shift and go to state 41
@@ -1273,6 +1910,23 @@ state 75
     factor                         shift and go to state 99
 
 state 76
+=======
+    INTEGER         shift and go to state 66
+    FLOAT           shift and go to state 67
+    CHAR            shift and go to state 68
+    BOOL            shift and go to state 38
+    MINUS           shift and go to state 39
+    PLUS            shift and go to state 40
+    LPAREN          shift and go to state 41
+    ID              shift and go to state 69
+    TRUE            shift and go to state 42
+    FALSE           shift and go to state 43
+    NOT             shift and go to state 44
+
+    factor                         shift and go to state 86
+
+state 65
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (16) factor -> MINUS factor .
 
@@ -1283,7 +1937,53 @@ state 76
     RBRACKET        reduce using rule 16 (factor -> MINUS factor .)
 
 
+<<<<<<< HEAD
 state 77
+=======
+state 66
+
+    (12) factor -> INTEGER .
+
+    AND             reduce using rule 12 (factor -> INTEGER .)
+    SEMICOLON       reduce using rule 12 (factor -> INTEGER .)
+    OR              reduce using rule 12 (factor -> INTEGER .)
+    COMMA           reduce using rule 12 (factor -> INTEGER .)
+
+
+state 67
+
+    (13) factor -> FLOAT .
+
+    AND             reduce using rule 13 (factor -> FLOAT .)
+    SEMICOLON       reduce using rule 13 (factor -> FLOAT .)
+    OR              reduce using rule 13 (factor -> FLOAT .)
+    COMMA           reduce using rule 13 (factor -> FLOAT .)
+
+
+state 68
+
+    (14) factor -> CHAR .
+
+    AND             reduce using rule 14 (factor -> CHAR .)
+    SEMICOLON       reduce using rule 14 (factor -> CHAR .)
+    OR              reduce using rule 14 (factor -> CHAR .)
+    COMMA           reduce using rule 14 (factor -> CHAR .)
+
+
+state 69
+
+    (40) factor -> ID . LBRACKET expressionTab RBRACKET
+    (46) factor -> ID .
+
+    LBRACKET        shift and go to state 60
+    AND             reduce using rule 46 (factor -> ID .)
+    SEMICOLON       reduce using rule 46 (factor -> ID .)
+    OR              reduce using rule 46 (factor -> ID .)
+    COMMA           reduce using rule 46 (factor -> ID .)
+
+
+state 70
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (17) factor -> PLUS factor .
 
@@ -1294,6 +1994,7 @@ state 77
     RBRACKET        reduce using rule 17 (factor -> PLUS factor .)
 
 
+<<<<<<< HEAD
 state 78
 
     (18) factor -> LPAREN INTEGER . RPAREN
@@ -1316,6 +2017,30 @@ state 80
 
 
 state 81
+=======
+state 71
+
+    (18) factor -> LPAREN INTEGER . RPAREN
+
+    RPAREN          shift and go to state 87
+
+
+state 72
+
+    (19) factor -> LPAREN FLOAT . RPAREN
+
+    RPAREN          shift and go to state 88
+
+
+state 73
+
+    (20) factor -> LPAREN MINUS . FLOAT RPAREN
+
+    FLOAT           shift and go to state 89
+
+
+state 74
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (51) factor -> NOT ID .
 
@@ -1326,6 +2051,7 @@ state 81
     RBRACKET        reduce using rule 51 (factor -> NOT ID .)
 
 
+<<<<<<< HEAD
 state 82
 
     (41) array_assignment -> ID LBRACKET expressionTab RBRACKET . EQUALS expressionTab SEMICOLON
@@ -1390,17 +2116,50 @@ state 89
 
 
 state 90
+=======
+state 75
+
+    (41) array_assignment -> ID LBRACKET expressionTab RBRACKET . EQUALS expressionTab SEMICOLON
+
+    EQUALS          shift and go to state 90
+
+
+state 76
+
+    (50) statement -> FOR LPAREN initialisation COLON . step COLON BorneSup RPAREN block
+    (52) step -> . INTEGER
+    (53) step -> . ID
+
+    INTEGER         shift and go to state 92
+    ID              shift and go to state 93
+
+    step                           shift and go to state 91
+
+state 77
+
+    (51) initialisation -> ID EQUALS . INTEGER
+
+    INTEGER         shift and go to state 94
+
+
+state 78
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (30) array_declarationTab -> type ID LBRACKET INTEGER RBRACKET . SEMICOLON
     (35) declarationTab -> ID LBRACKET INTEGER RBRACKET .
 
   ! shift/reduce conflict for SEMICOLON resolved as shift
+<<<<<<< HEAD
     SEMICOLON       shift and go to state 113
+=======
+    SEMICOLON       shift and go to state 95
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
     COMMA           reduce using rule 35 (declarationTab -> ID LBRACKET INTEGER RBRACKET .)
 
   ! SEMICOLON       [ reduce using rule 35 (declarationTab -> ID LBRACKET INTEGER RBRACKET .) ]
 
 
+<<<<<<< HEAD
 state 91
 
     (42) declaration_assignment -> type ID EQUALS expression SEMICOLON .
@@ -1419,6 +2178,9 @@ state 91
 
 
 state 92
+=======
+state 79
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (6) declaration -> ID EQUALS . expression
     (44) expression -> . expression OR term
@@ -1440,6 +2202,7 @@ state 92
     (50) factor -> . FALSE
     (51) factor -> . NOT ID
 
+<<<<<<< HEAD
     INTEGER         shift and go to state 39
     FLOAT           shift and go to state 40
     CHAR            shift and go to state 41
@@ -1457,6 +2220,25 @@ state 92
     factor                         shift and go to state 38
 
 state 93
+=======
+    INTEGER         shift and go to state 66
+    FLOAT           shift and go to state 67
+    CHAR            shift and go to state 68
+    BOOL            shift and go to state 38
+    MINUS           shift and go to state 39
+    PLUS            shift and go to state 40
+    LPAREN          shift and go to state 41
+    ID              shift and go to state 69
+    TRUE            shift and go to state 42
+    FALSE           shift and go to state 43
+    NOT             shift and go to state 44
+
+    expression                     shift and go to state 53
+    term                           shift and go to state 33
+    factor                         shift and go to state 37
+
+state 80
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (34) declarationTab -> ID EQUALS . expressionTab
     (36) expressionTab -> . ID
@@ -1464,6 +2246,7 @@ state 93
     (38) expressionTab -> . INTEGER
     (39) expressionTab -> . CHAR
 
+<<<<<<< HEAD
     ID              shift and go to state 49
     FLOAT           shift and go to state 51
     INTEGER         shift and go to state 52
@@ -1479,10 +2262,28 @@ state 94
 
 
 state 95
+=======
+    ID              shift and go to state 45
+    FLOAT           shift and go to state 47
+    INTEGER         shift and go to state 48
+    CHAR            shift and go to state 49
+
+    expressionTab                  shift and go to state 54
+
+state 81
+
+    (35) declarationTab -> ID LBRACKET . INTEGER RBRACKET
+
+    INTEGER         shift and go to state 96
+
+
+state 82
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (2) statement -> CONST type ID EQUALS expression . SEMICOLON
     (44) expression -> expression . OR term
 
+<<<<<<< HEAD
     SEMICOLON       shift and go to state 116
     OR              shift and go to state 74
 
@@ -1495,19 +2296,41 @@ state 96
 
 
 state 97
+=======
+    SEMICOLON       shift and go to state 97
+    OR              shift and go to state 62
+
+
+state 83
+
+    (29) const_declarationTab -> CONST type ID EQUALS expressionTab . SEMICOLON
+
+    SEMICOLON       shift and go to state 98
+
+
+state 84
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (40) factor -> ID LBRACKET expression . RBRACKET
     (44) expression -> expression . OR term
 
+<<<<<<< HEAD
     RBRACKET        shift and go to state 118
     OR              shift and go to state 74
 
 
 state 98
+=======
+    RBRACKET        shift and go to state 99
+
+
+state 85
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (44) expression -> expression OR term .
     (46) term -> term . AND factor
 
+<<<<<<< HEAD
     SEMICOLON       reduce using rule 44 (expression -> expression OR term .)
     OR              reduce using rule 44 (expression -> expression OR term .)
     COMMA           reduce using rule 44 (expression -> expression OR term .)
@@ -1516,6 +2339,15 @@ state 98
 
 
 state 99
+=======
+    SEMICOLON       reduce using rule 42 (expression -> expression OR term .)
+    OR              reduce using rule 42 (expression -> expression OR term .)
+    COMMA           reduce using rule 42 (expression -> expression OR term .)
+    AND             shift and go to state 64
+
+
+state 86
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (46) term -> term AND factor .
 
@@ -1526,7 +2358,11 @@ state 99
     RBRACKET        reduce using rule 46 (term -> term AND factor .)
 
 
+<<<<<<< HEAD
 state 100
+=======
+state 87
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (18) factor -> LPAREN INTEGER RPAREN .
 
@@ -1537,7 +2373,11 @@ state 100
     RBRACKET        reduce using rule 18 (factor -> LPAREN INTEGER RPAREN .)
 
 
+<<<<<<< HEAD
 state 101
+=======
+state 88
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (19) factor -> LPAREN FLOAT RPAREN .
 
@@ -1548,6 +2388,7 @@ state 101
     RBRACKET        reduce using rule 19 (factor -> LPAREN FLOAT RPAREN .)
 
 
+<<<<<<< HEAD
 state 102
 
     (20) factor -> LPAREN MINUS FLOAT . RPAREN
@@ -1556,6 +2397,16 @@ state 102
 
 
 state 103
+=======
+state 89
+
+    (20) factor -> LPAREN MINUS FLOAT . RPAREN
+
+    RPAREN          shift and go to state 100
+
+
+state 90
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (41) array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS . expressionTab SEMICOLON
     (36) expressionTab -> . ID
@@ -1563,6 +2414,7 @@ state 103
     (38) expressionTab -> . INTEGER
     (39) expressionTab -> . CHAR
 
+<<<<<<< HEAD
     ID              shift and go to state 49
     FLOAT           shift and go to state 51
     INTEGER         shift and go to state 52
@@ -1655,14 +2507,55 @@ state 112
 
 
 state 113
+=======
+    ID              shift and go to state 45
+    FLOAT           shift and go to state 47
+    INTEGER         shift and go to state 48
+    CHAR            shift and go to state 49
+
+    expressionTab                  shift and go to state 101
+
+state 91
+
+    (50) statement -> FOR LPAREN initialisation COLON step . COLON BorneSup RPAREN block
+
+    COLON           shift and go to state 102
+
+
+state 92
+
+    (52) step -> INTEGER .
+
+    COLON           reduce using rule 52 (step -> INTEGER .)
+
+
+state 93
+
+    (53) step -> ID .
+
+    COLON           reduce using rule 53 (step -> ID .)
+
+
+state 94
+
+    (51) initialisation -> ID EQUALS INTEGER .
+
+    COLON           reduce using rule 51 (initialisation -> ID EQUALS INTEGER .)
+
+
+state 95
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (30) array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .
 
     $end            reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
     CONST           reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
     ID              reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
+<<<<<<< HEAD
     READ            reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
     WRITE           reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
+=======
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
     FOR             reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
     INT_TYPE        reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
     FLOAT_TYPE      reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
@@ -1671,6 +2564,7 @@ state 113
     RBRACE          reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
 
 
+<<<<<<< HEAD
 state 114
 
     (6) declaration -> ID EQUALS expression .
@@ -1689,14 +2583,27 @@ state 115
 
 
 state 116
+=======
+state 96
+
+    (35) declarationTab -> ID LBRACKET INTEGER . RBRACKET
+
+    RBRACKET        shift and go to state 103
+
+
+state 97
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (2) statement -> CONST type ID EQUALS expression SEMICOLON .
 
     $end            reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
     CONST           reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
     ID              reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
+<<<<<<< HEAD
     READ            reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
     WRITE           reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
+=======
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
     FOR             reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
     INT_TYPE        reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
     FLOAT_TYPE      reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
@@ -1705,15 +2612,22 @@ state 116
     RBRACE          reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
 
 
+<<<<<<< HEAD
 state 117
+=======
+state 98
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (29) const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .
 
     $end            reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
     CONST           reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
     ID              reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
+<<<<<<< HEAD
     READ            reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
     WRITE           reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
+=======
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
     FOR             reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
     INT_TYPE        reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
     FLOAT_TYPE      reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
@@ -1722,7 +2636,11 @@ state 117
     RBRACE          reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
 
 
+<<<<<<< HEAD
 state 118
+=======
+state 99
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (40) factor -> ID LBRACKET expression RBRACKET .
 
@@ -1733,7 +2651,11 @@ state 118
     RBRACKET        reduce using rule 40 (factor -> ID LBRACKET expression RBRACKET .)
 
 
+<<<<<<< HEAD
 state 119
+=======
+state 100
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (20) factor -> LPAREN MINUS FLOAT RPAREN .
 
@@ -1744,6 +2666,7 @@ state 119
     RBRACKET        reduce using rule 20 (factor -> LPAREN MINUS FLOAT RPAREN .)
 
 
+<<<<<<< HEAD
 state 120
 
     (41) array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab . SEMICOLON
@@ -1776,6 +2699,25 @@ state 123
     BorneSup                       shift and go to state 127
 
 state 124
+=======
+state 101
+
+    (41) array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab . SEMICOLON
+
+    SEMICOLON       shift and go to state 104
+
+
+state 102
+
+    (50) statement -> FOR LPAREN initialisation COLON step COLON . BorneSup RPAREN block
+    (54) BorneSup -> . ID
+
+    ID              shift and go to state 106
+
+    BorneSup                       shift and go to state 105
+
+state 103
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (35) declarationTab -> ID LBRACKET INTEGER RBRACKET .
 
@@ -1783,15 +2725,22 @@ state 124
     SEMICOLON       reduce using rule 35 (declarationTab -> ID LBRACKET INTEGER RBRACKET .)
 
 
+<<<<<<< HEAD
 state 125
+=======
+state 104
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (41) array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .
 
     $end            reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
     CONST           reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
     ID              reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
+<<<<<<< HEAD
     READ            reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
     WRITE           reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
+=======
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
     FOR             reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
     INT_TYPE        reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
     FLOAT_TYPE      reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
@@ -1800,6 +2749,7 @@ state 125
     RBRACE          reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
 
 
+<<<<<<< HEAD
 state 126
 
     (53) statement -> READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN . SEMICOLON
@@ -1867,6 +2817,49 @@ state 131
 state 132
 
     (64) block -> LBRACE . statements RBRACE
+=======
+state 105
+
+    (50) statement -> FOR LPAREN initialisation COLON step COLON BorneSup . RPAREN block
+
+    RPAREN          shift and go to state 107
+
+
+state 106
+
+    (54) BorneSup -> ID .
+
+    RPAREN          reduce using rule 54 (BorneSup -> ID .)
+
+
+state 107
+
+    (50) statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN . block
+    (55) block -> . LBRACE statements RBRACE
+
+    LBRACE          shift and go to state 109
+
+    block                          shift and go to state 108
+
+state 108
+
+    (50) statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .
+
+    $end            reduce using rule 50 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    CONST           reduce using rule 50 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    ID              reduce using rule 50 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    FOR             reduce using rule 50 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    INT_TYPE        reduce using rule 50 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    FLOAT_TYPE      reduce using rule 50 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    BOOL_TYPE       reduce using rule 50 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    CHAR_TYPE       reduce using rule 50 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    RBRACE          reduce using rule 50 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+
+
+state 109
+
+    (55) block -> LBRACE . statements RBRACE
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
     (21) statements -> . statement
     (22) statements -> . statement statements
     (1) statement -> . type declaration_list SEMICOLON
@@ -1874,6 +2867,7 @@ state 132
     (7) statement -> . ID EQUALS expression SEMICOLON
     (23) statement -> . simple_assignment
     (24) statement -> . array_declarationTab
+<<<<<<< HEAD
     (25) statement -> . declaration_assignment
     (26) statement -> . array_assignment
     (27) statement -> . type declarationTab_listTab SEMICOLON
@@ -1882,18 +2876,30 @@ state 132
     (53) statement -> . READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON
     (54) statement -> . WRITE LPAREN write_content RPAREN SEMICOLON
     (59) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
+=======
+    (25) statement -> . array_assignment
+    (26) statement -> . type declarationTab_listTab SEMICOLON
+    (27) statement -> . const_declarationTab
+    (50) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
     (8) type -> . INT_TYPE
     (9) type -> . FLOAT_TYPE
     (10) type -> . BOOL_TYPE
     (11) type -> . CHAR_TYPE
+<<<<<<< HEAD
     (43) simple_assignment -> . ID EQUALS expression SEMICOLON
     (30) array_declarationTab -> . type ID LBRACKET INTEGER RBRACKET SEMICOLON
     (42) declaration_assignment -> . type ID EQUALS expression SEMICOLON
+=======
+    (28) simple_assignment -> . ID EQUALS expressionTab SEMICOLON
+    (30) array_declarationTab -> . type ID LBRACKET INTEGER RBRACKET SEMICOLON
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
     (41) array_assignment -> . ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON
     (29) const_declarationTab -> . CONST type ID EQUALS expressionTab SEMICOLON
 
     CONST           shift and go to state 3
     ID              shift and go to state 4
+<<<<<<< HEAD
     READ            shift and go to state 10
     WRITE           shift and go to state 11
     FOR             shift and go to state 12
@@ -1919,6 +2925,30 @@ state 133
 
 
 state 134
+=======
+    FOR             shift and go to state 9
+    INT_TYPE        shift and go to state 10
+    FLOAT_TYPE      shift and go to state 11
+    BOOL_TYPE       shift and go to state 12
+    CHAR_TYPE       shift and go to state 13
+
+    statements                     shift and go to state 110
+    statement                      shift and go to state 111
+    type                           shift and go to state 2
+    simple_assignment              shift and go to state 5
+    array_declarationTab           shift and go to state 6
+    array_assignment               shift and go to state 7
+    const_declarationTab           shift and go to state 8
+
+state 110
+
+    (55) block -> LBRACE statements . RBRACE
+
+    RBRACE          shift and go to state 112
+
+
+state 111
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (21) statements -> statement .
     (22) statements -> statement . statements
@@ -1929,6 +2959,7 @@ state 134
     (7) statement -> . ID EQUALS expression SEMICOLON
     (23) statement -> . simple_assignment
     (24) statement -> . array_declarationTab
+<<<<<<< HEAD
     (25) statement -> . declaration_assignment
     (26) statement -> . array_assignment
     (27) statement -> . type declarationTab_listTab SEMICOLON
@@ -1937,19 +2968,31 @@ state 134
     (53) statement -> . READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON
     (54) statement -> . WRITE LPAREN write_content RPAREN SEMICOLON
     (59) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
+=======
+    (25) statement -> . array_assignment
+    (26) statement -> . type declarationTab_listTab SEMICOLON
+    (27) statement -> . const_declarationTab
+    (50) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
     (8) type -> . INT_TYPE
     (9) type -> . FLOAT_TYPE
     (10) type -> . BOOL_TYPE
     (11) type -> . CHAR_TYPE
+<<<<<<< HEAD
     (43) simple_assignment -> . ID EQUALS expression SEMICOLON
     (30) array_declarationTab -> . type ID LBRACKET INTEGER RBRACKET SEMICOLON
     (42) declaration_assignment -> . type ID EQUALS expression SEMICOLON
+=======
+    (28) simple_assignment -> . ID EQUALS expressionTab SEMICOLON
+    (30) array_declarationTab -> . type ID LBRACKET INTEGER RBRACKET SEMICOLON
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
     (41) array_assignment -> . ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON
     (29) const_declarationTab -> . CONST type ID EQUALS expressionTab SEMICOLON
 
     RBRACE          reduce using rule 21 (statements -> statement .)
     CONST           shift and go to state 3
     ID              shift and go to state 4
+<<<<<<< HEAD
     READ            shift and go to state 10
     WRITE           shift and go to state 11
     FOR             shift and go to state 12
@@ -1985,6 +3028,38 @@ state 135
 
 
 state 136
+=======
+    FOR             shift and go to state 9
+    INT_TYPE        shift and go to state 10
+    FLOAT_TYPE      shift and go to state 11
+    BOOL_TYPE       shift and go to state 12
+    CHAR_TYPE       shift and go to state 13
+
+    statement                      shift and go to state 111
+    statements                     shift and go to state 113
+    type                           shift and go to state 2
+    simple_assignment              shift and go to state 5
+    array_declarationTab           shift and go to state 6
+    array_assignment               shift and go to state 7
+    const_declarationTab           shift and go to state 8
+
+state 112
+
+    (55) block -> LBRACE statements RBRACE .
+
+    $end            reduce using rule 55 (block -> LBRACE statements RBRACE .)
+    CONST           reduce using rule 55 (block -> LBRACE statements RBRACE .)
+    ID              reduce using rule 55 (block -> LBRACE statements RBRACE .)
+    FOR             reduce using rule 55 (block -> LBRACE statements RBRACE .)
+    INT_TYPE        reduce using rule 55 (block -> LBRACE statements RBRACE .)
+    FLOAT_TYPE      reduce using rule 55 (block -> LBRACE statements RBRACE .)
+    BOOL_TYPE       reduce using rule 55 (block -> LBRACE statements RBRACE .)
+    CHAR_TYPE       reduce using rule 55 (block -> LBRACE statements RBRACE .)
+    RBRACE          reduce using rule 55 (block -> LBRACE statements RBRACE .)
+
+
+state 113
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
 
     (22) statements -> statement statements .
 
@@ -1993,6 +3068,7 @@ state 136
 WARNING: 
 WARNING: Conflicts:
 WARNING: 
+<<<<<<< HEAD
 WARNING: shift/reduce conflict for SEMICOLON in state 62 resolved as shift
 WARNING: shift/reduce conflict for SEMICOLON in state 90 resolved as shift
 WARNING: reduce/reduce conflict in state 19 resolved using rule (declaration -> ID)
@@ -2008,3 +3084,16 @@ WARNING: rejected rule (expressionTab -> CHAR) in state 66
 WARNING: reduce/reduce conflict in state 73 resolved using rule (statement -> ID EQUALS expression SEMICOLON)
 WARNING: rejected rule (simple_assignment -> ID EQUALS expression SEMICOLON) in state 73
 WARNING: Rule (simple_assignment -> ID EQUALS expression SEMICOLON) is never reduced
+=======
+WARNING: shift/reduce conflict for SEMICOLON in state 78 resolved as shift
+WARNING: reduce/reduce conflict in state 16 resolved using rule (declaration -> ID)
+WARNING: rejected rule (declarationTab -> ID) in state 16
+WARNING: reduce/reduce conflict in state 30 resolved using rule (expressionTab -> ID)
+WARNING: rejected rule (factor -> ID) in state 30
+WARNING: reduce/reduce conflict in state 34 resolved using rule (factor -> FLOAT)
+WARNING: rejected rule (expressionTab -> FLOAT) in state 34
+WARNING: reduce/reduce conflict in state 35 resolved using rule (factor -> INTEGER)
+WARNING: rejected rule (expressionTab -> INTEGER) in state 35
+WARNING: reduce/reduce conflict in state 36 resolved using rule (factor -> CHAR)
+WARNING: rejected rule (expressionTab -> CHAR) in state 36
+>>>>>>> 8970e3b2ffcebb681d1ca7a0894c807344fcf6f7
