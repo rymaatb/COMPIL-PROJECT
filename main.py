@@ -9,7 +9,7 @@ tokens = (
     'VAR_GLOBAL', 'DECLARATION' ,  'CONST','INSTRUCTION',  # mots-clés
     'ID', 'COMMENT','TRUE','FALSE',
     'LBRACKET', 'RBRACKET',
-    'SEMICOLON', 'COMMA',
+    'SEMICOLON', 'COMMA','LBRACE', 'RBRACE',
     'NUMBER', 'PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'LPAREN', 'RPAREN',
     'EQ', 'NEQ', 'LT', 'LTE', 'GT', 'GTE', 'AND', 'OR', 'NOT',
     'EQUALS', 'INTEGER','BOOL', 'FLOAT', 'CHAR', 'INT_TYPE', 'FLOAT_TYPE', 'BOOL_TYPE', 'CHAR_TYPE',  'COLON',  
@@ -40,6 +40,9 @@ t_VAR_GLOBAL = r'VAR_GLOBAL'
 t_DECLARATION = r'DECLARATION'
 t_INSTRUCTION = r'INSTRUCTION'
 
+t_LBRACE = r'\{'
+t_RBRACE = r'\}'
+t_COLON = r':'
 t_SEMICOLON = r';'
 t_COMMA = r','
 t_LBRACKET = r'\['
@@ -295,7 +298,7 @@ def p_statements(t):
 def p_statement(t):
     '''statement : simple_assignment
                  | array_declarationTab
-                   | declaration_assignment 
+                 | declaration_assignment 
                  | array_assignment
                  | type declarationTab_listTab SEMICOLON
                  | const_declarationTab'''
@@ -307,6 +310,7 @@ def p_const_declarationTab(t):
     add_to_symbol_table(var_name, var_type, "global", value, "constant")
   
 def p_array_declarationTab(t):
+    #global quadruples
     'array_declarationTab : type ID LBRACKET INTEGER RBRACKET SEMICOLON'
     var_type, var_name, size = t[1], t[2], t[4]
     if size <= 0:
@@ -317,6 +321,7 @@ def p_array_declarationTab(t):
            # Génération du quadruplet ADEC
     quadruplet = ("ADEC", var_name, size, None)  # Aucun résultat spécifique dans la 4e colonne
     quadruples.append(quadruplet)
+    increment_quad_counter(1)
      
 
 def p_declarationTab_listTab(t):
@@ -372,6 +377,7 @@ def p_array_access(t):
 
 
 def p_array_assignment(t):
+    #global quadruples
     'array_assignment : ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON'
     var_name, index, value = t[1], t[3], t[6]
     for entry in symbol_table:
@@ -391,6 +397,7 @@ def p_array_assignment(t):
                 # Met à jour la valeur si tout est correct
                 entry[4][index] = value
                 quadruples.append(('=',value, None, f'{var_name}[{index}]' ))
+                increment_quad_counter(1)
 
                 
                 return
@@ -399,6 +406,7 @@ def p_array_assignment(t):
                 return
     print(f"Erreur : Tableau '{var_name}' non déclaré.")
 def p_declaration_assignment(t):
+    #global quadruples
     '''declaration_assignment : type ID EQUALS expression SEMICOLON'''
     var_type, var_name, value = t[1], t[2], t[4]
 
@@ -424,11 +432,13 @@ def p_declaration_assignment(t):
     # Génération du quadruplet
     quadruple = ('=', source, 'NONE', var_name)
     quadruples.append(quadruple)
+    increment_quad_counter(1)
     print(f"Quadruplet généré : {quadruple}")
 
 
 
 def p_variable_assignment(t):
+    #global quadruples
     '''simple_assignment : ID EQUALS expression SEMICOLON'''
     var_name = t[1]
     '''declaration_assignment : type ID EQUALS expression SEMICOLON'''
@@ -456,6 +466,7 @@ def p_variable_assignment(t):
     # Génération du quadruplet
     quadruple = ('=', source, 'NONE', var_name)
     quadruples.append(quadruple)
+    increment_quad_counter(1)
     print(f"Quadruplet généré : {quadruple}")
 
 # END of var declaration
@@ -577,6 +588,7 @@ def R3(t):
 
 
 def R4(t):
+    global quadruples
     check_boolean(t[2])
     tem = new_temp()
     quadruples.append(('BNZ',get_counter() +3, t[2],None ))
@@ -593,7 +605,7 @@ def R4(t):
 
 
 def R5(t):
-
+    global quadruples
     if( TL['type']=='' or FL['type']=='' or TL['type']=='bool' and FL['type']=='bool'):
         tem = new_temp()
         quadruples.append(('BZ',get_counter() +4, t[1],None ))
@@ -621,7 +633,7 @@ def R6(t):
 
 
 def R7(t):
-
+    global quadruples
     tem = new_temp()
     quadruples.append(('BNZ', get_counter() +4 , t[1],None ))
     increment_quad_counter(1)   
@@ -657,6 +669,7 @@ def p_read_statement(t):
         print("Unexpected read format.")
         
 def process_read_var(var_name, index=None):
+    global quadruples
     found = False
     for entry in symbol_table:
         if entry[0] == var_name:  # Check if variable exists
@@ -667,12 +680,14 @@ def process_read_var(var_name, index=None):
                
                 #entry[4] = value[0] if value else None
                 quadruples.append(('READ', None, None, var_name if index is None else f"{var_name}[{index}]"))
+                increment_quad_counter(1)
             
             elif var_type in ('INTEGER', 'FLOAT'):
                
                 try:
                     #entry[4] = int(value) if var_type == 'INTEGER' else float(value)
                     quadruples.append(('READ', None, None, var_name if index is None else f"{var_name}[{index}]"))
+                    increment_quad_counter(1)
                 except ValueError:
                     print(f"Error: Invalid {var_type.lower()} input.")
             else:
@@ -683,6 +698,7 @@ def process_read_var(var_name, index=None):
         print(f"Error: Variable '{var_name}' not declared.")
 
 def process_read_array(var_name, index):
+    global quadruples
     found = False
     for entry in symbol_table:
         if entry[0] == var_name and isinstance(entry[4], list):  # Ensure it's an array
@@ -692,11 +708,13 @@ def process_read_array(var_name, index):
                 if var_type == 'CHAR':
                   
                     quadruples.append(('READ', None, None, f"{var_name}[{index}]"))
+                    increment_quad_counter(1)
                 elif var_type in ('INTEGER', 'FLOAT'):
                    
                     try:
                       
                         quadruples.append(('READ', None, None, f"{var_name}[{index}]"))
+                        increment_quad_counter(1)
                     except ValueError:
                         print(f"Error: Invalid {var_type.lower()} input.")
                 else:
@@ -761,6 +779,131 @@ def get_array_value(var_name, index):
                 return None  # Indicates index out of bounds
     return None  # Indicates array not found
 
+#**********************************************************START of for loop*********************************************************************
+
+def p_statement_FORloop(t):
+    #statement --> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block {D}
+    'statement : FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block '
+    t[0] = ('statement',t[3],t[5],t[7],t[9])
+    D(t)
+    
+def p_initialisation(t):
+    #initialisation --> ID EQUALS INT {A}
+    'initialisation : ID EQUALS INTEGER'
+    if len(t) < 4:
+        print('syntaxic error')
+    else:
+     t[0] = (t[1], t[3])
+     A(t)
+
+def p_step(t):
+    #step --> INT {B} | ID {B1}
+    '''step : INTEGER
+            | ID'''
+    if isinstance(t[1],int):
+        B(t)
+    elif isinstance(t[1],str):
+        B1(t)
+        
+def p_BorneSup(t):
+    #BorneSup --> ID {C}
+    'BorneSup : ID'
+    C(t)
+
+def p_block(t):
+    'block : LBRACE statements RBRACE'
+    t[0] = t[2] 
+   
+#************************************************** Routines********************************************
+sauve_BG = 0
+step = 0 
+var_iter = None
+# Routine semantique A : Initialisation de la variable de boucle
+def A(t):
+    global quadruples,var_iter
+    var_name = t[1]  # Nom de la variable
+    var_iter = var_name
+    var_value = t[3]  # Valeur initiale
+    #Check that the variable is integer and declared.
+    if find_in_symbol_table(var_name,"global") == False:
+        raise_semantic_error(var_name, "is not declared.")
+    if  (findType_in_symbol_table(var_name))!="INTEGER":
+        raise_semantic_error(var_name, "must be of type INTEGER.")
+    # check if the initialisation value in an int
+    if R0_dec('INTEGER',var_value) == False:
+        raise_semantic_error(var_name, "a une valeur d'initialisation invalide.")
+    
+    update_symbol_table(var_name,var_value)
+    # Générer le quadruplet d'initialisation
+    quadruples.append(('=', var_value, None, var_name))
+    increment_quad_counter(1)
+    print(f"Routine A : Initialisation '{var_name}' = {var_value}")
+
+# Routine semantique B : Gestion du pas de la boucle cas int
+def B(t):
+    global quadruples, step
+    step = t[1]  # Valeur du pas
+    if not isinstance(step, int) or step <= 0:
+        raise_semantic_error("step", "must be a positif integer")
+    t[0]=t[1]
+    print(f"Routine B : Pas de la boucle valide : step = {step}")
+
+# Routine semantique B1 : Gestion du pas de la boucle cas id
+def B1(t):
+    global quadruples, step
+    var_name = t[1]
+    #Check that the variable is integer and declared.
+    if find_in_symbol_table(var_name,"global") == False:
+        raise_semantic_error(var_name, "is not declared.")
+    if  (findType_in_symbol_table(var_name))!="INTEGER":
+        raise_semantic_error(var_name, "must be of type INTEGER.")
+    if get_variable_value(var_name) == None :
+        raise_semantic_error(var_name,"is not initialized")
+    elif get_variable_value(var_name) <= 0 :
+        raise_semantic_error(var_name,"must be a positif integer")
+    step = get_variable_value(var_name)
+    t[0] = step
+    print(f"Routine B : Pas de la boucle valide : step = {step}")
+
+# Routine semantique C : Gestion de la borne superieure
+def C(t):
+    global quadruples, sauve_BG,step
+    var_name = t[1]
+    #Check that the variable is integer and declared.
+    if find_in_symbol_table(var_name,"global") == False:
+        raise_semantic_error(var_name, "is not declared.")
+    if  (findType_in_symbol_table(var_name))!="INTEGER":
+        raise_semantic_error(var_name, "must be of type INTEGER.")
+    if get_variable_value(var_name) == None :
+        raise_semantic_error(var_name,"is not initialized")
+    elif get_variable_value(var_name) < step :
+        raise_semantic_error(var_name,"must be at least equal to iteration variable")
+    borne_sup = get_variable_value(var_name)
+    print(f"Routine C : Borne superieure validee : {step} < {borne_sup}")
+    # Sauvegarder l'étiquette de début de la boucle
+    sauve_BG = get_counter
+     # quadruplets
+    fin= new_label()
+    quadruples.append(('BG',fin ,var_iter, var_name))
+    increment_quad_counter(1)
+    
+
+
+# Routine semantique D : Incrementation et branchement
+def D(t):
+    global  sauve_BG, step,var_iter
+    # Générer l'incrémentation
+    t0 = new_temp()
+    quadruples.append(('+', var_iter, step, t0))
+    increment_quad_counter(1)
+    quadruples.append(('=', t0, None, var_iter))
+    increment_quad_counter(1)
+    # Retourner au début de la boucle
+    statFor = new_label()
+    quadruples.append(('BR', statFor, None, None))
+    increment_quad_counter(1)
+
+    print(f"Routine D : Incrementation et branchement de '{var_iter}' avec step = {step}")
 
 
      
@@ -797,16 +940,18 @@ if __name__ == '__main__':
         # "INTEGER c = 43  ;",
         # "INTEGER d = 5  ;",
         # "CHAR d = '5'  ;",
-        # "bool b = false ;",
-        # "bool a = true  ;",
-        # "bool m = false;",
+         "bool b = false ;",
+         "bool a = true  ;",
+         "bool m = false;",
         # "bool n = b && a  ;",
         # "bool f = false;",
         # "bool z = f || a   ;",
         # " m = ! a;",
-         "INTEGER Matrix[3];",
+        "INTEGER Matrix[3];",
         "Matrix[2] = 2;",
-        " INTEGER X = Matrix[2];"
+        " INTEGER X = Matrix[2];",
+        "INTEGER i, n = 9;",
+        "FOR(i =3 : 1 : n){ m = b && a ; }"
  
     ]
     for stmt in expressions:
