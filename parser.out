@@ -4,7 +4,18 @@ Unused terminals:
 
     COMMENT
     DECLARATION
+    DIVIDE
+    ELSE
+    EQ
+    GT
+    GTE
+    IF
     INSTRUCTION
+    LT
+    LTE
+    MULTIPLY
+    NEQ
+    NUMBER
     VAR_GLOBAL
 
 Grammar
@@ -21,100 +32,133 @@ Rule 8     type -> INT_TYPE
 Rule 9     type -> FLOAT_TYPE
 Rule 10    type -> BOOL_TYPE
 Rule 11    type -> CHAR_TYPE
-Rule 12    factor -> INT
+Rule 12    factor -> INTEGER
 Rule 13    factor -> FLOAT
 Rule 14    factor -> CHAR
 Rule 15    factor -> BOOL
-Rule 16    expression -> expression PLUS term
-Rule 17    expression -> expression MINUS term
-Rule 18    term -> term MULTIPLY factor
-Rule 19    term -> term DIVIDE factor
-Rule 20    expression -> term
-Rule 21    term -> factor
-Rule 22    factor -> NUMBER
-Rule 23    expression -> expression OR expression
-Rule 24    expression -> expression AND expression
-Rule 25    expression -> expression EQ expression
-Rule 26    expression -> expression NEQ expression
-Rule 27    expression -> expression LT expression
-Rule 28    expression -> expression GT expression
-Rule 29    expression -> expression LTE expression
-Rule 30    expression -> expression GTE expression
-Rule 31    expression -> NOT expression
-Rule 32    comparison -> LPAREN expression RPAREN
-Rule 33    comparison -> NUMBER
-Rule 34    factor -> comparison
-Rule 35    factor -> ID
-Rule 36    statement -> IF LPAREN expression RPAREN block ELSE block
-Rule 37    statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block
-Rule 38    statement -> IF LPAREN expression RPAREN block
-Rule 39    statements -> statement
-Rule 40    statements -> statements statement
-Rule 41    statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
-Rule 42    initialisation -> ID EQUALS INT
-Rule 43    step -> INT
-Rule 44    step -> ID
-Rule 45    BorneSup -> ID
-Rule 46    block -> LBRACE statements RBRACE
+Rule 16    factor -> MINUS factor
+Rule 17    factor -> PLUS factor
+Rule 18    factor -> LPAREN INTEGER RPAREN
+Rule 19    factor -> LPAREN FLOAT RPAREN
+Rule 20    factor -> LPAREN MINUS FLOAT RPAREN
+Rule 21    statements -> statement
+Rule 22    statements -> statement statements
+Rule 23    statement -> simple_assignment
+Rule 24    statement -> array_declarationTab
+Rule 25    statement -> declaration_assignment
+Rule 26    statement -> array_assignment
+Rule 27    statement -> type declarationTab_listTab SEMICOLON
+Rule 28    statement -> const_declarationTab
+Rule 29    const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON
+Rule 30    array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON
+Rule 31    declarationTab_listTab -> declarationTab
+Rule 32    declarationTab_listTab -> declarationTab COMMA declarationTab_listTab
+Rule 33    declarationTab -> ID
+Rule 34    declarationTab -> ID EQUALS expressionTab
+Rule 35    declarationTab -> ID LBRACKET INTEGER RBRACKET
+Rule 36    expressionTab -> ID
+Rule 37    expressionTab -> FLOAT
+Rule 38    expressionTab -> INTEGER
+Rule 39    expressionTab -> CHAR
+Rule 40    factor -> ID LBRACKET expression RBRACKET
+Rule 41    array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON
+Rule 42    declaration_assignment -> type ID EQUALS expression SEMICOLON
+Rule 43    simple_assignment -> ID EQUALS expression SEMICOLON
+Rule 44    expression -> expression OR term
+Rule 45    expression -> term
+Rule 46    term -> term AND factor
+Rule 47    term -> factor
+Rule 48    factor -> ID
+Rule 49    factor -> TRUE
+Rule 50    factor -> FALSE
+Rule 51    factor -> NOT ID
+Rule 52    statement -> READ LPAREN ID RPAREN SEMICOLON
+Rule 53    statement -> READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON
+Rule 54    statement -> WRITE LPAREN write_content RPAREN SEMICOLON
+Rule 55    write_content -> write_item
+Rule 56    write_content -> write_content COMMA write_item
+Rule 57    write_item -> ID
+Rule 58    write_item -> ID LBRACKET INTEGER RBRACKET
+Rule 59    statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
+Rule 60    initialisation -> ID EQUALS INTEGER
+Rule 61    step -> INTEGER
+Rule 62    step -> ID
+Rule 63    BorneSup -> ID
+Rule 64    block -> LBRACE statements RBRACE
 
 Terminals, with rules where they appear
 
-AND                  : 24
+AND                  : 46
 BOOL                 : 15
 BOOL_TYPE            : 10
-CHAR                 : 14
+CHAR                 : 14 39
 CHAR_TYPE            : 11
-COLON                : 41 41
-COMMA                : 4
+COLON                : 59 59
+COMMA                : 4 32 56
 COMMENT              : 
-CONST                : 2
+CONST                : 2 29
 DECLARATION          : 
-DIVIDE               : 19
-ELSE                 : 36 37 37
-EQ                   : 25
-EQUALS               : 2 6 7 42
-FLOAT                : 13
+DIVIDE               : 
+ELSE                 : 
+EQ                   : 
+EQUALS               : 2 6 7 29 34 41 42 43 60
+FALSE                : 50
+FLOAT                : 13 19 20 37
 FLOAT_TYPE           : 9
-FOR                  : 41
-GT                   : 28
-GTE                  : 30
-ID                   : 2 5 6 7 35 42 44 45
-IF                   : 36 37 37 38
+FOR                  : 59
+GT                   : 
+GTE                  : 
+ID                   : 2 5 6 7 29 30 33 34 35 36 40 41 42 43 48 51 52 53 57 58 60 62 63
+IF                   : 
 INSTRUCTION          : 
-INT                  : 12 42 43
+INTEGER              : 12 18 30 35 38 53 58 60 61
 INT_TYPE             : 8
-LBRACE               : 46
-LPAREN               : 32 36 37 37 38 41
-LT                   : 27
-LTE                  : 29
-MINUS                : 17
-MULTIPLY             : 18
-NEQ                  : 26
-NOT                  : 31
-NUMBER               : 22 33
-OR                   : 23
-PLUS                 : 16
-RBRACE               : 46
-RPAREN               : 32 36 37 37 38 41
-SEMICOLON            : 1 2 7
+LBRACE               : 64
+LBRACKET             : 30 35 40 41 53 58
+LPAREN               : 18 19 20 52 53 54 59
+LT                   : 
+LTE                  : 
+MINUS                : 16 20
+MULTIPLY             : 
+NEQ                  : 
+NOT                  : 51
+NUMBER               : 
+OR                   : 44
+PLUS                 : 17
+RBRACE               : 64
+RBRACKET             : 30 35 40 41 53 58
+READ                 : 52 53
+RPAREN               : 18 19 20 52 53 54 59
+SEMICOLON            : 1 2 7 27 29 30 41 42 43 52 53 54
+TRUE                 : 49
 VAR_GLOBAL           : 
+WRITE                : 54
 error                : 
 
 Nonterminals, with rules where they appear
 
-BorneSup             : 41
-block                : 36 36 37 37 37 38 41
-comparison           : 34
+BorneSup             : 59
+array_assignment     : 26
+array_declarationTab : 24
+block                : 59
+const_declarationTab : 28
 declaration          : 3 4
+declarationTab       : 31 32
+declarationTab_listTab : 27 32
+declaration_assignment : 25
 declaration_list     : 1 4
-expression           : 2 6 7 16 17 23 23 24 24 25 25 26 26 27 27 28 28 29 29 30 30 31 32 36 37 37 38
-factor               : 18 19 21
-initialisation       : 41
-statement            : 39 40 0
-statements           : 40 46
-step                 : 41
-term                 : 16 17 18 19 20
-type                 : 1 2
+expression           : 2 6 7 40 42 43 44
+expressionTab        : 29 34 41 41
+factor               : 16 17 46 47
+initialisation       : 59
+simple_assignment    : 23
+statement            : 21 22 0
+statements           : 22 64
+step                 : 59
+term                 : 44 45 46
+type                 : 1 2 27 29 30 42
+write_content        : 54 56
+write_item           : 55 56
 
 Parsing method: LALR
 
@@ -124,26 +168,43 @@ state 0
     (1) statement -> . type declaration_list SEMICOLON
     (2) statement -> . CONST type ID EQUALS expression SEMICOLON
     (7) statement -> . ID EQUALS expression SEMICOLON
-    (36) statement -> . IF LPAREN expression RPAREN block ELSE block
-    (37) statement -> . IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block
-    (38) statement -> . IF LPAREN expression RPAREN block
-    (41) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
+    (23) statement -> . simple_assignment
+    (24) statement -> . array_declarationTab
+    (25) statement -> . declaration_assignment
+    (26) statement -> . array_assignment
+    (27) statement -> . type declarationTab_listTab SEMICOLON
+    (28) statement -> . const_declarationTab
+    (52) statement -> . READ LPAREN ID RPAREN SEMICOLON
+    (53) statement -> . READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON
+    (54) statement -> . WRITE LPAREN write_content RPAREN SEMICOLON
+    (59) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
     (8) type -> . INT_TYPE
     (9) type -> . FLOAT_TYPE
     (10) type -> . BOOL_TYPE
     (11) type -> . CHAR_TYPE
+    (43) simple_assignment -> . ID EQUALS expression SEMICOLON
+    (30) array_declarationTab -> . type ID LBRACKET INTEGER RBRACKET SEMICOLON
+    (42) declaration_assignment -> . type ID EQUALS expression SEMICOLON
+    (41) array_assignment -> . ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON
+    (29) const_declarationTab -> . CONST type ID EQUALS expressionTab SEMICOLON
 
     CONST           shift and go to state 3
     ID              shift and go to state 4
-    IF              shift and go to state 5
-    FOR             shift and go to state 6
-    INT_TYPE        shift and go to state 7
-    FLOAT_TYPE      shift and go to state 8
-    BOOL_TYPE       shift and go to state 9
-    CHAR_TYPE       shift and go to state 10
+    READ            shift and go to state 10
+    WRITE           shift and go to state 11
+    FOR             shift and go to state 12
+    INT_TYPE        shift and go to state 13
+    FLOAT_TYPE      shift and go to state 14
+    BOOL_TYPE       shift and go to state 15
+    CHAR_TYPE       shift and go to state 16
 
     statement                      shift and go to state 1
     type                           shift and go to state 2
+    simple_assignment              shift and go to state 5
+    array_declarationTab           shift and go to state 6
+    declaration_assignment         shift and go to state 7
+    array_assignment               shift and go to state 8
+    const_declarationTab           shift and go to state 9
 
 state 1
 
@@ -154,227 +215,420 @@ state 1
 state 2
 
     (1) statement -> type . declaration_list SEMICOLON
+    (27) statement -> type . declarationTab_listTab SEMICOLON
+    (30) array_declarationTab -> type . ID LBRACKET INTEGER RBRACKET SEMICOLON
+    (42) declaration_assignment -> type . ID EQUALS expression SEMICOLON
     (3) declaration_list -> . declaration
     (4) declaration_list -> . declaration COMMA declaration_list
+    (31) declarationTab_listTab -> . declarationTab
+    (32) declarationTab_listTab -> . declarationTab COMMA declarationTab_listTab
     (5) declaration -> . ID
     (6) declaration -> . ID EQUALS expression
+    (33) declarationTab -> . ID
+    (34) declarationTab -> . ID EQUALS expressionTab
+    (35) declarationTab -> . ID LBRACKET INTEGER RBRACKET
 
-    ID              shift and go to state 13
+    ID              shift and go to state 19
 
-    declaration_list               shift and go to state 11
-    declaration                    shift and go to state 12
+    declaration_list               shift and go to state 17
+    declarationTab_listTab         shift and go to state 18
+    declaration                    shift and go to state 20
+    declarationTab                 shift and go to state 21
 
 state 3
 
     (2) statement -> CONST . type ID EQUALS expression SEMICOLON
+    (29) const_declarationTab -> CONST . type ID EQUALS expressionTab SEMICOLON
     (8) type -> . INT_TYPE
     (9) type -> . FLOAT_TYPE
     (10) type -> . BOOL_TYPE
     (11) type -> . CHAR_TYPE
 
-    INT_TYPE        shift and go to state 7
-    FLOAT_TYPE      shift and go to state 8
-    BOOL_TYPE       shift and go to state 9
-    CHAR_TYPE       shift and go to state 10
+    INT_TYPE        shift and go to state 13
+    FLOAT_TYPE      shift and go to state 14
+    BOOL_TYPE       shift and go to state 15
+    CHAR_TYPE       shift and go to state 16
 
-    type                           shift and go to state 14
+    type                           shift and go to state 22
 
 state 4
 
     (7) statement -> ID . EQUALS expression SEMICOLON
+    (43) simple_assignment -> ID . EQUALS expression SEMICOLON
+    (41) array_assignment -> ID . LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON
 
-    EQUALS          shift and go to state 15
+    EQUALS          shift and go to state 23
+    LBRACKET        shift and go to state 24
 
 
 state 5
 
-    (36) statement -> IF . LPAREN expression RPAREN block ELSE block
-    (37) statement -> IF . LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block
-    (38) statement -> IF . LPAREN expression RPAREN block
+    (23) statement -> simple_assignment .
 
-    LPAREN          shift and go to state 16
+    $end            reduce using rule 23 (statement -> simple_assignment .)
+    CONST           reduce using rule 23 (statement -> simple_assignment .)
+    ID              reduce using rule 23 (statement -> simple_assignment .)
+    READ            reduce using rule 23 (statement -> simple_assignment .)
+    WRITE           reduce using rule 23 (statement -> simple_assignment .)
+    FOR             reduce using rule 23 (statement -> simple_assignment .)
+    INT_TYPE        reduce using rule 23 (statement -> simple_assignment .)
+    FLOAT_TYPE      reduce using rule 23 (statement -> simple_assignment .)
+    BOOL_TYPE       reduce using rule 23 (statement -> simple_assignment .)
+    CHAR_TYPE       reduce using rule 23 (statement -> simple_assignment .)
+    RBRACE          reduce using rule 23 (statement -> simple_assignment .)
 
 
 state 6
 
-    (41) statement -> FOR . LPAREN initialisation COLON step COLON BorneSup RPAREN block
+    (24) statement -> array_declarationTab .
 
-    LPAREN          shift and go to state 17
+    $end            reduce using rule 24 (statement -> array_declarationTab .)
+    CONST           reduce using rule 24 (statement -> array_declarationTab .)
+    ID              reduce using rule 24 (statement -> array_declarationTab .)
+    READ            reduce using rule 24 (statement -> array_declarationTab .)
+    WRITE           reduce using rule 24 (statement -> array_declarationTab .)
+    FOR             reduce using rule 24 (statement -> array_declarationTab .)
+    INT_TYPE        reduce using rule 24 (statement -> array_declarationTab .)
+    FLOAT_TYPE      reduce using rule 24 (statement -> array_declarationTab .)
+    BOOL_TYPE       reduce using rule 24 (statement -> array_declarationTab .)
+    CHAR_TYPE       reduce using rule 24 (statement -> array_declarationTab .)
+    RBRACE          reduce using rule 24 (statement -> array_declarationTab .)
 
 
 state 7
+
+    (25) statement -> declaration_assignment .
+
+    $end            reduce using rule 25 (statement -> declaration_assignment .)
+    CONST           reduce using rule 25 (statement -> declaration_assignment .)
+    ID              reduce using rule 25 (statement -> declaration_assignment .)
+    READ            reduce using rule 25 (statement -> declaration_assignment .)
+    WRITE           reduce using rule 25 (statement -> declaration_assignment .)
+    FOR             reduce using rule 25 (statement -> declaration_assignment .)
+    INT_TYPE        reduce using rule 25 (statement -> declaration_assignment .)
+    FLOAT_TYPE      reduce using rule 25 (statement -> declaration_assignment .)
+    BOOL_TYPE       reduce using rule 25 (statement -> declaration_assignment .)
+    CHAR_TYPE       reduce using rule 25 (statement -> declaration_assignment .)
+    RBRACE          reduce using rule 25 (statement -> declaration_assignment .)
+
+
+state 8
+
+    (26) statement -> array_assignment .
+
+    $end            reduce using rule 26 (statement -> array_assignment .)
+    CONST           reduce using rule 26 (statement -> array_assignment .)
+    ID              reduce using rule 26 (statement -> array_assignment .)
+    READ            reduce using rule 26 (statement -> array_assignment .)
+    WRITE           reduce using rule 26 (statement -> array_assignment .)
+    FOR             reduce using rule 26 (statement -> array_assignment .)
+    INT_TYPE        reduce using rule 26 (statement -> array_assignment .)
+    FLOAT_TYPE      reduce using rule 26 (statement -> array_assignment .)
+    BOOL_TYPE       reduce using rule 26 (statement -> array_assignment .)
+    CHAR_TYPE       reduce using rule 26 (statement -> array_assignment .)
+    RBRACE          reduce using rule 26 (statement -> array_assignment .)
+
+
+state 9
+
+    (28) statement -> const_declarationTab .
+
+    $end            reduce using rule 28 (statement -> const_declarationTab .)
+    CONST           reduce using rule 28 (statement -> const_declarationTab .)
+    ID              reduce using rule 28 (statement -> const_declarationTab .)
+    READ            reduce using rule 28 (statement -> const_declarationTab .)
+    WRITE           reduce using rule 28 (statement -> const_declarationTab .)
+    FOR             reduce using rule 28 (statement -> const_declarationTab .)
+    INT_TYPE        reduce using rule 28 (statement -> const_declarationTab .)
+    FLOAT_TYPE      reduce using rule 28 (statement -> const_declarationTab .)
+    BOOL_TYPE       reduce using rule 28 (statement -> const_declarationTab .)
+    CHAR_TYPE       reduce using rule 28 (statement -> const_declarationTab .)
+    RBRACE          reduce using rule 28 (statement -> const_declarationTab .)
+
+
+state 10
+
+    (52) statement -> READ . LPAREN ID RPAREN SEMICOLON
+    (53) statement -> READ . LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON
+
+    LPAREN          shift and go to state 25
+
+
+state 11
+
+    (54) statement -> WRITE . LPAREN write_content RPAREN SEMICOLON
+
+    LPAREN          shift and go to state 26
+
+
+state 12
+
+    (59) statement -> FOR . LPAREN initialisation COLON step COLON BorneSup RPAREN block
+
+    LPAREN          shift and go to state 27
+
+
+state 13
 
     (8) type -> INT_TYPE .
 
     ID              reduce using rule 8 (type -> INT_TYPE .)
 
 
-state 8
+state 14
 
     (9) type -> FLOAT_TYPE .
 
     ID              reduce using rule 9 (type -> FLOAT_TYPE .)
 
 
-state 9
+state 15
 
     (10) type -> BOOL_TYPE .
 
     ID              reduce using rule 10 (type -> BOOL_TYPE .)
 
 
-state 10
+state 16
 
     (11) type -> CHAR_TYPE .
 
     ID              reduce using rule 11 (type -> CHAR_TYPE .)
 
 
-state 11
+state 17
 
     (1) statement -> type declaration_list . SEMICOLON
 
-    SEMICOLON       shift and go to state 18
+    SEMICOLON       shift and go to state 28
 
 
-state 12
+state 18
+
+    (27) statement -> type declarationTab_listTab . SEMICOLON
+
+    SEMICOLON       shift and go to state 29
+
+
+state 19
+
+    (30) array_declarationTab -> type ID . LBRACKET INTEGER RBRACKET SEMICOLON
+    (42) declaration_assignment -> type ID . EQUALS expression SEMICOLON
+    (5) declaration -> ID .
+    (6) declaration -> ID . EQUALS expression
+    (33) declarationTab -> ID .
+    (34) declarationTab -> ID . EQUALS expressionTab
+    (35) declarationTab -> ID . LBRACKET INTEGER RBRACKET
+
+  ! reduce/reduce conflict for COMMA resolved using rule 5 (declaration -> ID .)
+  ! reduce/reduce conflict for SEMICOLON resolved using rule 5 (declaration -> ID .)
+    LBRACKET        shift and go to state 30
+    EQUALS          shift and go to state 31
+    COMMA           reduce using rule 5 (declaration -> ID .)
+    SEMICOLON       reduce using rule 5 (declaration -> ID .)
+
+  ! COMMA           [ reduce using rule 33 (declarationTab -> ID .) ]
+  ! SEMICOLON       [ reduce using rule 33 (declarationTab -> ID .) ]
+
+
+state 20
 
     (3) declaration_list -> declaration .
     (4) declaration_list -> declaration . COMMA declaration_list
 
     SEMICOLON       reduce using rule 3 (declaration_list -> declaration .)
-    COMMA           shift and go to state 19
+    COMMA           shift and go to state 32
 
 
-state 13
+state 21
 
-    (5) declaration -> ID .
-    (6) declaration -> ID . EQUALS expression
+    (31) declarationTab_listTab -> declarationTab .
+    (32) declarationTab_listTab -> declarationTab . COMMA declarationTab_listTab
 
-    COMMA           reduce using rule 5 (declaration -> ID .)
-    SEMICOLON       reduce using rule 5 (declaration -> ID .)
-    EQUALS          shift and go to state 20
+    SEMICOLON       reduce using rule 31 (declarationTab_listTab -> declarationTab .)
+    COMMA           shift and go to state 33
 
 
-state 14
+state 22
 
     (2) statement -> CONST type . ID EQUALS expression SEMICOLON
+    (29) const_declarationTab -> CONST type . ID EQUALS expressionTab SEMICOLON
 
-    ID              shift and go to state 21
+    ID              shift and go to state 34
 
 
-state 15
+state 23
 
     (7) statement -> ID EQUALS . expression SEMICOLON
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
-    (20) expression -> . term
-    (23) expression -> . expression OR expression
-    (24) expression -> . expression AND expression
-    (25) expression -> . expression EQ expression
-    (26) expression -> . expression NEQ expression
-    (27) expression -> . expression LT expression
-    (28) expression -> . expression GT expression
-    (29) expression -> . expression LTE expression
-    (30) expression -> . expression GTE expression
-    (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
-    (21) term -> . factor
-    (12) factor -> . INT
+    (43) simple_assignment -> ID EQUALS . expression SEMICOLON
+    (44) expression -> . expression OR term
+    (45) expression -> . term
+    (46) term -> . term AND factor
+    (47) term -> . factor
+    (12) factor -> . INTEGER
     (13) factor -> . FLOAT
     (14) factor -> . CHAR
     (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
+    (16) factor -> . MINUS factor
+    (17) factor -> . PLUS factor
+    (18) factor -> . LPAREN INTEGER RPAREN
+    (19) factor -> . LPAREN FLOAT RPAREN
+    (20) factor -> . LPAREN MINUS FLOAT RPAREN
+    (40) factor -> . ID LBRACKET expression RBRACKET
+    (48) factor -> . ID
+    (49) factor -> . TRUE
+    (50) factor -> . FALSE
+    (51) factor -> . NOT ID
 
-    NOT             shift and go to state 25
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    CHAR            shift and go to state 41
+    BOOL            shift and go to state 42
+    MINUS           shift and go to state 43
+    PLUS            shift and go to state 44
+    LPAREN          shift and go to state 45
+    ID              shift and go to state 35
+    TRUE            shift and go to state 46
+    FALSE           shift and go to state 47
+    NOT             shift and go to state 48
 
-    expression                     shift and go to state 23
-    term                           shift and go to state 24
-    factor                         shift and go to state 26
-    comparison                     shift and go to state 32
+    expression                     shift and go to state 36
+    term                           shift and go to state 37
+    factor                         shift and go to state 38
 
-state 16
+state 24
 
-    (36) statement -> IF LPAREN . expression RPAREN block ELSE block
-    (37) statement -> IF LPAREN . expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block
-    (38) statement -> IF LPAREN . expression RPAREN block
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
-    (20) expression -> . term
-    (23) expression -> . expression OR expression
-    (24) expression -> . expression AND expression
-    (25) expression -> . expression EQ expression
-    (26) expression -> . expression NEQ expression
-    (27) expression -> . expression LT expression
-    (28) expression -> . expression GT expression
-    (29) expression -> . expression LTE expression
-    (30) expression -> . expression GTE expression
-    (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
-    (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
+    (41) array_assignment -> ID LBRACKET . expressionTab RBRACKET EQUALS expressionTab SEMICOLON
+    (36) expressionTab -> . ID
+    (37) expressionTab -> . FLOAT
+    (38) expressionTab -> . INTEGER
+    (39) expressionTab -> . CHAR
 
-    NOT             shift and go to state 25
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
+    ID              shift and go to state 49
+    FLOAT           shift and go to state 51
+    INTEGER         shift and go to state 52
+    CHAR            shift and go to state 53
 
-    expression                     shift and go to state 34
-    term                           shift and go to state 24
-    factor                         shift and go to state 26
-    comparison                     shift and go to state 32
+    expressionTab                  shift and go to state 50
 
-state 17
+state 25
 
-    (41) statement -> FOR LPAREN . initialisation COLON step COLON BorneSup RPAREN block
-    (42) initialisation -> . ID EQUALS INT
+    (52) statement -> READ LPAREN . ID RPAREN SEMICOLON
+    (53) statement -> READ LPAREN . ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON
 
-    ID              shift and go to state 36
+    ID              shift and go to state 54
 
-    initialisation                 shift and go to state 35
 
-state 18
+state 26
+
+    (54) statement -> WRITE LPAREN . write_content RPAREN SEMICOLON
+    (55) write_content -> . write_item
+    (56) write_content -> . write_content COMMA write_item
+    (57) write_item -> . ID
+    (58) write_item -> . ID LBRACKET INTEGER RBRACKET
+
+    ID              shift and go to state 57
+
+    write_content                  shift and go to state 55
+    write_item                     shift and go to state 56
+
+state 27
+
+    (59) statement -> FOR LPAREN . initialisation COLON step COLON BorneSup RPAREN block
+    (60) initialisation -> . ID EQUALS INTEGER
+
+    ID              shift and go to state 59
+
+    initialisation                 shift and go to state 58
+
+state 28
 
     (1) statement -> type declaration_list SEMICOLON .
 
     $end            reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
-    RBRACE          reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
     CONST           reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
     ID              reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
-    IF              reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
+    READ            reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
+    WRITE           reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
     FOR             reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
     INT_TYPE        reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
     FLOAT_TYPE      reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
     BOOL_TYPE       reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
     CHAR_TYPE       reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
+    RBRACE          reduce using rule 1 (statement -> type declaration_list SEMICOLON .)
 
 
-state 19
+state 29
+
+    (27) statement -> type declarationTab_listTab SEMICOLON .
+
+    $end            reduce using rule 27 (statement -> type declarationTab_listTab SEMICOLON .)
+    CONST           reduce using rule 27 (statement -> type declarationTab_listTab SEMICOLON .)
+    ID              reduce using rule 27 (statement -> type declarationTab_listTab SEMICOLON .)
+    READ            reduce using rule 27 (statement -> type declarationTab_listTab SEMICOLON .)
+    WRITE           reduce using rule 27 (statement -> type declarationTab_listTab SEMICOLON .)
+    FOR             reduce using rule 27 (statement -> type declarationTab_listTab SEMICOLON .)
+    INT_TYPE        reduce using rule 27 (statement -> type declarationTab_listTab SEMICOLON .)
+    FLOAT_TYPE      reduce using rule 27 (statement -> type declarationTab_listTab SEMICOLON .)
+    BOOL_TYPE       reduce using rule 27 (statement -> type declarationTab_listTab SEMICOLON .)
+    CHAR_TYPE       reduce using rule 27 (statement -> type declarationTab_listTab SEMICOLON .)
+    RBRACE          reduce using rule 27 (statement -> type declarationTab_listTab SEMICOLON .)
+
+
+state 30
+
+    (30) array_declarationTab -> type ID LBRACKET . INTEGER RBRACKET SEMICOLON
+    (35) declarationTab -> ID LBRACKET . INTEGER RBRACKET
+
+    INTEGER         shift and go to state 60
+
+
+state 31
+
+    (42) declaration_assignment -> type ID EQUALS . expression SEMICOLON
+    (6) declaration -> ID EQUALS . expression
+    (34) declarationTab -> ID EQUALS . expressionTab
+    (44) expression -> . expression OR term
+    (45) expression -> . term
+    (36) expressionTab -> . ID
+    (37) expressionTab -> . FLOAT
+    (38) expressionTab -> . INTEGER
+    (39) expressionTab -> . CHAR
+    (46) term -> . term AND factor
+    (47) term -> . factor
+    (12) factor -> . INTEGER
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (16) factor -> . MINUS factor
+    (17) factor -> . PLUS factor
+    (18) factor -> . LPAREN INTEGER RPAREN
+    (19) factor -> . LPAREN FLOAT RPAREN
+    (20) factor -> . LPAREN MINUS FLOAT RPAREN
+    (40) factor -> . ID LBRACKET expression RBRACKET
+    (48) factor -> . ID
+    (49) factor -> . TRUE
+    (50) factor -> . FALSE
+    (51) factor -> . NOT ID
+
+    ID              shift and go to state 61
+    FLOAT           shift and go to state 64
+    INTEGER         shift and go to state 65
+    CHAR            shift and go to state 66
+    BOOL            shift and go to state 42
+    MINUS           shift and go to state 43
+    PLUS            shift and go to state 44
+    LPAREN          shift and go to state 45
+    TRUE            shift and go to state 46
+    FALSE           shift and go to state 47
+    NOT             shift and go to state 48
+
+    expression                     shift and go to state 62
+    expressionTab                  shift and go to state 63
+    term                           shift and go to state 37
+    factor                         shift and go to state 38
+
+state 32
 
     (4) declaration_list -> declaration COMMA . declaration_list
     (3) declaration_list -> . declaration
@@ -382,2065 +636,1375 @@ state 19
     (5) declaration -> . ID
     (6) declaration -> . ID EQUALS expression
 
-    ID              shift and go to state 13
+    ID              shift and go to state 68
 
-    declaration                    shift and go to state 12
-    declaration_list               shift and go to state 37
-
-state 20
-
-    (6) declaration -> ID EQUALS . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
-    (20) expression -> . term
-    (23) expression -> . expression OR expression
-    (24) expression -> . expression AND expression
-    (25) expression -> . expression EQ expression
-    (26) expression -> . expression NEQ expression
-    (27) expression -> . expression LT expression
-    (28) expression -> . expression GT expression
-    (29) expression -> . expression LTE expression
-    (30) expression -> . expression GTE expression
-    (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
-    (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
-
-    NOT             shift and go to state 25
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
-
-    expression                     shift and go to state 38
-    term                           shift and go to state 24
-    factor                         shift and go to state 26
-    comparison                     shift and go to state 32
-
-state 21
-
-    (2) statement -> CONST type ID . EQUALS expression SEMICOLON
-
-    EQUALS          shift and go to state 39
-
-
-state 22
-
-    (35) factor -> ID .
-
-    MULTIPLY        reduce using rule 35 (factor -> ID .)
-    DIVIDE          reduce using rule 35 (factor -> ID .)
-    SEMICOLON       reduce using rule 35 (factor -> ID .)
-    PLUS            reduce using rule 35 (factor -> ID .)
-    MINUS           reduce using rule 35 (factor -> ID .)
-    OR              reduce using rule 35 (factor -> ID .)
-    AND             reduce using rule 35 (factor -> ID .)
-    EQ              reduce using rule 35 (factor -> ID .)
-    NEQ             reduce using rule 35 (factor -> ID .)
-    LT              reduce using rule 35 (factor -> ID .)
-    GT              reduce using rule 35 (factor -> ID .)
-    LTE             reduce using rule 35 (factor -> ID .)
-    GTE             reduce using rule 35 (factor -> ID .)
-    RPAREN          reduce using rule 35 (factor -> ID .)
-    COMMA           reduce using rule 35 (factor -> ID .)
-
-
-state 23
-
-    (7) statement -> ID EQUALS expression . SEMICOLON
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
-    (23) expression -> expression . OR expression
-    (24) expression -> expression . AND expression
-    (25) expression -> expression . EQ expression
-    (26) expression -> expression . NEQ expression
-    (27) expression -> expression . LT expression
-    (28) expression -> expression . GT expression
-    (29) expression -> expression . LTE expression
-    (30) expression -> expression . GTE expression
-
-    SEMICOLON       shift and go to state 40
-    PLUS            shift and go to state 41
-    MINUS           shift and go to state 42
-    OR              shift and go to state 43
-    AND             shift and go to state 44
-    EQ              shift and go to state 45
-    NEQ             shift and go to state 46
-    LT              shift and go to state 47
-    GT              shift and go to state 48
-    LTE             shift and go to state 49
-    GTE             shift and go to state 50
-
-
-state 24
-
-    (20) expression -> term .
-    (18) term -> term . MULTIPLY factor
-    (19) term -> term . DIVIDE factor
-
-    SEMICOLON       reduce using rule 20 (expression -> term .)
-    PLUS            reduce using rule 20 (expression -> term .)
-    MINUS           reduce using rule 20 (expression -> term .)
-    OR              reduce using rule 20 (expression -> term .)
-    AND             reduce using rule 20 (expression -> term .)
-    EQ              reduce using rule 20 (expression -> term .)
-    NEQ             reduce using rule 20 (expression -> term .)
-    LT              reduce using rule 20 (expression -> term .)
-    GT              reduce using rule 20 (expression -> term .)
-    LTE             reduce using rule 20 (expression -> term .)
-    GTE             reduce using rule 20 (expression -> term .)
-    RPAREN          reduce using rule 20 (expression -> term .)
-    COMMA           reduce using rule 20 (expression -> term .)
-    MULTIPLY        shift and go to state 51
-    DIVIDE          shift and go to state 52
-
-
-state 25
-
-    (31) expression -> NOT . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
-    (20) expression -> . term
-    (23) expression -> . expression OR expression
-    (24) expression -> . expression AND expression
-    (25) expression -> . expression EQ expression
-    (26) expression -> . expression NEQ expression
-    (27) expression -> . expression LT expression
-    (28) expression -> . expression GT expression
-    (29) expression -> . expression LTE expression
-    (30) expression -> . expression GTE expression
-    (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
-    (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
-
-    NOT             shift and go to state 25
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
-
-    expression                     shift and go to state 53
-    term                           shift and go to state 24
-    factor                         shift and go to state 26
-    comparison                     shift and go to state 32
-
-state 26
-
-    (21) term -> factor .
-
-    MULTIPLY        reduce using rule 21 (term -> factor .)
-    DIVIDE          reduce using rule 21 (term -> factor .)
-    SEMICOLON       reduce using rule 21 (term -> factor .)
-    PLUS            reduce using rule 21 (term -> factor .)
-    MINUS           reduce using rule 21 (term -> factor .)
-    OR              reduce using rule 21 (term -> factor .)
-    AND             reduce using rule 21 (term -> factor .)
-    EQ              reduce using rule 21 (term -> factor .)
-    NEQ             reduce using rule 21 (term -> factor .)
-    LT              reduce using rule 21 (term -> factor .)
-    GT              reduce using rule 21 (term -> factor .)
-    LTE             reduce using rule 21 (term -> factor .)
-    GTE             reduce using rule 21 (term -> factor .)
-    RPAREN          reduce using rule 21 (term -> factor .)
-    COMMA           reduce using rule 21 (term -> factor .)
-
-
-state 27
-
-    (12) factor -> INT .
-
-    MULTIPLY        reduce using rule 12 (factor -> INT .)
-    DIVIDE          reduce using rule 12 (factor -> INT .)
-    SEMICOLON       reduce using rule 12 (factor -> INT .)
-    PLUS            reduce using rule 12 (factor -> INT .)
-    MINUS           reduce using rule 12 (factor -> INT .)
-    OR              reduce using rule 12 (factor -> INT .)
-    AND             reduce using rule 12 (factor -> INT .)
-    EQ              reduce using rule 12 (factor -> INT .)
-    NEQ             reduce using rule 12 (factor -> INT .)
-    LT              reduce using rule 12 (factor -> INT .)
-    GT              reduce using rule 12 (factor -> INT .)
-    LTE             reduce using rule 12 (factor -> INT .)
-    GTE             reduce using rule 12 (factor -> INT .)
-    RPAREN          reduce using rule 12 (factor -> INT .)
-    COMMA           reduce using rule 12 (factor -> INT .)
-
-
-state 28
-
-    (13) factor -> FLOAT .
-
-    MULTIPLY        reduce using rule 13 (factor -> FLOAT .)
-    DIVIDE          reduce using rule 13 (factor -> FLOAT .)
-    SEMICOLON       reduce using rule 13 (factor -> FLOAT .)
-    PLUS            reduce using rule 13 (factor -> FLOAT .)
-    MINUS           reduce using rule 13 (factor -> FLOAT .)
-    OR              reduce using rule 13 (factor -> FLOAT .)
-    AND             reduce using rule 13 (factor -> FLOAT .)
-    EQ              reduce using rule 13 (factor -> FLOAT .)
-    NEQ             reduce using rule 13 (factor -> FLOAT .)
-    LT              reduce using rule 13 (factor -> FLOAT .)
-    GT              reduce using rule 13 (factor -> FLOAT .)
-    LTE             reduce using rule 13 (factor -> FLOAT .)
-    GTE             reduce using rule 13 (factor -> FLOAT .)
-    RPAREN          reduce using rule 13 (factor -> FLOAT .)
-    COMMA           reduce using rule 13 (factor -> FLOAT .)
-
-
-state 29
-
-    (14) factor -> CHAR .
-
-    MULTIPLY        reduce using rule 14 (factor -> CHAR .)
-    DIVIDE          reduce using rule 14 (factor -> CHAR .)
-    SEMICOLON       reduce using rule 14 (factor -> CHAR .)
-    PLUS            reduce using rule 14 (factor -> CHAR .)
-    MINUS           reduce using rule 14 (factor -> CHAR .)
-    OR              reduce using rule 14 (factor -> CHAR .)
-    AND             reduce using rule 14 (factor -> CHAR .)
-    EQ              reduce using rule 14 (factor -> CHAR .)
-    NEQ             reduce using rule 14 (factor -> CHAR .)
-    LT              reduce using rule 14 (factor -> CHAR .)
-    GT              reduce using rule 14 (factor -> CHAR .)
-    LTE             reduce using rule 14 (factor -> CHAR .)
-    GTE             reduce using rule 14 (factor -> CHAR .)
-    RPAREN          reduce using rule 14 (factor -> CHAR .)
-    COMMA           reduce using rule 14 (factor -> CHAR .)
-
-
-state 30
-
-    (15) factor -> BOOL .
-
-    MULTIPLY        reduce using rule 15 (factor -> BOOL .)
-    DIVIDE          reduce using rule 15 (factor -> BOOL .)
-    SEMICOLON       reduce using rule 15 (factor -> BOOL .)
-    PLUS            reduce using rule 15 (factor -> BOOL .)
-    MINUS           reduce using rule 15 (factor -> BOOL .)
-    OR              reduce using rule 15 (factor -> BOOL .)
-    AND             reduce using rule 15 (factor -> BOOL .)
-    EQ              reduce using rule 15 (factor -> BOOL .)
-    NEQ             reduce using rule 15 (factor -> BOOL .)
-    LT              reduce using rule 15 (factor -> BOOL .)
-    GT              reduce using rule 15 (factor -> BOOL .)
-    LTE             reduce using rule 15 (factor -> BOOL .)
-    GTE             reduce using rule 15 (factor -> BOOL .)
-    RPAREN          reduce using rule 15 (factor -> BOOL .)
-    COMMA           reduce using rule 15 (factor -> BOOL .)
-
-
-state 31
-
-    (22) factor -> NUMBER .
-    (33) comparison -> NUMBER .
-
-  ! reduce/reduce conflict for MULTIPLY resolved using rule 22 (factor -> NUMBER .)
-  ! reduce/reduce conflict for DIVIDE resolved using rule 22 (factor -> NUMBER .)
-  ! reduce/reduce conflict for SEMICOLON resolved using rule 22 (factor -> NUMBER .)
-  ! reduce/reduce conflict for PLUS resolved using rule 22 (factor -> NUMBER .)
-  ! reduce/reduce conflict for MINUS resolved using rule 22 (factor -> NUMBER .)
-  ! reduce/reduce conflict for OR resolved using rule 22 (factor -> NUMBER .)
-  ! reduce/reduce conflict for AND resolved using rule 22 (factor -> NUMBER .)
-  ! reduce/reduce conflict for EQ resolved using rule 22 (factor -> NUMBER .)
-  ! reduce/reduce conflict for NEQ resolved using rule 22 (factor -> NUMBER .)
-  ! reduce/reduce conflict for LT resolved using rule 22 (factor -> NUMBER .)
-  ! reduce/reduce conflict for GT resolved using rule 22 (factor -> NUMBER .)
-  ! reduce/reduce conflict for LTE resolved using rule 22 (factor -> NUMBER .)
-  ! reduce/reduce conflict for GTE resolved using rule 22 (factor -> NUMBER .)
-  ! reduce/reduce conflict for RPAREN resolved using rule 22 (factor -> NUMBER .)
-  ! reduce/reduce conflict for COMMA resolved using rule 22 (factor -> NUMBER .)
-    MULTIPLY        reduce using rule 22 (factor -> NUMBER .)
-    DIVIDE          reduce using rule 22 (factor -> NUMBER .)
-    SEMICOLON       reduce using rule 22 (factor -> NUMBER .)
-    PLUS            reduce using rule 22 (factor -> NUMBER .)
-    MINUS           reduce using rule 22 (factor -> NUMBER .)
-    OR              reduce using rule 22 (factor -> NUMBER .)
-    AND             reduce using rule 22 (factor -> NUMBER .)
-    EQ              reduce using rule 22 (factor -> NUMBER .)
-    NEQ             reduce using rule 22 (factor -> NUMBER .)
-    LT              reduce using rule 22 (factor -> NUMBER .)
-    GT              reduce using rule 22 (factor -> NUMBER .)
-    LTE             reduce using rule 22 (factor -> NUMBER .)
-    GTE             reduce using rule 22 (factor -> NUMBER .)
-    RPAREN          reduce using rule 22 (factor -> NUMBER .)
-    COMMA           reduce using rule 22 (factor -> NUMBER .)
-
-  ! MULTIPLY        [ reduce using rule 33 (comparison -> NUMBER .) ]
-  ! DIVIDE          [ reduce using rule 33 (comparison -> NUMBER .) ]
-  ! SEMICOLON       [ reduce using rule 33 (comparison -> NUMBER .) ]
-  ! PLUS            [ reduce using rule 33 (comparison -> NUMBER .) ]
-  ! MINUS           [ reduce using rule 33 (comparison -> NUMBER .) ]
-  ! OR              [ reduce using rule 33 (comparison -> NUMBER .) ]
-  ! AND             [ reduce using rule 33 (comparison -> NUMBER .) ]
-  ! EQ              [ reduce using rule 33 (comparison -> NUMBER .) ]
-  ! NEQ             [ reduce using rule 33 (comparison -> NUMBER .) ]
-  ! LT              [ reduce using rule 33 (comparison -> NUMBER .) ]
-  ! GT              [ reduce using rule 33 (comparison -> NUMBER .) ]
-  ! LTE             [ reduce using rule 33 (comparison -> NUMBER .) ]
-  ! GTE             [ reduce using rule 33 (comparison -> NUMBER .) ]
-  ! RPAREN          [ reduce using rule 33 (comparison -> NUMBER .) ]
-  ! COMMA           [ reduce using rule 33 (comparison -> NUMBER .) ]
-
-
-state 32
-
-    (34) factor -> comparison .
-
-    MULTIPLY        reduce using rule 34 (factor -> comparison .)
-    DIVIDE          reduce using rule 34 (factor -> comparison .)
-    SEMICOLON       reduce using rule 34 (factor -> comparison .)
-    PLUS            reduce using rule 34 (factor -> comparison .)
-    MINUS           reduce using rule 34 (factor -> comparison .)
-    OR              reduce using rule 34 (factor -> comparison .)
-    AND             reduce using rule 34 (factor -> comparison .)
-    EQ              reduce using rule 34 (factor -> comparison .)
-    NEQ             reduce using rule 34 (factor -> comparison .)
-    LT              reduce using rule 34 (factor -> comparison .)
-    GT              reduce using rule 34 (factor -> comparison .)
-    LTE             reduce using rule 34 (factor -> comparison .)
-    GTE             reduce using rule 34 (factor -> comparison .)
-    RPAREN          reduce using rule 34 (factor -> comparison .)
-    COMMA           reduce using rule 34 (factor -> comparison .)
-
+    declaration                    shift and go to state 20
+    declaration_list               shift and go to state 67
 
 state 33
 
-    (32) comparison -> LPAREN . expression RPAREN
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
-    (20) expression -> . term
-    (23) expression -> . expression OR expression
-    (24) expression -> . expression AND expression
-    (25) expression -> . expression EQ expression
-    (26) expression -> . expression NEQ expression
-    (27) expression -> . expression LT expression
-    (28) expression -> . expression GT expression
-    (29) expression -> . expression LTE expression
-    (30) expression -> . expression GTE expression
-    (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
-    (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
+    (32) declarationTab_listTab -> declarationTab COMMA . declarationTab_listTab
+    (31) declarationTab_listTab -> . declarationTab
+    (32) declarationTab_listTab -> . declarationTab COMMA declarationTab_listTab
+    (33) declarationTab -> . ID
+    (34) declarationTab -> . ID EQUALS expressionTab
+    (35) declarationTab -> . ID LBRACKET INTEGER RBRACKET
 
-    NOT             shift and go to state 25
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
+    ID              shift and go to state 70
 
-    expression                     shift and go to state 54
-    term                           shift and go to state 24
-    factor                         shift and go to state 26
-    comparison                     shift and go to state 32
+    declarationTab                 shift and go to state 21
+    declarationTab_listTab         shift and go to state 69
 
 state 34
 
-    (36) statement -> IF LPAREN expression . RPAREN block ELSE block
-    (37) statement -> IF LPAREN expression . RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block
-    (38) statement -> IF LPAREN expression . RPAREN block
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
-    (23) expression -> expression . OR expression
-    (24) expression -> expression . AND expression
-    (25) expression -> expression . EQ expression
-    (26) expression -> expression . NEQ expression
-    (27) expression -> expression . LT expression
-    (28) expression -> expression . GT expression
-    (29) expression -> expression . LTE expression
-    (30) expression -> expression . GTE expression
+    (2) statement -> CONST type ID . EQUALS expression SEMICOLON
+    (29) const_declarationTab -> CONST type ID . EQUALS expressionTab SEMICOLON
 
-    RPAREN          shift and go to state 55
-    PLUS            shift and go to state 41
-    MINUS           shift and go to state 42
-    OR              shift and go to state 43
-    AND             shift and go to state 44
-    EQ              shift and go to state 45
-    NEQ             shift and go to state 46
-    LT              shift and go to state 47
-    GT              shift and go to state 48
-    LTE             shift and go to state 49
-    GTE             shift and go to state 50
+    EQUALS          shift and go to state 71
 
 
 state 35
 
-    (41) statement -> FOR LPAREN initialisation . COLON step COLON BorneSup RPAREN block
+    (40) factor -> ID . LBRACKET expression RBRACKET
+    (48) factor -> ID .
 
-    COLON           shift and go to state 56
+    LBRACKET        shift and go to state 72
+    AND             reduce using rule 48 (factor -> ID .)
+    SEMICOLON       reduce using rule 48 (factor -> ID .)
+    OR              reduce using rule 48 (factor -> ID .)
+    COMMA           reduce using rule 48 (factor -> ID .)
+    RBRACKET        reduce using rule 48 (factor -> ID .)
 
 
 state 36
 
-    (42) initialisation -> ID . EQUALS INT
+    (7) statement -> ID EQUALS expression . SEMICOLON
+    (43) simple_assignment -> ID EQUALS expression . SEMICOLON
+    (44) expression -> expression . OR term
 
-    EQUALS          shift and go to state 57
+    SEMICOLON       shift and go to state 73
+    OR              shift and go to state 74
 
 
 state 37
+
+    (45) expression -> term .
+    (46) term -> term . AND factor
+
+    SEMICOLON       reduce using rule 45 (expression -> term .)
+    OR              reduce using rule 45 (expression -> term .)
+    COMMA           reduce using rule 45 (expression -> term .)
+    RBRACKET        reduce using rule 45 (expression -> term .)
+    AND             shift and go to state 75
+
+
+state 38
+
+    (47) term -> factor .
+
+    AND             reduce using rule 47 (term -> factor .)
+    SEMICOLON       reduce using rule 47 (term -> factor .)
+    OR              reduce using rule 47 (term -> factor .)
+    COMMA           reduce using rule 47 (term -> factor .)
+    RBRACKET        reduce using rule 47 (term -> factor .)
+
+
+state 39
+
+    (12) factor -> INTEGER .
+
+    AND             reduce using rule 12 (factor -> INTEGER .)
+    SEMICOLON       reduce using rule 12 (factor -> INTEGER .)
+    OR              reduce using rule 12 (factor -> INTEGER .)
+    COMMA           reduce using rule 12 (factor -> INTEGER .)
+    RBRACKET        reduce using rule 12 (factor -> INTEGER .)
+
+
+state 40
+
+    (13) factor -> FLOAT .
+
+    AND             reduce using rule 13 (factor -> FLOAT .)
+    SEMICOLON       reduce using rule 13 (factor -> FLOAT .)
+    OR              reduce using rule 13 (factor -> FLOAT .)
+    COMMA           reduce using rule 13 (factor -> FLOAT .)
+    RBRACKET        reduce using rule 13 (factor -> FLOAT .)
+
+
+state 41
+
+    (14) factor -> CHAR .
+
+    AND             reduce using rule 14 (factor -> CHAR .)
+    SEMICOLON       reduce using rule 14 (factor -> CHAR .)
+    OR              reduce using rule 14 (factor -> CHAR .)
+    COMMA           reduce using rule 14 (factor -> CHAR .)
+    RBRACKET        reduce using rule 14 (factor -> CHAR .)
+
+
+state 42
+
+    (15) factor -> BOOL .
+
+    AND             reduce using rule 15 (factor -> BOOL .)
+    SEMICOLON       reduce using rule 15 (factor -> BOOL .)
+    OR              reduce using rule 15 (factor -> BOOL .)
+    COMMA           reduce using rule 15 (factor -> BOOL .)
+    RBRACKET        reduce using rule 15 (factor -> BOOL .)
+
+
+state 43
+
+    (16) factor -> MINUS . factor
+    (12) factor -> . INTEGER
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (16) factor -> . MINUS factor
+    (17) factor -> . PLUS factor
+    (18) factor -> . LPAREN INTEGER RPAREN
+    (19) factor -> . LPAREN FLOAT RPAREN
+    (20) factor -> . LPAREN MINUS FLOAT RPAREN
+    (40) factor -> . ID LBRACKET expression RBRACKET
+    (48) factor -> . ID
+    (49) factor -> . TRUE
+    (50) factor -> . FALSE
+    (51) factor -> . NOT ID
+
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    CHAR            shift and go to state 41
+    BOOL            shift and go to state 42
+    MINUS           shift and go to state 43
+    PLUS            shift and go to state 44
+    LPAREN          shift and go to state 45
+    ID              shift and go to state 35
+    TRUE            shift and go to state 46
+    FALSE           shift and go to state 47
+    NOT             shift and go to state 48
+
+    factor                         shift and go to state 76
+
+state 44
+
+    (17) factor -> PLUS . factor
+    (12) factor -> . INTEGER
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (16) factor -> . MINUS factor
+    (17) factor -> . PLUS factor
+    (18) factor -> . LPAREN INTEGER RPAREN
+    (19) factor -> . LPAREN FLOAT RPAREN
+    (20) factor -> . LPAREN MINUS FLOAT RPAREN
+    (40) factor -> . ID LBRACKET expression RBRACKET
+    (48) factor -> . ID
+    (49) factor -> . TRUE
+    (50) factor -> . FALSE
+    (51) factor -> . NOT ID
+
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    CHAR            shift and go to state 41
+    BOOL            shift and go to state 42
+    MINUS           shift and go to state 43
+    PLUS            shift and go to state 44
+    LPAREN          shift and go to state 45
+    ID              shift and go to state 35
+    TRUE            shift and go to state 46
+    FALSE           shift and go to state 47
+    NOT             shift and go to state 48
+
+    factor                         shift and go to state 77
+
+state 45
+
+    (18) factor -> LPAREN . INTEGER RPAREN
+    (19) factor -> LPAREN . FLOAT RPAREN
+    (20) factor -> LPAREN . MINUS FLOAT RPAREN
+
+    INTEGER         shift and go to state 78
+    FLOAT           shift and go to state 79
+    MINUS           shift and go to state 80
+
+
+state 46
+
+    (49) factor -> TRUE .
+
+    AND             reduce using rule 49 (factor -> TRUE .)
+    SEMICOLON       reduce using rule 49 (factor -> TRUE .)
+    OR              reduce using rule 49 (factor -> TRUE .)
+    COMMA           reduce using rule 49 (factor -> TRUE .)
+    RBRACKET        reduce using rule 49 (factor -> TRUE .)
+
+
+state 47
+
+    (50) factor -> FALSE .
+
+    AND             reduce using rule 50 (factor -> FALSE .)
+    SEMICOLON       reduce using rule 50 (factor -> FALSE .)
+    OR              reduce using rule 50 (factor -> FALSE .)
+    COMMA           reduce using rule 50 (factor -> FALSE .)
+    RBRACKET        reduce using rule 50 (factor -> FALSE .)
+
+
+state 48
+
+    (51) factor -> NOT . ID
+
+    ID              shift and go to state 81
+
+
+state 49
+
+    (36) expressionTab -> ID .
+
+    RBRACKET        reduce using rule 36 (expressionTab -> ID .)
+    COMMA           reduce using rule 36 (expressionTab -> ID .)
+    SEMICOLON       reduce using rule 36 (expressionTab -> ID .)
+
+
+state 50
+
+    (41) array_assignment -> ID LBRACKET expressionTab . RBRACKET EQUALS expressionTab SEMICOLON
+
+    RBRACKET        shift and go to state 82
+
+
+state 51
+
+    (37) expressionTab -> FLOAT .
+
+    RBRACKET        reduce using rule 37 (expressionTab -> FLOAT .)
+    COMMA           reduce using rule 37 (expressionTab -> FLOAT .)
+    SEMICOLON       reduce using rule 37 (expressionTab -> FLOAT .)
+
+
+state 52
+
+    (38) expressionTab -> INTEGER .
+
+    RBRACKET        reduce using rule 38 (expressionTab -> INTEGER .)
+    COMMA           reduce using rule 38 (expressionTab -> INTEGER .)
+    SEMICOLON       reduce using rule 38 (expressionTab -> INTEGER .)
+
+
+state 53
+
+    (39) expressionTab -> CHAR .
+
+    RBRACKET        reduce using rule 39 (expressionTab -> CHAR .)
+    COMMA           reduce using rule 39 (expressionTab -> CHAR .)
+    SEMICOLON       reduce using rule 39 (expressionTab -> CHAR .)
+
+
+state 54
+
+    (52) statement -> READ LPAREN ID . RPAREN SEMICOLON
+    (53) statement -> READ LPAREN ID . LBRACKET INTEGER RBRACKET RPAREN SEMICOLON
+
+    RPAREN          shift and go to state 83
+    LBRACKET        shift and go to state 84
+
+
+state 55
+
+    (54) statement -> WRITE LPAREN write_content . RPAREN SEMICOLON
+    (56) write_content -> write_content . COMMA write_item
+
+    RPAREN          shift and go to state 85
+    COMMA           shift and go to state 86
+
+
+state 56
+
+    (55) write_content -> write_item .
+
+    RPAREN          reduce using rule 55 (write_content -> write_item .)
+    COMMA           reduce using rule 55 (write_content -> write_item .)
+
+
+state 57
+
+    (57) write_item -> ID .
+    (58) write_item -> ID . LBRACKET INTEGER RBRACKET
+
+    RPAREN          reduce using rule 57 (write_item -> ID .)
+    COMMA           reduce using rule 57 (write_item -> ID .)
+    LBRACKET        shift and go to state 87
+
+
+state 58
+
+    (59) statement -> FOR LPAREN initialisation . COLON step COLON BorneSup RPAREN block
+
+    COLON           shift and go to state 88
+
+
+state 59
+
+    (60) initialisation -> ID . EQUALS INTEGER
+
+    EQUALS          shift and go to state 89
+
+
+state 60
+
+    (30) array_declarationTab -> type ID LBRACKET INTEGER . RBRACKET SEMICOLON
+    (35) declarationTab -> ID LBRACKET INTEGER . RBRACKET
+
+    RBRACKET        shift and go to state 90
+
+
+state 61
+
+    (36) expressionTab -> ID .
+    (40) factor -> ID . LBRACKET expression RBRACKET
+    (48) factor -> ID .
+
+  ! reduce/reduce conflict for SEMICOLON resolved using rule 36 (expressionTab -> ID .)
+  ! reduce/reduce conflict for COMMA resolved using rule 36 (expressionTab -> ID .)
+    COMMA           reduce using rule 36 (expressionTab -> ID .)
+    SEMICOLON       reduce using rule 36 (expressionTab -> ID .)
+    LBRACKET        shift and go to state 72
+    AND             reduce using rule 48 (factor -> ID .)
+    OR              reduce using rule 48 (factor -> ID .)
+
+  ! SEMICOLON       [ reduce using rule 48 (factor -> ID .) ]
+  ! COMMA           [ reduce using rule 48 (factor -> ID .) ]
+
+
+state 62
+
+    (42) declaration_assignment -> type ID EQUALS expression . SEMICOLON
+    (6) declaration -> ID EQUALS expression .
+    (44) expression -> expression . OR term
+
+  ! shift/reduce conflict for SEMICOLON resolved as shift
+    SEMICOLON       shift and go to state 91
+    COMMA           reduce using rule 6 (declaration -> ID EQUALS expression .)
+    OR              shift and go to state 74
+
+  ! SEMICOLON       [ reduce using rule 6 (declaration -> ID EQUALS expression .) ]
+
+
+state 63
+
+    (34) declarationTab -> ID EQUALS expressionTab .
+
+    COMMA           reduce using rule 34 (declarationTab -> ID EQUALS expressionTab .)
+    SEMICOLON       reduce using rule 34 (declarationTab -> ID EQUALS expressionTab .)
+
+
+state 64
+
+    (37) expressionTab -> FLOAT .
+    (13) factor -> FLOAT .
+
+  ! reduce/reduce conflict for SEMICOLON resolved using rule 13 (factor -> FLOAT .)
+  ! reduce/reduce conflict for COMMA resolved using rule 13 (factor -> FLOAT .)
+    AND             reduce using rule 13 (factor -> FLOAT .)
+    SEMICOLON       reduce using rule 13 (factor -> FLOAT .)
+    OR              reduce using rule 13 (factor -> FLOAT .)
+    COMMA           reduce using rule 13 (factor -> FLOAT .)
+
+  ! COMMA           [ reduce using rule 37 (expressionTab -> FLOAT .) ]
+  ! SEMICOLON       [ reduce using rule 37 (expressionTab -> FLOAT .) ]
+
+
+state 65
+
+    (38) expressionTab -> INTEGER .
+    (12) factor -> INTEGER .
+
+  ! reduce/reduce conflict for SEMICOLON resolved using rule 12 (factor -> INTEGER .)
+  ! reduce/reduce conflict for COMMA resolved using rule 12 (factor -> INTEGER .)
+    AND             reduce using rule 12 (factor -> INTEGER .)
+    SEMICOLON       reduce using rule 12 (factor -> INTEGER .)
+    OR              reduce using rule 12 (factor -> INTEGER .)
+    COMMA           reduce using rule 12 (factor -> INTEGER .)
+
+  ! COMMA           [ reduce using rule 38 (expressionTab -> INTEGER .) ]
+  ! SEMICOLON       [ reduce using rule 38 (expressionTab -> INTEGER .) ]
+
+
+state 66
+
+    (39) expressionTab -> CHAR .
+    (14) factor -> CHAR .
+
+  ! reduce/reduce conflict for SEMICOLON resolved using rule 14 (factor -> CHAR .)
+  ! reduce/reduce conflict for COMMA resolved using rule 14 (factor -> CHAR .)
+    AND             reduce using rule 14 (factor -> CHAR .)
+    SEMICOLON       reduce using rule 14 (factor -> CHAR .)
+    OR              reduce using rule 14 (factor -> CHAR .)
+    COMMA           reduce using rule 14 (factor -> CHAR .)
+
+  ! COMMA           [ reduce using rule 39 (expressionTab -> CHAR .) ]
+  ! SEMICOLON       [ reduce using rule 39 (expressionTab -> CHAR .) ]
+
+
+state 67
 
     (4) declaration_list -> declaration COMMA declaration_list .
 
     SEMICOLON       reduce using rule 4 (declaration_list -> declaration COMMA declaration_list .)
 
 
-state 38
+state 68
 
-    (6) declaration -> ID EQUALS expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
-    (23) expression -> expression . OR expression
-    (24) expression -> expression . AND expression
-    (25) expression -> expression . EQ expression
-    (26) expression -> expression . NEQ expression
-    (27) expression -> expression . LT expression
-    (28) expression -> expression . GT expression
-    (29) expression -> expression . LTE expression
-    (30) expression -> expression . GTE expression
+    (5) declaration -> ID .
+    (6) declaration -> ID . EQUALS expression
 
-    COMMA           reduce using rule 6 (declaration -> ID EQUALS expression .)
-    SEMICOLON       reduce using rule 6 (declaration -> ID EQUALS expression .)
-    PLUS            shift and go to state 41
-    MINUS           shift and go to state 42
-    OR              shift and go to state 43
-    AND             shift and go to state 44
-    EQ              shift and go to state 45
-    NEQ             shift and go to state 46
-    LT              shift and go to state 47
-    GT              shift and go to state 48
-    LTE             shift and go to state 49
-    GTE             shift and go to state 50
+    COMMA           reduce using rule 5 (declaration -> ID .)
+    SEMICOLON       reduce using rule 5 (declaration -> ID .)
+    EQUALS          shift and go to state 92
 
 
-state 39
+state 69
+
+    (32) declarationTab_listTab -> declarationTab COMMA declarationTab_listTab .
+
+    SEMICOLON       reduce using rule 32 (declarationTab_listTab -> declarationTab COMMA declarationTab_listTab .)
+
+
+state 70
+
+    (33) declarationTab -> ID .
+    (34) declarationTab -> ID . EQUALS expressionTab
+    (35) declarationTab -> ID . LBRACKET INTEGER RBRACKET
+
+    COMMA           reduce using rule 33 (declarationTab -> ID .)
+    SEMICOLON       reduce using rule 33 (declarationTab -> ID .)
+    EQUALS          shift and go to state 93
+    LBRACKET        shift and go to state 94
+
+
+state 71
 
     (2) statement -> CONST type ID EQUALS . expression SEMICOLON
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
-    (20) expression -> . term
-    (23) expression -> . expression OR expression
-    (24) expression -> . expression AND expression
-    (25) expression -> . expression EQ expression
-    (26) expression -> . expression NEQ expression
-    (27) expression -> . expression LT expression
-    (28) expression -> . expression GT expression
-    (29) expression -> . expression LTE expression
-    (30) expression -> . expression GTE expression
-    (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
-    (21) term -> . factor
-    (12) factor -> . INT
+    (29) const_declarationTab -> CONST type ID EQUALS . expressionTab SEMICOLON
+    (44) expression -> . expression OR term
+    (45) expression -> . term
+    (36) expressionTab -> . ID
+    (37) expressionTab -> . FLOAT
+    (38) expressionTab -> . INTEGER
+    (39) expressionTab -> . CHAR
+    (46) term -> . term AND factor
+    (47) term -> . factor
+    (12) factor -> . INTEGER
     (13) factor -> . FLOAT
     (14) factor -> . CHAR
     (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
+    (16) factor -> . MINUS factor
+    (17) factor -> . PLUS factor
+    (18) factor -> . LPAREN INTEGER RPAREN
+    (19) factor -> . LPAREN FLOAT RPAREN
+    (20) factor -> . LPAREN MINUS FLOAT RPAREN
+    (40) factor -> . ID LBRACKET expression RBRACKET
+    (48) factor -> . ID
+    (49) factor -> . TRUE
+    (50) factor -> . FALSE
+    (51) factor -> . NOT ID
 
-    NOT             shift and go to state 25
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
+    ID              shift and go to state 61
+    FLOAT           shift and go to state 64
+    INTEGER         shift and go to state 65
+    CHAR            shift and go to state 66
+    BOOL            shift and go to state 42
+    MINUS           shift and go to state 43
+    PLUS            shift and go to state 44
+    LPAREN          shift and go to state 45
+    TRUE            shift and go to state 46
+    FALSE           shift and go to state 47
+    NOT             shift and go to state 48
 
-    expression                     shift and go to state 58
-    term                           shift and go to state 24
-    factor                         shift and go to state 26
-    comparison                     shift and go to state 32
+    expression                     shift and go to state 95
+    expressionTab                  shift and go to state 96
+    term                           shift and go to state 37
+    factor                         shift and go to state 38
 
-state 40
+state 72
+
+    (40) factor -> ID LBRACKET . expression RBRACKET
+    (44) expression -> . expression OR term
+    (45) expression -> . term
+    (46) term -> . term AND factor
+    (47) term -> . factor
+    (12) factor -> . INTEGER
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (16) factor -> . MINUS factor
+    (17) factor -> . PLUS factor
+    (18) factor -> . LPAREN INTEGER RPAREN
+    (19) factor -> . LPAREN FLOAT RPAREN
+    (20) factor -> . LPAREN MINUS FLOAT RPAREN
+    (40) factor -> . ID LBRACKET expression RBRACKET
+    (48) factor -> . ID
+    (49) factor -> . TRUE
+    (50) factor -> . FALSE
+    (51) factor -> . NOT ID
+
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    CHAR            shift and go to state 41
+    BOOL            shift and go to state 42
+    MINUS           shift and go to state 43
+    PLUS            shift and go to state 44
+    LPAREN          shift and go to state 45
+    ID              shift and go to state 35
+    TRUE            shift and go to state 46
+    FALSE           shift and go to state 47
+    NOT             shift and go to state 48
+
+    expression                     shift and go to state 97
+    term                           shift and go to state 37
+    factor                         shift and go to state 38
+
+state 73
 
     (7) statement -> ID EQUALS expression SEMICOLON .
+    (43) simple_assignment -> ID EQUALS expression SEMICOLON .
 
+  ! reduce/reduce conflict for $end resolved using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+  ! reduce/reduce conflict for CONST resolved using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+  ! reduce/reduce conflict for ID resolved using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+  ! reduce/reduce conflict for READ resolved using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+  ! reduce/reduce conflict for WRITE resolved using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+  ! reduce/reduce conflict for FOR resolved using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+  ! reduce/reduce conflict for INT_TYPE resolved using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+  ! reduce/reduce conflict for FLOAT_TYPE resolved using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+  ! reduce/reduce conflict for BOOL_TYPE resolved using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+  ! reduce/reduce conflict for CHAR_TYPE resolved using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+  ! reduce/reduce conflict for RBRACE resolved using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     $end            reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
-    RBRACE          reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     CONST           reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     ID              reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
-    IF              reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+    READ            reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+    WRITE           reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     FOR             reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     INT_TYPE        reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     FLOAT_TYPE      reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     BOOL_TYPE       reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
     CHAR_TYPE       reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+    RBRACE          reduce using rule 7 (statement -> ID EQUALS expression SEMICOLON .)
+
+  ! $end            [ reduce using rule 43 (simple_assignment -> ID EQUALS expression SEMICOLON .) ]
+  ! CONST           [ reduce using rule 43 (simple_assignment -> ID EQUALS expression SEMICOLON .) ]
+  ! ID              [ reduce using rule 43 (simple_assignment -> ID EQUALS expression SEMICOLON .) ]
+  ! READ            [ reduce using rule 43 (simple_assignment -> ID EQUALS expression SEMICOLON .) ]
+  ! WRITE           [ reduce using rule 43 (simple_assignment -> ID EQUALS expression SEMICOLON .) ]
+  ! FOR             [ reduce using rule 43 (simple_assignment -> ID EQUALS expression SEMICOLON .) ]
+  ! INT_TYPE        [ reduce using rule 43 (simple_assignment -> ID EQUALS expression SEMICOLON .) ]
+  ! FLOAT_TYPE      [ reduce using rule 43 (simple_assignment -> ID EQUALS expression SEMICOLON .) ]
+  ! BOOL_TYPE       [ reduce using rule 43 (simple_assignment -> ID EQUALS expression SEMICOLON .) ]
+  ! CHAR_TYPE       [ reduce using rule 43 (simple_assignment -> ID EQUALS expression SEMICOLON .) ]
+  ! RBRACE          [ reduce using rule 43 (simple_assignment -> ID EQUALS expression SEMICOLON .) ]
 
-
-state 41
-
-    (16) expression -> expression PLUS . term
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
-    (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
-
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
-
-    term                           shift and go to state 59
-    factor                         shift and go to state 26
-    comparison                     shift and go to state 32
-
-state 42
-
-    (17) expression -> expression MINUS . term
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
-    (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
-
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
-
-    term                           shift and go to state 60
-    factor                         shift and go to state 26
-    comparison                     shift and go to state 32
-
-state 43
-
-    (23) expression -> expression OR . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
-    (20) expression -> . term
-    (23) expression -> . expression OR expression
-    (24) expression -> . expression AND expression
-    (25) expression -> . expression EQ expression
-    (26) expression -> . expression NEQ expression
-    (27) expression -> . expression LT expression
-    (28) expression -> . expression GT expression
-    (29) expression -> . expression LTE expression
-    (30) expression -> . expression GTE expression
-    (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
-    (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
-
-    NOT             shift and go to state 25
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
-
-    expression                     shift and go to state 61
-    term                           shift and go to state 24
-    factor                         shift and go to state 26
-    comparison                     shift and go to state 32
-
-state 44
-
-    (24) expression -> expression AND . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
-    (20) expression -> . term
-    (23) expression -> . expression OR expression
-    (24) expression -> . expression AND expression
-    (25) expression -> . expression EQ expression
-    (26) expression -> . expression NEQ expression
-    (27) expression -> . expression LT expression
-    (28) expression -> . expression GT expression
-    (29) expression -> . expression LTE expression
-    (30) expression -> . expression GTE expression
-    (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
-    (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
-
-    NOT             shift and go to state 25
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
-
-    expression                     shift and go to state 62
-    term                           shift and go to state 24
-    factor                         shift and go to state 26
-    comparison                     shift and go to state 32
-
-state 45
-
-    (25) expression -> expression EQ . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
-    (20) expression -> . term
-    (23) expression -> . expression OR expression
-    (24) expression -> . expression AND expression
-    (25) expression -> . expression EQ expression
-    (26) expression -> . expression NEQ expression
-    (27) expression -> . expression LT expression
-    (28) expression -> . expression GT expression
-    (29) expression -> . expression LTE expression
-    (30) expression -> . expression GTE expression
-    (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
-    (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
-
-    NOT             shift and go to state 25
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
-
-    expression                     shift and go to state 63
-    term                           shift and go to state 24
-    factor                         shift and go to state 26
-    comparison                     shift and go to state 32
-
-state 46
-
-    (26) expression -> expression NEQ . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
-    (20) expression -> . term
-    (23) expression -> . expression OR expression
-    (24) expression -> . expression AND expression
-    (25) expression -> . expression EQ expression
-    (26) expression -> . expression NEQ expression
-    (27) expression -> . expression LT expression
-    (28) expression -> . expression GT expression
-    (29) expression -> . expression LTE expression
-    (30) expression -> . expression GTE expression
-    (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
-    (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
-
-    NOT             shift and go to state 25
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
-
-    expression                     shift and go to state 64
-    term                           shift and go to state 24
-    factor                         shift and go to state 26
-    comparison                     shift and go to state 32
-
-state 47
-
-    (27) expression -> expression LT . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
-    (20) expression -> . term
-    (23) expression -> . expression OR expression
-    (24) expression -> . expression AND expression
-    (25) expression -> . expression EQ expression
-    (26) expression -> . expression NEQ expression
-    (27) expression -> . expression LT expression
-    (28) expression -> . expression GT expression
-    (29) expression -> . expression LTE expression
-    (30) expression -> . expression GTE expression
-    (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
-    (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
-
-    NOT             shift and go to state 25
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
-
-    expression                     shift and go to state 65
-    term                           shift and go to state 24
-    factor                         shift and go to state 26
-    comparison                     shift and go to state 32
-
-state 48
-
-    (28) expression -> expression GT . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
-    (20) expression -> . term
-    (23) expression -> . expression OR expression
-    (24) expression -> . expression AND expression
-    (25) expression -> . expression EQ expression
-    (26) expression -> . expression NEQ expression
-    (27) expression -> . expression LT expression
-    (28) expression -> . expression GT expression
-    (29) expression -> . expression LTE expression
-    (30) expression -> . expression GTE expression
-    (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
-    (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
-
-    NOT             shift and go to state 25
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
-
-    expression                     shift and go to state 66
-    term                           shift and go to state 24
-    factor                         shift and go to state 26
-    comparison                     shift and go to state 32
-
-state 49
-
-    (29) expression -> expression LTE . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
-    (20) expression -> . term
-    (23) expression -> . expression OR expression
-    (24) expression -> . expression AND expression
-    (25) expression -> . expression EQ expression
-    (26) expression -> . expression NEQ expression
-    (27) expression -> . expression LT expression
-    (28) expression -> . expression GT expression
-    (29) expression -> . expression LTE expression
-    (30) expression -> . expression GTE expression
-    (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
-    (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
-
-    NOT             shift and go to state 25
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
-
-    expression                     shift and go to state 67
-    term                           shift and go to state 24
-    factor                         shift and go to state 26
-    comparison                     shift and go to state 32
-
-state 50
-
-    (30) expression -> expression GTE . expression
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
-    (20) expression -> . term
-    (23) expression -> . expression OR expression
-    (24) expression -> . expression AND expression
-    (25) expression -> . expression EQ expression
-    (26) expression -> . expression NEQ expression
-    (27) expression -> . expression LT expression
-    (28) expression -> . expression GT expression
-    (29) expression -> . expression LTE expression
-    (30) expression -> . expression GTE expression
-    (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
-    (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
-
-    NOT             shift and go to state 25
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
-
-    expression                     shift and go to state 68
-    term                           shift and go to state 24
-    factor                         shift and go to state 26
-    comparison                     shift and go to state 32
-
-state 51
-
-    (18) term -> term MULTIPLY . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
-
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
-
-    factor                         shift and go to state 69
-    comparison                     shift and go to state 32
-
-state 52
-
-    (19) term -> term DIVIDE . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
-
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
-
-    factor                         shift and go to state 70
-    comparison                     shift and go to state 32
-
-state 53
-
-    (31) expression -> NOT expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
-    (23) expression -> expression . OR expression
-    (24) expression -> expression . AND expression
-    (25) expression -> expression . EQ expression
-    (26) expression -> expression . NEQ expression
-    (27) expression -> expression . LT expression
-    (28) expression -> expression . GT expression
-    (29) expression -> expression . LTE expression
-    (30) expression -> expression . GTE expression
-
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for OR resolved as shift
-  ! shift/reduce conflict for AND resolved as shift
-  ! shift/reduce conflict for EQ resolved as shift
-  ! shift/reduce conflict for NEQ resolved as shift
-  ! shift/reduce conflict for LT resolved as shift
-  ! shift/reduce conflict for GT resolved as shift
-  ! shift/reduce conflict for LTE resolved as shift
-  ! shift/reduce conflict for GTE resolved as shift
-    SEMICOLON       reduce using rule 31 (expression -> NOT expression .)
-    RPAREN          reduce using rule 31 (expression -> NOT expression .)
-    COMMA           reduce using rule 31 (expression -> NOT expression .)
-    PLUS            shift and go to state 41
-    MINUS           shift and go to state 42
-    OR              shift and go to state 43
-    AND             shift and go to state 44
-    EQ              shift and go to state 45
-    NEQ             shift and go to state 46
-    LT              shift and go to state 47
-    GT              shift and go to state 48
-    LTE             shift and go to state 49
-    GTE             shift and go to state 50
-
-  ! PLUS            [ reduce using rule 31 (expression -> NOT expression .) ]
-  ! MINUS           [ reduce using rule 31 (expression -> NOT expression .) ]
-  ! OR              [ reduce using rule 31 (expression -> NOT expression .) ]
-  ! AND             [ reduce using rule 31 (expression -> NOT expression .) ]
-  ! EQ              [ reduce using rule 31 (expression -> NOT expression .) ]
-  ! NEQ             [ reduce using rule 31 (expression -> NOT expression .) ]
-  ! LT              [ reduce using rule 31 (expression -> NOT expression .) ]
-  ! GT              [ reduce using rule 31 (expression -> NOT expression .) ]
-  ! LTE             [ reduce using rule 31 (expression -> NOT expression .) ]
-  ! GTE             [ reduce using rule 31 (expression -> NOT expression .) ]
-
-
-state 54
-
-    (32) comparison -> LPAREN expression . RPAREN
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
-    (23) expression -> expression . OR expression
-    (24) expression -> expression . AND expression
-    (25) expression -> expression . EQ expression
-    (26) expression -> expression . NEQ expression
-    (27) expression -> expression . LT expression
-    (28) expression -> expression . GT expression
-    (29) expression -> expression . LTE expression
-    (30) expression -> expression . GTE expression
-
-    RPAREN          shift and go to state 71
-    PLUS            shift and go to state 41
-    MINUS           shift and go to state 42
-    OR              shift and go to state 43
-    AND             shift and go to state 44
-    EQ              shift and go to state 45
-    NEQ             shift and go to state 46
-    LT              shift and go to state 47
-    GT              shift and go to state 48
-    LTE             shift and go to state 49
-    GTE             shift and go to state 50
-
-
-state 55
-
-    (36) statement -> IF LPAREN expression RPAREN . block ELSE block
-    (37) statement -> IF LPAREN expression RPAREN . block ELSE IF LPAREN expression RPAREN block ELSE block
-    (38) statement -> IF LPAREN expression RPAREN . block
-    (46) block -> . LBRACE statements RBRACE
-
-    LBRACE          shift and go to state 73
-
-    block                          shift and go to state 72
-
-state 56
-
-    (41) statement -> FOR LPAREN initialisation COLON . step COLON BorneSup RPAREN block
-    (43) step -> . INT
-    (44) step -> . ID
-
-    INT             shift and go to state 75
-    ID              shift and go to state 76
-
-    step                           shift and go to state 74
-
-state 57
-
-    (42) initialisation -> ID EQUALS . INT
-
-    INT             shift and go to state 77
-
-
-state 58
-
-    (2) statement -> CONST type ID EQUALS expression . SEMICOLON
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
-    (23) expression -> expression . OR expression
-    (24) expression -> expression . AND expression
-    (25) expression -> expression . EQ expression
-    (26) expression -> expression . NEQ expression
-    (27) expression -> expression . LT expression
-    (28) expression -> expression . GT expression
-    (29) expression -> expression . LTE expression
-    (30) expression -> expression . GTE expression
-
-    SEMICOLON       shift and go to state 78
-    PLUS            shift and go to state 41
-    MINUS           shift and go to state 42
-    OR              shift and go to state 43
-    AND             shift and go to state 44
-    EQ              shift and go to state 45
-    NEQ             shift and go to state 46
-    LT              shift and go to state 47
-    GT              shift and go to state 48
-    LTE             shift and go to state 49
-    GTE             shift and go to state 50
-
-
-state 59
-
-    (16) expression -> expression PLUS term .
-    (18) term -> term . MULTIPLY factor
-    (19) term -> term . DIVIDE factor
-
-    SEMICOLON       reduce using rule 16 (expression -> expression PLUS term .)
-    PLUS            reduce using rule 16 (expression -> expression PLUS term .)
-    MINUS           reduce using rule 16 (expression -> expression PLUS term .)
-    OR              reduce using rule 16 (expression -> expression PLUS term .)
-    AND             reduce using rule 16 (expression -> expression PLUS term .)
-    EQ              reduce using rule 16 (expression -> expression PLUS term .)
-    NEQ             reduce using rule 16 (expression -> expression PLUS term .)
-    LT              reduce using rule 16 (expression -> expression PLUS term .)
-    GT              reduce using rule 16 (expression -> expression PLUS term .)
-    LTE             reduce using rule 16 (expression -> expression PLUS term .)
-    GTE             reduce using rule 16 (expression -> expression PLUS term .)
-    RPAREN          reduce using rule 16 (expression -> expression PLUS term .)
-    COMMA           reduce using rule 16 (expression -> expression PLUS term .)
-    MULTIPLY        shift and go to state 51
-    DIVIDE          shift and go to state 52
-
-
-state 60
-
-    (17) expression -> expression MINUS term .
-    (18) term -> term . MULTIPLY factor
-    (19) term -> term . DIVIDE factor
-
-    SEMICOLON       reduce using rule 17 (expression -> expression MINUS term .)
-    PLUS            reduce using rule 17 (expression -> expression MINUS term .)
-    MINUS           reduce using rule 17 (expression -> expression MINUS term .)
-    OR              reduce using rule 17 (expression -> expression MINUS term .)
-    AND             reduce using rule 17 (expression -> expression MINUS term .)
-    EQ              reduce using rule 17 (expression -> expression MINUS term .)
-    NEQ             reduce using rule 17 (expression -> expression MINUS term .)
-    LT              reduce using rule 17 (expression -> expression MINUS term .)
-    GT              reduce using rule 17 (expression -> expression MINUS term .)
-    LTE             reduce using rule 17 (expression -> expression MINUS term .)
-    GTE             reduce using rule 17 (expression -> expression MINUS term .)
-    RPAREN          reduce using rule 17 (expression -> expression MINUS term .)
-    COMMA           reduce using rule 17 (expression -> expression MINUS term .)
-    MULTIPLY        shift and go to state 51
-    DIVIDE          shift and go to state 52
-
-
-state 61
-
-    (23) expression -> expression OR expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
-    (23) expression -> expression . OR expression
-    (24) expression -> expression . AND expression
-    (25) expression -> expression . EQ expression
-    (26) expression -> expression . NEQ expression
-    (27) expression -> expression . LT expression
-    (28) expression -> expression . GT expression
-    (29) expression -> expression . LTE expression
-    (30) expression -> expression . GTE expression
-
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for OR resolved as shift
-  ! shift/reduce conflict for AND resolved as shift
-  ! shift/reduce conflict for EQ resolved as shift
-  ! shift/reduce conflict for NEQ resolved as shift
-  ! shift/reduce conflict for LT resolved as shift
-  ! shift/reduce conflict for GT resolved as shift
-  ! shift/reduce conflict for LTE resolved as shift
-  ! shift/reduce conflict for GTE resolved as shift
-    SEMICOLON       reduce using rule 23 (expression -> expression OR expression .)
-    RPAREN          reduce using rule 23 (expression -> expression OR expression .)
-    COMMA           reduce using rule 23 (expression -> expression OR expression .)
-    PLUS            shift and go to state 41
-    MINUS           shift and go to state 42
-    OR              shift and go to state 43
-    AND             shift and go to state 44
-    EQ              shift and go to state 45
-    NEQ             shift and go to state 46
-    LT              shift and go to state 47
-    GT              shift and go to state 48
-    LTE             shift and go to state 49
-    GTE             shift and go to state 50
-
-  ! PLUS            [ reduce using rule 23 (expression -> expression OR expression .) ]
-  ! MINUS           [ reduce using rule 23 (expression -> expression OR expression .) ]
-  ! OR              [ reduce using rule 23 (expression -> expression OR expression .) ]
-  ! AND             [ reduce using rule 23 (expression -> expression OR expression .) ]
-  ! EQ              [ reduce using rule 23 (expression -> expression OR expression .) ]
-  ! NEQ             [ reduce using rule 23 (expression -> expression OR expression .) ]
-  ! LT              [ reduce using rule 23 (expression -> expression OR expression .) ]
-  ! GT              [ reduce using rule 23 (expression -> expression OR expression .) ]
-  ! LTE             [ reduce using rule 23 (expression -> expression OR expression .) ]
-  ! GTE             [ reduce using rule 23 (expression -> expression OR expression .) ]
-
-
-state 62
-
-    (24) expression -> expression AND expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
-    (23) expression -> expression . OR expression
-    (24) expression -> expression . AND expression
-    (25) expression -> expression . EQ expression
-    (26) expression -> expression . NEQ expression
-    (27) expression -> expression . LT expression
-    (28) expression -> expression . GT expression
-    (29) expression -> expression . LTE expression
-    (30) expression -> expression . GTE expression
-
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for OR resolved as shift
-  ! shift/reduce conflict for AND resolved as shift
-  ! shift/reduce conflict for EQ resolved as shift
-  ! shift/reduce conflict for NEQ resolved as shift
-  ! shift/reduce conflict for LT resolved as shift
-  ! shift/reduce conflict for GT resolved as shift
-  ! shift/reduce conflict for LTE resolved as shift
-  ! shift/reduce conflict for GTE resolved as shift
-    SEMICOLON       reduce using rule 24 (expression -> expression AND expression .)
-    RPAREN          reduce using rule 24 (expression -> expression AND expression .)
-    COMMA           reduce using rule 24 (expression -> expression AND expression .)
-    PLUS            shift and go to state 41
-    MINUS           shift and go to state 42
-    OR              shift and go to state 43
-    AND             shift and go to state 44
-    EQ              shift and go to state 45
-    NEQ             shift and go to state 46
-    LT              shift and go to state 47
-    GT              shift and go to state 48
-    LTE             shift and go to state 49
-    GTE             shift and go to state 50
-
-  ! PLUS            [ reduce using rule 24 (expression -> expression AND expression .) ]
-  ! MINUS           [ reduce using rule 24 (expression -> expression AND expression .) ]
-  ! OR              [ reduce using rule 24 (expression -> expression AND expression .) ]
-  ! AND             [ reduce using rule 24 (expression -> expression AND expression .) ]
-  ! EQ              [ reduce using rule 24 (expression -> expression AND expression .) ]
-  ! NEQ             [ reduce using rule 24 (expression -> expression AND expression .) ]
-  ! LT              [ reduce using rule 24 (expression -> expression AND expression .) ]
-  ! GT              [ reduce using rule 24 (expression -> expression AND expression .) ]
-  ! LTE             [ reduce using rule 24 (expression -> expression AND expression .) ]
-  ! GTE             [ reduce using rule 24 (expression -> expression AND expression .) ]
-
-
-state 63
-
-    (25) expression -> expression EQ expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
-    (23) expression -> expression . OR expression
-    (24) expression -> expression . AND expression
-    (25) expression -> expression . EQ expression
-    (26) expression -> expression . NEQ expression
-    (27) expression -> expression . LT expression
-    (28) expression -> expression . GT expression
-    (29) expression -> expression . LTE expression
-    (30) expression -> expression . GTE expression
-
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for OR resolved as shift
-  ! shift/reduce conflict for AND resolved as shift
-  ! shift/reduce conflict for EQ resolved as shift
-  ! shift/reduce conflict for NEQ resolved as shift
-  ! shift/reduce conflict for LT resolved as shift
-  ! shift/reduce conflict for GT resolved as shift
-  ! shift/reduce conflict for LTE resolved as shift
-  ! shift/reduce conflict for GTE resolved as shift
-    SEMICOLON       reduce using rule 25 (expression -> expression EQ expression .)
-    RPAREN          reduce using rule 25 (expression -> expression EQ expression .)
-    COMMA           reduce using rule 25 (expression -> expression EQ expression .)
-    PLUS            shift and go to state 41
-    MINUS           shift and go to state 42
-    OR              shift and go to state 43
-    AND             shift and go to state 44
-    EQ              shift and go to state 45
-    NEQ             shift and go to state 46
-    LT              shift and go to state 47
-    GT              shift and go to state 48
-    LTE             shift and go to state 49
-    GTE             shift and go to state 50
-
-  ! PLUS            [ reduce using rule 25 (expression -> expression EQ expression .) ]
-  ! MINUS           [ reduce using rule 25 (expression -> expression EQ expression .) ]
-  ! OR              [ reduce using rule 25 (expression -> expression EQ expression .) ]
-  ! AND             [ reduce using rule 25 (expression -> expression EQ expression .) ]
-  ! EQ              [ reduce using rule 25 (expression -> expression EQ expression .) ]
-  ! NEQ             [ reduce using rule 25 (expression -> expression EQ expression .) ]
-  ! LT              [ reduce using rule 25 (expression -> expression EQ expression .) ]
-  ! GT              [ reduce using rule 25 (expression -> expression EQ expression .) ]
-  ! LTE             [ reduce using rule 25 (expression -> expression EQ expression .) ]
-  ! GTE             [ reduce using rule 25 (expression -> expression EQ expression .) ]
-
-
-state 64
-
-    (26) expression -> expression NEQ expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
-    (23) expression -> expression . OR expression
-    (24) expression -> expression . AND expression
-    (25) expression -> expression . EQ expression
-    (26) expression -> expression . NEQ expression
-    (27) expression -> expression . LT expression
-    (28) expression -> expression . GT expression
-    (29) expression -> expression . LTE expression
-    (30) expression -> expression . GTE expression
-
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for OR resolved as shift
-  ! shift/reduce conflict for AND resolved as shift
-  ! shift/reduce conflict for EQ resolved as shift
-  ! shift/reduce conflict for NEQ resolved as shift
-  ! shift/reduce conflict for LT resolved as shift
-  ! shift/reduce conflict for GT resolved as shift
-  ! shift/reduce conflict for LTE resolved as shift
-  ! shift/reduce conflict for GTE resolved as shift
-    SEMICOLON       reduce using rule 26 (expression -> expression NEQ expression .)
-    RPAREN          reduce using rule 26 (expression -> expression NEQ expression .)
-    COMMA           reduce using rule 26 (expression -> expression NEQ expression .)
-    PLUS            shift and go to state 41
-    MINUS           shift and go to state 42
-    OR              shift and go to state 43
-    AND             shift and go to state 44
-    EQ              shift and go to state 45
-    NEQ             shift and go to state 46
-    LT              shift and go to state 47
-    GT              shift and go to state 48
-    LTE             shift and go to state 49
-    GTE             shift and go to state 50
-
-  ! PLUS            [ reduce using rule 26 (expression -> expression NEQ expression .) ]
-  ! MINUS           [ reduce using rule 26 (expression -> expression NEQ expression .) ]
-  ! OR              [ reduce using rule 26 (expression -> expression NEQ expression .) ]
-  ! AND             [ reduce using rule 26 (expression -> expression NEQ expression .) ]
-  ! EQ              [ reduce using rule 26 (expression -> expression NEQ expression .) ]
-  ! NEQ             [ reduce using rule 26 (expression -> expression NEQ expression .) ]
-  ! LT              [ reduce using rule 26 (expression -> expression NEQ expression .) ]
-  ! GT              [ reduce using rule 26 (expression -> expression NEQ expression .) ]
-  ! LTE             [ reduce using rule 26 (expression -> expression NEQ expression .) ]
-  ! GTE             [ reduce using rule 26 (expression -> expression NEQ expression .) ]
-
-
-state 65
-
-    (27) expression -> expression LT expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
-    (23) expression -> expression . OR expression
-    (24) expression -> expression . AND expression
-    (25) expression -> expression . EQ expression
-    (26) expression -> expression . NEQ expression
-    (27) expression -> expression . LT expression
-    (28) expression -> expression . GT expression
-    (29) expression -> expression . LTE expression
-    (30) expression -> expression . GTE expression
-
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for OR resolved as shift
-  ! shift/reduce conflict for AND resolved as shift
-  ! shift/reduce conflict for EQ resolved as shift
-  ! shift/reduce conflict for NEQ resolved as shift
-  ! shift/reduce conflict for LT resolved as shift
-  ! shift/reduce conflict for GT resolved as shift
-  ! shift/reduce conflict for LTE resolved as shift
-  ! shift/reduce conflict for GTE resolved as shift
-    SEMICOLON       reduce using rule 27 (expression -> expression LT expression .)
-    RPAREN          reduce using rule 27 (expression -> expression LT expression .)
-    COMMA           reduce using rule 27 (expression -> expression LT expression .)
-    PLUS            shift and go to state 41
-    MINUS           shift and go to state 42
-    OR              shift and go to state 43
-    AND             shift and go to state 44
-    EQ              shift and go to state 45
-    NEQ             shift and go to state 46
-    LT              shift and go to state 47
-    GT              shift and go to state 48
-    LTE             shift and go to state 49
-    GTE             shift and go to state 50
-
-  ! PLUS            [ reduce using rule 27 (expression -> expression LT expression .) ]
-  ! MINUS           [ reduce using rule 27 (expression -> expression LT expression .) ]
-  ! OR              [ reduce using rule 27 (expression -> expression LT expression .) ]
-  ! AND             [ reduce using rule 27 (expression -> expression LT expression .) ]
-  ! EQ              [ reduce using rule 27 (expression -> expression LT expression .) ]
-  ! NEQ             [ reduce using rule 27 (expression -> expression LT expression .) ]
-  ! LT              [ reduce using rule 27 (expression -> expression LT expression .) ]
-  ! GT              [ reduce using rule 27 (expression -> expression LT expression .) ]
-  ! LTE             [ reduce using rule 27 (expression -> expression LT expression .) ]
-  ! GTE             [ reduce using rule 27 (expression -> expression LT expression .) ]
-
-
-state 66
-
-    (28) expression -> expression GT expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
-    (23) expression -> expression . OR expression
-    (24) expression -> expression . AND expression
-    (25) expression -> expression . EQ expression
-    (26) expression -> expression . NEQ expression
-    (27) expression -> expression . LT expression
-    (28) expression -> expression . GT expression
-    (29) expression -> expression . LTE expression
-    (30) expression -> expression . GTE expression
-
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for OR resolved as shift
-  ! shift/reduce conflict for AND resolved as shift
-  ! shift/reduce conflict for EQ resolved as shift
-  ! shift/reduce conflict for NEQ resolved as shift
-  ! shift/reduce conflict for LT resolved as shift
-  ! shift/reduce conflict for GT resolved as shift
-  ! shift/reduce conflict for LTE resolved as shift
-  ! shift/reduce conflict for GTE resolved as shift
-    SEMICOLON       reduce using rule 28 (expression -> expression GT expression .)
-    RPAREN          reduce using rule 28 (expression -> expression GT expression .)
-    COMMA           reduce using rule 28 (expression -> expression GT expression .)
-    PLUS            shift and go to state 41
-    MINUS           shift and go to state 42
-    OR              shift and go to state 43
-    AND             shift and go to state 44
-    EQ              shift and go to state 45
-    NEQ             shift and go to state 46
-    LT              shift and go to state 47
-    GT              shift and go to state 48
-    LTE             shift and go to state 49
-    GTE             shift and go to state 50
-
-  ! PLUS            [ reduce using rule 28 (expression -> expression GT expression .) ]
-  ! MINUS           [ reduce using rule 28 (expression -> expression GT expression .) ]
-  ! OR              [ reduce using rule 28 (expression -> expression GT expression .) ]
-  ! AND             [ reduce using rule 28 (expression -> expression GT expression .) ]
-  ! EQ              [ reduce using rule 28 (expression -> expression GT expression .) ]
-  ! NEQ             [ reduce using rule 28 (expression -> expression GT expression .) ]
-  ! LT              [ reduce using rule 28 (expression -> expression GT expression .) ]
-  ! GT              [ reduce using rule 28 (expression -> expression GT expression .) ]
-  ! LTE             [ reduce using rule 28 (expression -> expression GT expression .) ]
-  ! GTE             [ reduce using rule 28 (expression -> expression GT expression .) ]
-
-
-state 67
-
-    (29) expression -> expression LTE expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
-    (23) expression -> expression . OR expression
-    (24) expression -> expression . AND expression
-    (25) expression -> expression . EQ expression
-    (26) expression -> expression . NEQ expression
-    (27) expression -> expression . LT expression
-    (28) expression -> expression . GT expression
-    (29) expression -> expression . LTE expression
-    (30) expression -> expression . GTE expression
-
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for OR resolved as shift
-  ! shift/reduce conflict for AND resolved as shift
-  ! shift/reduce conflict for EQ resolved as shift
-  ! shift/reduce conflict for NEQ resolved as shift
-  ! shift/reduce conflict for LT resolved as shift
-  ! shift/reduce conflict for GT resolved as shift
-  ! shift/reduce conflict for LTE resolved as shift
-  ! shift/reduce conflict for GTE resolved as shift
-    SEMICOLON       reduce using rule 29 (expression -> expression LTE expression .)
-    RPAREN          reduce using rule 29 (expression -> expression LTE expression .)
-    COMMA           reduce using rule 29 (expression -> expression LTE expression .)
-    PLUS            shift and go to state 41
-    MINUS           shift and go to state 42
-    OR              shift and go to state 43
-    AND             shift and go to state 44
-    EQ              shift and go to state 45
-    NEQ             shift and go to state 46
-    LT              shift and go to state 47
-    GT              shift and go to state 48
-    LTE             shift and go to state 49
-    GTE             shift and go to state 50
-
-  ! PLUS            [ reduce using rule 29 (expression -> expression LTE expression .) ]
-  ! MINUS           [ reduce using rule 29 (expression -> expression LTE expression .) ]
-  ! OR              [ reduce using rule 29 (expression -> expression LTE expression .) ]
-  ! AND             [ reduce using rule 29 (expression -> expression LTE expression .) ]
-  ! EQ              [ reduce using rule 29 (expression -> expression LTE expression .) ]
-  ! NEQ             [ reduce using rule 29 (expression -> expression LTE expression .) ]
-  ! LT              [ reduce using rule 29 (expression -> expression LTE expression .) ]
-  ! GT              [ reduce using rule 29 (expression -> expression LTE expression .) ]
-  ! LTE             [ reduce using rule 29 (expression -> expression LTE expression .) ]
-  ! GTE             [ reduce using rule 29 (expression -> expression LTE expression .) ]
-
-
-state 68
-
-    (30) expression -> expression GTE expression .
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
-    (23) expression -> expression . OR expression
-    (24) expression -> expression . AND expression
-    (25) expression -> expression . EQ expression
-    (26) expression -> expression . NEQ expression
-    (27) expression -> expression . LT expression
-    (28) expression -> expression . GT expression
-    (29) expression -> expression . LTE expression
-    (30) expression -> expression . GTE expression
-
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for OR resolved as shift
-  ! shift/reduce conflict for AND resolved as shift
-  ! shift/reduce conflict for EQ resolved as shift
-  ! shift/reduce conflict for NEQ resolved as shift
-  ! shift/reduce conflict for LT resolved as shift
-  ! shift/reduce conflict for GT resolved as shift
-  ! shift/reduce conflict for LTE resolved as shift
-  ! shift/reduce conflict for GTE resolved as shift
-    SEMICOLON       reduce using rule 30 (expression -> expression GTE expression .)
-    RPAREN          reduce using rule 30 (expression -> expression GTE expression .)
-    COMMA           reduce using rule 30 (expression -> expression GTE expression .)
-    PLUS            shift and go to state 41
-    MINUS           shift and go to state 42
-    OR              shift and go to state 43
-    AND             shift and go to state 44
-    EQ              shift and go to state 45
-    NEQ             shift and go to state 46
-    LT              shift and go to state 47
-    GT              shift and go to state 48
-    LTE             shift and go to state 49
-    GTE             shift and go to state 50
-
-  ! PLUS            [ reduce using rule 30 (expression -> expression GTE expression .) ]
-  ! MINUS           [ reduce using rule 30 (expression -> expression GTE expression .) ]
-  ! OR              [ reduce using rule 30 (expression -> expression GTE expression .) ]
-  ! AND             [ reduce using rule 30 (expression -> expression GTE expression .) ]
-  ! EQ              [ reduce using rule 30 (expression -> expression GTE expression .) ]
-  ! NEQ             [ reduce using rule 30 (expression -> expression GTE expression .) ]
-  ! LT              [ reduce using rule 30 (expression -> expression GTE expression .) ]
-  ! GT              [ reduce using rule 30 (expression -> expression GTE expression .) ]
-  ! LTE             [ reduce using rule 30 (expression -> expression GTE expression .) ]
-  ! GTE             [ reduce using rule 30 (expression -> expression GTE expression .) ]
-
-
-state 69
-
-    (18) term -> term MULTIPLY factor .
-
-    MULTIPLY        reduce using rule 18 (term -> term MULTIPLY factor .)
-    DIVIDE          reduce using rule 18 (term -> term MULTIPLY factor .)
-    SEMICOLON       reduce using rule 18 (term -> term MULTIPLY factor .)
-    PLUS            reduce using rule 18 (term -> term MULTIPLY factor .)
-    MINUS           reduce using rule 18 (term -> term MULTIPLY factor .)
-    OR              reduce using rule 18 (term -> term MULTIPLY factor .)
-    AND             reduce using rule 18 (term -> term MULTIPLY factor .)
-    EQ              reduce using rule 18 (term -> term MULTIPLY factor .)
-    NEQ             reduce using rule 18 (term -> term MULTIPLY factor .)
-    LT              reduce using rule 18 (term -> term MULTIPLY factor .)
-    GT              reduce using rule 18 (term -> term MULTIPLY factor .)
-    LTE             reduce using rule 18 (term -> term MULTIPLY factor .)
-    GTE             reduce using rule 18 (term -> term MULTIPLY factor .)
-    RPAREN          reduce using rule 18 (term -> term MULTIPLY factor .)
-    COMMA           reduce using rule 18 (term -> term MULTIPLY factor .)
-
-
-state 70
-
-    (19) term -> term DIVIDE factor .
-
-    MULTIPLY        reduce using rule 19 (term -> term DIVIDE factor .)
-    DIVIDE          reduce using rule 19 (term -> term DIVIDE factor .)
-    SEMICOLON       reduce using rule 19 (term -> term DIVIDE factor .)
-    PLUS            reduce using rule 19 (term -> term DIVIDE factor .)
-    MINUS           reduce using rule 19 (term -> term DIVIDE factor .)
-    OR              reduce using rule 19 (term -> term DIVIDE factor .)
-    AND             reduce using rule 19 (term -> term DIVIDE factor .)
-    EQ              reduce using rule 19 (term -> term DIVIDE factor .)
-    NEQ             reduce using rule 19 (term -> term DIVIDE factor .)
-    LT              reduce using rule 19 (term -> term DIVIDE factor .)
-    GT              reduce using rule 19 (term -> term DIVIDE factor .)
-    LTE             reduce using rule 19 (term -> term DIVIDE factor .)
-    GTE             reduce using rule 19 (term -> term DIVIDE factor .)
-    RPAREN          reduce using rule 19 (term -> term DIVIDE factor .)
-    COMMA           reduce using rule 19 (term -> term DIVIDE factor .)
-
-
-state 71
-
-    (32) comparison -> LPAREN expression RPAREN .
-
-    MULTIPLY        reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
-    DIVIDE          reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
-    SEMICOLON       reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
-    PLUS            reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
-    MINUS           reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
-    OR              reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
-    AND             reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
-    EQ              reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
-    NEQ             reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
-    LT              reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
-    GT              reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
-    LTE             reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
-    GTE             reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
-    RPAREN          reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
-    COMMA           reduce using rule 32 (comparison -> LPAREN expression RPAREN .)
-
-
-state 72
-
-    (36) statement -> IF LPAREN expression RPAREN block . ELSE block
-    (37) statement -> IF LPAREN expression RPAREN block . ELSE IF LPAREN expression RPAREN block ELSE block
-    (38) statement -> IF LPAREN expression RPAREN block .
-
-    ELSE            shift and go to state 79
-    $end            reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
-    RBRACE          reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
-    CONST           reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
-    ID              reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
-    IF              reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
-    FOR             reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
-    INT_TYPE        reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
-    FLOAT_TYPE      reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
-    BOOL_TYPE       reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
-    CHAR_TYPE       reduce using rule 38 (statement -> IF LPAREN expression RPAREN block .)
-
-
-state 73
-
-    (46) block -> LBRACE . statements RBRACE
-    (39) statements -> . statement
-    (40) statements -> . statements statement
-    (1) statement -> . type declaration_list SEMICOLON
-    (2) statement -> . CONST type ID EQUALS expression SEMICOLON
-    (7) statement -> . ID EQUALS expression SEMICOLON
-    (36) statement -> . IF LPAREN expression RPAREN block ELSE block
-    (37) statement -> . IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block
-    (38) statement -> . IF LPAREN expression RPAREN block
-    (41) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
-    (8) type -> . INT_TYPE
-    (9) type -> . FLOAT_TYPE
-    (10) type -> . BOOL_TYPE
-    (11) type -> . CHAR_TYPE
-
-    CONST           shift and go to state 3
-    ID              shift and go to state 4
-    IF              shift and go to state 5
-    FOR             shift and go to state 6
-    INT_TYPE        shift and go to state 7
-    FLOAT_TYPE      shift and go to state 8
-    BOOL_TYPE       shift and go to state 9
-    CHAR_TYPE       shift and go to state 10
-
-    statements                     shift and go to state 80
-    statement                      shift and go to state 81
-    type                           shift and go to state 2
 
 state 74
 
-    (41) statement -> FOR LPAREN initialisation COLON step . COLON BorneSup RPAREN block
+    (44) expression -> expression OR . term
+    (46) term -> . term AND factor
+    (47) term -> . factor
+    (12) factor -> . INTEGER
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (16) factor -> . MINUS factor
+    (17) factor -> . PLUS factor
+    (18) factor -> . LPAREN INTEGER RPAREN
+    (19) factor -> . LPAREN FLOAT RPAREN
+    (20) factor -> . LPAREN MINUS FLOAT RPAREN
+    (40) factor -> . ID LBRACKET expression RBRACKET
+    (48) factor -> . ID
+    (49) factor -> . TRUE
+    (50) factor -> . FALSE
+    (51) factor -> . NOT ID
 
-    COLON           shift and go to state 82
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    CHAR            shift and go to state 41
+    BOOL            shift and go to state 42
+    MINUS           shift and go to state 43
+    PLUS            shift and go to state 44
+    LPAREN          shift and go to state 45
+    ID              shift and go to state 35
+    TRUE            shift and go to state 46
+    FALSE           shift and go to state 47
+    NOT             shift and go to state 48
 
+    term                           shift and go to state 98
+    factor                         shift and go to state 38
 
 state 75
 
-    (43) step -> INT .
+    (46) term -> term AND . factor
+    (12) factor -> . INTEGER
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (16) factor -> . MINUS factor
+    (17) factor -> . PLUS factor
+    (18) factor -> . LPAREN INTEGER RPAREN
+    (19) factor -> . LPAREN FLOAT RPAREN
+    (20) factor -> . LPAREN MINUS FLOAT RPAREN
+    (40) factor -> . ID LBRACKET expression RBRACKET
+    (48) factor -> . ID
+    (49) factor -> . TRUE
+    (50) factor -> . FALSE
+    (51) factor -> . NOT ID
 
-    COLON           reduce using rule 43 (step -> INT .)
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    CHAR            shift and go to state 41
+    BOOL            shift and go to state 42
+    MINUS           shift and go to state 43
+    PLUS            shift and go to state 44
+    LPAREN          shift and go to state 45
+    ID              shift and go to state 35
+    TRUE            shift and go to state 46
+    FALSE           shift and go to state 47
+    NOT             shift and go to state 48
 
+    factor                         shift and go to state 99
 
 state 76
 
-    (44) step -> ID .
+    (16) factor -> MINUS factor .
 
-    COLON           reduce using rule 44 (step -> ID .)
+    AND             reduce using rule 16 (factor -> MINUS factor .)
+    SEMICOLON       reduce using rule 16 (factor -> MINUS factor .)
+    OR              reduce using rule 16 (factor -> MINUS factor .)
+    COMMA           reduce using rule 16 (factor -> MINUS factor .)
+    RBRACKET        reduce using rule 16 (factor -> MINUS factor .)
 
 
 state 77
 
-    (42) initialisation -> ID EQUALS INT .
+    (17) factor -> PLUS factor .
 
-    COLON           reduce using rule 42 (initialisation -> ID EQUALS INT .)
+    AND             reduce using rule 17 (factor -> PLUS factor .)
+    SEMICOLON       reduce using rule 17 (factor -> PLUS factor .)
+    OR              reduce using rule 17 (factor -> PLUS factor .)
+    COMMA           reduce using rule 17 (factor -> PLUS factor .)
+    RBRACKET        reduce using rule 17 (factor -> PLUS factor .)
 
 
 state 78
 
+    (18) factor -> LPAREN INTEGER . RPAREN
+
+    RPAREN          shift and go to state 100
+
+
+state 79
+
+    (19) factor -> LPAREN FLOAT . RPAREN
+
+    RPAREN          shift and go to state 101
+
+
+state 80
+
+    (20) factor -> LPAREN MINUS . FLOAT RPAREN
+
+    FLOAT           shift and go to state 102
+
+
+state 81
+
+    (51) factor -> NOT ID .
+
+    AND             reduce using rule 51 (factor -> NOT ID .)
+    SEMICOLON       reduce using rule 51 (factor -> NOT ID .)
+    OR              reduce using rule 51 (factor -> NOT ID .)
+    COMMA           reduce using rule 51 (factor -> NOT ID .)
+    RBRACKET        reduce using rule 51 (factor -> NOT ID .)
+
+
+state 82
+
+    (41) array_assignment -> ID LBRACKET expressionTab RBRACKET . EQUALS expressionTab SEMICOLON
+
+    EQUALS          shift and go to state 103
+
+
+state 83
+
+    (52) statement -> READ LPAREN ID RPAREN . SEMICOLON
+
+    SEMICOLON       shift and go to state 104
+
+
+state 84
+
+    (53) statement -> READ LPAREN ID LBRACKET . INTEGER RBRACKET RPAREN SEMICOLON
+
+    INTEGER         shift and go to state 105
+
+
+state 85
+
+    (54) statement -> WRITE LPAREN write_content RPAREN . SEMICOLON
+
+    SEMICOLON       shift and go to state 106
+
+
+state 86
+
+    (56) write_content -> write_content COMMA . write_item
+    (57) write_item -> . ID
+    (58) write_item -> . ID LBRACKET INTEGER RBRACKET
+
+    ID              shift and go to state 57
+
+    write_item                     shift and go to state 107
+
+state 87
+
+    (58) write_item -> ID LBRACKET . INTEGER RBRACKET
+
+    INTEGER         shift and go to state 108
+
+
+state 88
+
+    (59) statement -> FOR LPAREN initialisation COLON . step COLON BorneSup RPAREN block
+    (61) step -> . INTEGER
+    (62) step -> . ID
+
+    INTEGER         shift and go to state 110
+    ID              shift and go to state 111
+
+    step                           shift and go to state 109
+
+state 89
+
+    (60) initialisation -> ID EQUALS . INTEGER
+
+    INTEGER         shift and go to state 112
+
+
+state 90
+
+    (30) array_declarationTab -> type ID LBRACKET INTEGER RBRACKET . SEMICOLON
+    (35) declarationTab -> ID LBRACKET INTEGER RBRACKET .
+
+  ! shift/reduce conflict for SEMICOLON resolved as shift
+    SEMICOLON       shift and go to state 113
+    COMMA           reduce using rule 35 (declarationTab -> ID LBRACKET INTEGER RBRACKET .)
+
+  ! SEMICOLON       [ reduce using rule 35 (declarationTab -> ID LBRACKET INTEGER RBRACKET .) ]
+
+
+state 91
+
+    (42) declaration_assignment -> type ID EQUALS expression SEMICOLON .
+
+    $end            reduce using rule 42 (declaration_assignment -> type ID EQUALS expression SEMICOLON .)
+    CONST           reduce using rule 42 (declaration_assignment -> type ID EQUALS expression SEMICOLON .)
+    ID              reduce using rule 42 (declaration_assignment -> type ID EQUALS expression SEMICOLON .)
+    READ            reduce using rule 42 (declaration_assignment -> type ID EQUALS expression SEMICOLON .)
+    WRITE           reduce using rule 42 (declaration_assignment -> type ID EQUALS expression SEMICOLON .)
+    FOR             reduce using rule 42 (declaration_assignment -> type ID EQUALS expression SEMICOLON .)
+    INT_TYPE        reduce using rule 42 (declaration_assignment -> type ID EQUALS expression SEMICOLON .)
+    FLOAT_TYPE      reduce using rule 42 (declaration_assignment -> type ID EQUALS expression SEMICOLON .)
+    BOOL_TYPE       reduce using rule 42 (declaration_assignment -> type ID EQUALS expression SEMICOLON .)
+    CHAR_TYPE       reduce using rule 42 (declaration_assignment -> type ID EQUALS expression SEMICOLON .)
+    RBRACE          reduce using rule 42 (declaration_assignment -> type ID EQUALS expression SEMICOLON .)
+
+
+state 92
+
+    (6) declaration -> ID EQUALS . expression
+    (44) expression -> . expression OR term
+    (45) expression -> . term
+    (46) term -> . term AND factor
+    (47) term -> . factor
+    (12) factor -> . INTEGER
+    (13) factor -> . FLOAT
+    (14) factor -> . CHAR
+    (15) factor -> . BOOL
+    (16) factor -> . MINUS factor
+    (17) factor -> . PLUS factor
+    (18) factor -> . LPAREN INTEGER RPAREN
+    (19) factor -> . LPAREN FLOAT RPAREN
+    (20) factor -> . LPAREN MINUS FLOAT RPAREN
+    (40) factor -> . ID LBRACKET expression RBRACKET
+    (48) factor -> . ID
+    (49) factor -> . TRUE
+    (50) factor -> . FALSE
+    (51) factor -> . NOT ID
+
+    INTEGER         shift and go to state 39
+    FLOAT           shift and go to state 40
+    CHAR            shift and go to state 41
+    BOOL            shift and go to state 42
+    MINUS           shift and go to state 43
+    PLUS            shift and go to state 44
+    LPAREN          shift and go to state 45
+    ID              shift and go to state 35
+    TRUE            shift and go to state 46
+    FALSE           shift and go to state 47
+    NOT             shift and go to state 48
+
+    expression                     shift and go to state 114
+    term                           shift and go to state 37
+    factor                         shift and go to state 38
+
+state 93
+
+    (34) declarationTab -> ID EQUALS . expressionTab
+    (36) expressionTab -> . ID
+    (37) expressionTab -> . FLOAT
+    (38) expressionTab -> . INTEGER
+    (39) expressionTab -> . CHAR
+
+    ID              shift and go to state 49
+    FLOAT           shift and go to state 51
+    INTEGER         shift and go to state 52
+    CHAR            shift and go to state 53
+
+    expressionTab                  shift and go to state 63
+
+state 94
+
+    (35) declarationTab -> ID LBRACKET . INTEGER RBRACKET
+
+    INTEGER         shift and go to state 115
+
+
+state 95
+
+    (2) statement -> CONST type ID EQUALS expression . SEMICOLON
+    (44) expression -> expression . OR term
+
+    SEMICOLON       shift and go to state 116
+    OR              shift and go to state 74
+
+
+state 96
+
+    (29) const_declarationTab -> CONST type ID EQUALS expressionTab . SEMICOLON
+
+    SEMICOLON       shift and go to state 117
+
+
+state 97
+
+    (40) factor -> ID LBRACKET expression . RBRACKET
+    (44) expression -> expression . OR term
+
+    RBRACKET        shift and go to state 118
+    OR              shift and go to state 74
+
+
+state 98
+
+    (44) expression -> expression OR term .
+    (46) term -> term . AND factor
+
+    SEMICOLON       reduce using rule 44 (expression -> expression OR term .)
+    OR              reduce using rule 44 (expression -> expression OR term .)
+    COMMA           reduce using rule 44 (expression -> expression OR term .)
+    RBRACKET        reduce using rule 44 (expression -> expression OR term .)
+    AND             shift and go to state 75
+
+
+state 99
+
+    (46) term -> term AND factor .
+
+    AND             reduce using rule 46 (term -> term AND factor .)
+    SEMICOLON       reduce using rule 46 (term -> term AND factor .)
+    OR              reduce using rule 46 (term -> term AND factor .)
+    COMMA           reduce using rule 46 (term -> term AND factor .)
+    RBRACKET        reduce using rule 46 (term -> term AND factor .)
+
+
+state 100
+
+    (18) factor -> LPAREN INTEGER RPAREN .
+
+    AND             reduce using rule 18 (factor -> LPAREN INTEGER RPAREN .)
+    SEMICOLON       reduce using rule 18 (factor -> LPAREN INTEGER RPAREN .)
+    OR              reduce using rule 18 (factor -> LPAREN INTEGER RPAREN .)
+    COMMA           reduce using rule 18 (factor -> LPAREN INTEGER RPAREN .)
+    RBRACKET        reduce using rule 18 (factor -> LPAREN INTEGER RPAREN .)
+
+
+state 101
+
+    (19) factor -> LPAREN FLOAT RPAREN .
+
+    AND             reduce using rule 19 (factor -> LPAREN FLOAT RPAREN .)
+    SEMICOLON       reduce using rule 19 (factor -> LPAREN FLOAT RPAREN .)
+    OR              reduce using rule 19 (factor -> LPAREN FLOAT RPAREN .)
+    COMMA           reduce using rule 19 (factor -> LPAREN FLOAT RPAREN .)
+    RBRACKET        reduce using rule 19 (factor -> LPAREN FLOAT RPAREN .)
+
+
+state 102
+
+    (20) factor -> LPAREN MINUS FLOAT . RPAREN
+
+    RPAREN          shift and go to state 119
+
+
+state 103
+
+    (41) array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS . expressionTab SEMICOLON
+    (36) expressionTab -> . ID
+    (37) expressionTab -> . FLOAT
+    (38) expressionTab -> . INTEGER
+    (39) expressionTab -> . CHAR
+
+    ID              shift and go to state 49
+    FLOAT           shift and go to state 51
+    INTEGER         shift and go to state 52
+    CHAR            shift and go to state 53
+
+    expressionTab                  shift and go to state 120
+
+state 104
+
+    (52) statement -> READ LPAREN ID RPAREN SEMICOLON .
+
+    $end            reduce using rule 52 (statement -> READ LPAREN ID RPAREN SEMICOLON .)
+    CONST           reduce using rule 52 (statement -> READ LPAREN ID RPAREN SEMICOLON .)
+    ID              reduce using rule 52 (statement -> READ LPAREN ID RPAREN SEMICOLON .)
+    READ            reduce using rule 52 (statement -> READ LPAREN ID RPAREN SEMICOLON .)
+    WRITE           reduce using rule 52 (statement -> READ LPAREN ID RPAREN SEMICOLON .)
+    FOR             reduce using rule 52 (statement -> READ LPAREN ID RPAREN SEMICOLON .)
+    INT_TYPE        reduce using rule 52 (statement -> READ LPAREN ID RPAREN SEMICOLON .)
+    FLOAT_TYPE      reduce using rule 52 (statement -> READ LPAREN ID RPAREN SEMICOLON .)
+    BOOL_TYPE       reduce using rule 52 (statement -> READ LPAREN ID RPAREN SEMICOLON .)
+    CHAR_TYPE       reduce using rule 52 (statement -> READ LPAREN ID RPAREN SEMICOLON .)
+    RBRACE          reduce using rule 52 (statement -> READ LPAREN ID RPAREN SEMICOLON .)
+
+
+state 105
+
+    (53) statement -> READ LPAREN ID LBRACKET INTEGER . RBRACKET RPAREN SEMICOLON
+
+    RBRACKET        shift and go to state 121
+
+
+state 106
+
+    (54) statement -> WRITE LPAREN write_content RPAREN SEMICOLON .
+
+    $end            reduce using rule 54 (statement -> WRITE LPAREN write_content RPAREN SEMICOLON .)
+    CONST           reduce using rule 54 (statement -> WRITE LPAREN write_content RPAREN SEMICOLON .)
+    ID              reduce using rule 54 (statement -> WRITE LPAREN write_content RPAREN SEMICOLON .)
+    READ            reduce using rule 54 (statement -> WRITE LPAREN write_content RPAREN SEMICOLON .)
+    WRITE           reduce using rule 54 (statement -> WRITE LPAREN write_content RPAREN SEMICOLON .)
+    FOR             reduce using rule 54 (statement -> WRITE LPAREN write_content RPAREN SEMICOLON .)
+    INT_TYPE        reduce using rule 54 (statement -> WRITE LPAREN write_content RPAREN SEMICOLON .)
+    FLOAT_TYPE      reduce using rule 54 (statement -> WRITE LPAREN write_content RPAREN SEMICOLON .)
+    BOOL_TYPE       reduce using rule 54 (statement -> WRITE LPAREN write_content RPAREN SEMICOLON .)
+    CHAR_TYPE       reduce using rule 54 (statement -> WRITE LPAREN write_content RPAREN SEMICOLON .)
+    RBRACE          reduce using rule 54 (statement -> WRITE LPAREN write_content RPAREN SEMICOLON .)
+
+
+state 107
+
+    (56) write_content -> write_content COMMA write_item .
+
+    RPAREN          reduce using rule 56 (write_content -> write_content COMMA write_item .)
+    COMMA           reduce using rule 56 (write_content -> write_content COMMA write_item .)
+
+
+state 108
+
+    (58) write_item -> ID LBRACKET INTEGER . RBRACKET
+
+    RBRACKET        shift and go to state 122
+
+
+state 109
+
+    (59) statement -> FOR LPAREN initialisation COLON step . COLON BorneSup RPAREN block
+
+    COLON           shift and go to state 123
+
+
+state 110
+
+    (61) step -> INTEGER .
+
+    COLON           reduce using rule 61 (step -> INTEGER .)
+
+
+state 111
+
+    (62) step -> ID .
+
+    COLON           reduce using rule 62 (step -> ID .)
+
+
+state 112
+
+    (60) initialisation -> ID EQUALS INTEGER .
+
+    COLON           reduce using rule 60 (initialisation -> ID EQUALS INTEGER .)
+
+
+state 113
+
+    (30) array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .
+
+    $end            reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
+    CONST           reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
+    ID              reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
+    READ            reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
+    WRITE           reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
+    FOR             reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
+    INT_TYPE        reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
+    FLOAT_TYPE      reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
+    BOOL_TYPE       reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
+    CHAR_TYPE       reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
+    RBRACE          reduce using rule 30 (array_declarationTab -> type ID LBRACKET INTEGER RBRACKET SEMICOLON .)
+
+
+state 114
+
+    (6) declaration -> ID EQUALS expression .
+    (44) expression -> expression . OR term
+
+    COMMA           reduce using rule 6 (declaration -> ID EQUALS expression .)
+    SEMICOLON       reduce using rule 6 (declaration -> ID EQUALS expression .)
+    OR              shift and go to state 74
+
+
+state 115
+
+    (35) declarationTab -> ID LBRACKET INTEGER . RBRACKET
+
+    RBRACKET        shift and go to state 124
+
+
+state 116
+
     (2) statement -> CONST type ID EQUALS expression SEMICOLON .
 
     $end            reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
-    RBRACE          reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
     CONST           reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
     ID              reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
-    IF              reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
+    READ            reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
+    WRITE           reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
     FOR             reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
     INT_TYPE        reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
     FLOAT_TYPE      reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
     BOOL_TYPE       reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
     CHAR_TYPE       reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
+    RBRACE          reduce using rule 2 (statement -> CONST type ID EQUALS expression SEMICOLON .)
 
 
-state 79
+state 117
 
-    (36) statement -> IF LPAREN expression RPAREN block ELSE . block
-    (37) statement -> IF LPAREN expression RPAREN block ELSE . IF LPAREN expression RPAREN block ELSE block
-    (46) block -> . LBRACE statements RBRACE
+    (29) const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .
 
-    IF              shift and go to state 83
-    LBRACE          shift and go to state 73
+    $end            reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
+    CONST           reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
+    ID              reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
+    READ            reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
+    WRITE           reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
+    FOR             reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
+    INT_TYPE        reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
+    FLOAT_TYPE      reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
+    BOOL_TYPE       reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
+    CHAR_TYPE       reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
+    RBRACE          reduce using rule 29 (const_declarationTab -> CONST type ID EQUALS expressionTab SEMICOLON .)
 
-    block                          shift and go to state 84
 
-state 80
+state 118
 
-    (46) block -> LBRACE statements . RBRACE
-    (40) statements -> statements . statement
+    (40) factor -> ID LBRACKET expression RBRACKET .
+
+    AND             reduce using rule 40 (factor -> ID LBRACKET expression RBRACKET .)
+    SEMICOLON       reduce using rule 40 (factor -> ID LBRACKET expression RBRACKET .)
+    OR              reduce using rule 40 (factor -> ID LBRACKET expression RBRACKET .)
+    COMMA           reduce using rule 40 (factor -> ID LBRACKET expression RBRACKET .)
+    RBRACKET        reduce using rule 40 (factor -> ID LBRACKET expression RBRACKET .)
+
+
+state 119
+
+    (20) factor -> LPAREN MINUS FLOAT RPAREN .
+
+    AND             reduce using rule 20 (factor -> LPAREN MINUS FLOAT RPAREN .)
+    SEMICOLON       reduce using rule 20 (factor -> LPAREN MINUS FLOAT RPAREN .)
+    OR              reduce using rule 20 (factor -> LPAREN MINUS FLOAT RPAREN .)
+    COMMA           reduce using rule 20 (factor -> LPAREN MINUS FLOAT RPAREN .)
+    RBRACKET        reduce using rule 20 (factor -> LPAREN MINUS FLOAT RPAREN .)
+
+
+state 120
+
+    (41) array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab . SEMICOLON
+
+    SEMICOLON       shift and go to state 125
+
+
+state 121
+
+    (53) statement -> READ LPAREN ID LBRACKET INTEGER RBRACKET . RPAREN SEMICOLON
+
+    RPAREN          shift and go to state 126
+
+
+state 122
+
+    (58) write_item -> ID LBRACKET INTEGER RBRACKET .
+
+    RPAREN          reduce using rule 58 (write_item -> ID LBRACKET INTEGER RBRACKET .)
+    COMMA           reduce using rule 58 (write_item -> ID LBRACKET INTEGER RBRACKET .)
+
+
+state 123
+
+    (59) statement -> FOR LPAREN initialisation COLON step COLON . BorneSup RPAREN block
+    (63) BorneSup -> . ID
+
+    ID              shift and go to state 128
+
+    BorneSup                       shift and go to state 127
+
+state 124
+
+    (35) declarationTab -> ID LBRACKET INTEGER RBRACKET .
+
+    COMMA           reduce using rule 35 (declarationTab -> ID LBRACKET INTEGER RBRACKET .)
+    SEMICOLON       reduce using rule 35 (declarationTab -> ID LBRACKET INTEGER RBRACKET .)
+
+
+state 125
+
+    (41) array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .
+
+    $end            reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
+    CONST           reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
+    ID              reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
+    READ            reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
+    WRITE           reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
+    FOR             reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
+    INT_TYPE        reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
+    FLOAT_TYPE      reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
+    BOOL_TYPE       reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
+    CHAR_TYPE       reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
+    RBRACE          reduce using rule 41 (array_assignment -> ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON .)
+
+
+state 126
+
+    (53) statement -> READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN . SEMICOLON
+
+    SEMICOLON       shift and go to state 129
+
+
+state 127
+
+    (59) statement -> FOR LPAREN initialisation COLON step COLON BorneSup . RPAREN block
+
+    RPAREN          shift and go to state 130
+
+
+state 128
+
+    (63) BorneSup -> ID .
+
+    RPAREN          reduce using rule 63 (BorneSup -> ID .)
+
+
+state 129
+
+    (53) statement -> READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON .
+
+    $end            reduce using rule 53 (statement -> READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON .)
+    CONST           reduce using rule 53 (statement -> READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON .)
+    ID              reduce using rule 53 (statement -> READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON .)
+    READ            reduce using rule 53 (statement -> READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON .)
+    WRITE           reduce using rule 53 (statement -> READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON .)
+    FOR             reduce using rule 53 (statement -> READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON .)
+    INT_TYPE        reduce using rule 53 (statement -> READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON .)
+    FLOAT_TYPE      reduce using rule 53 (statement -> READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON .)
+    BOOL_TYPE       reduce using rule 53 (statement -> READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON .)
+    CHAR_TYPE       reduce using rule 53 (statement -> READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON .)
+    RBRACE          reduce using rule 53 (statement -> READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON .)
+
+
+state 130
+
+    (59) statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN . block
+    (64) block -> . LBRACE statements RBRACE
+
+    LBRACE          shift and go to state 132
+
+    block                          shift and go to state 131
+
+state 131
+
+    (59) statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .
+
+    $end            reduce using rule 59 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    CONST           reduce using rule 59 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    ID              reduce using rule 59 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    READ            reduce using rule 59 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    WRITE           reduce using rule 59 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    FOR             reduce using rule 59 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    INT_TYPE        reduce using rule 59 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    FLOAT_TYPE      reduce using rule 59 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    BOOL_TYPE       reduce using rule 59 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    CHAR_TYPE       reduce using rule 59 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+    RBRACE          reduce using rule 59 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
+
+
+state 132
+
+    (64) block -> LBRACE . statements RBRACE
+    (21) statements -> . statement
+    (22) statements -> . statement statements
     (1) statement -> . type declaration_list SEMICOLON
     (2) statement -> . CONST type ID EQUALS expression SEMICOLON
     (7) statement -> . ID EQUALS expression SEMICOLON
-    (36) statement -> . IF LPAREN expression RPAREN block ELSE block
-    (37) statement -> . IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block
-    (38) statement -> . IF LPAREN expression RPAREN block
-    (41) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
+    (23) statement -> . simple_assignment
+    (24) statement -> . array_declarationTab
+    (25) statement -> . declaration_assignment
+    (26) statement -> . array_assignment
+    (27) statement -> . type declarationTab_listTab SEMICOLON
+    (28) statement -> . const_declarationTab
+    (52) statement -> . READ LPAREN ID RPAREN SEMICOLON
+    (53) statement -> . READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON
+    (54) statement -> . WRITE LPAREN write_content RPAREN SEMICOLON
+    (59) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
     (8) type -> . INT_TYPE
     (9) type -> . FLOAT_TYPE
     (10) type -> . BOOL_TYPE
     (11) type -> . CHAR_TYPE
+    (43) simple_assignment -> . ID EQUALS expression SEMICOLON
+    (30) array_declarationTab -> . type ID LBRACKET INTEGER RBRACKET SEMICOLON
+    (42) declaration_assignment -> . type ID EQUALS expression SEMICOLON
+    (41) array_assignment -> . ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON
+    (29) const_declarationTab -> . CONST type ID EQUALS expressionTab SEMICOLON
 
-    RBRACE          shift and go to state 85
     CONST           shift and go to state 3
     ID              shift and go to state 4
-    IF              shift and go to state 5
-    FOR             shift and go to state 6
-    INT_TYPE        shift and go to state 7
-    FLOAT_TYPE      shift and go to state 8
-    BOOL_TYPE       shift and go to state 9
-    CHAR_TYPE       shift and go to state 10
+    READ            shift and go to state 10
+    WRITE           shift and go to state 11
+    FOR             shift and go to state 12
+    INT_TYPE        shift and go to state 13
+    FLOAT_TYPE      shift and go to state 14
+    BOOL_TYPE       shift and go to state 15
+    CHAR_TYPE       shift and go to state 16
 
-    statement                      shift and go to state 86
+    statements                     shift and go to state 133
+    statement                      shift and go to state 134
     type                           shift and go to state 2
+    simple_assignment              shift and go to state 5
+    array_declarationTab           shift and go to state 6
+    declaration_assignment         shift and go to state 7
+    array_assignment               shift and go to state 8
+    const_declarationTab           shift and go to state 9
 
-state 81
+state 133
 
-    (39) statements -> statement .
+    (64) block -> LBRACE statements . RBRACE
 
-    RBRACE          reduce using rule 39 (statements -> statement .)
-    CONST           reduce using rule 39 (statements -> statement .)
-    ID              reduce using rule 39 (statements -> statement .)
-    IF              reduce using rule 39 (statements -> statement .)
-    FOR             reduce using rule 39 (statements -> statement .)
-    INT_TYPE        reduce using rule 39 (statements -> statement .)
-    FLOAT_TYPE      reduce using rule 39 (statements -> statement .)
-    BOOL_TYPE       reduce using rule 39 (statements -> statement .)
-    CHAR_TYPE       reduce using rule 39 (statements -> statement .)
+    RBRACE          shift and go to state 135
 
 
-state 82
+state 134
 
-    (41) statement -> FOR LPAREN initialisation COLON step COLON . BorneSup RPAREN block
-    (45) BorneSup -> . ID
+    (21) statements -> statement .
+    (22) statements -> statement . statements
+    (21) statements -> . statement
+    (22) statements -> . statement statements
+    (1) statement -> . type declaration_list SEMICOLON
+    (2) statement -> . CONST type ID EQUALS expression SEMICOLON
+    (7) statement -> . ID EQUALS expression SEMICOLON
+    (23) statement -> . simple_assignment
+    (24) statement -> . array_declarationTab
+    (25) statement -> . declaration_assignment
+    (26) statement -> . array_assignment
+    (27) statement -> . type declarationTab_listTab SEMICOLON
+    (28) statement -> . const_declarationTab
+    (52) statement -> . READ LPAREN ID RPAREN SEMICOLON
+    (53) statement -> . READ LPAREN ID LBRACKET INTEGER RBRACKET RPAREN SEMICOLON
+    (54) statement -> . WRITE LPAREN write_content RPAREN SEMICOLON
+    (59) statement -> . FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block
+    (8) type -> . INT_TYPE
+    (9) type -> . FLOAT_TYPE
+    (10) type -> . BOOL_TYPE
+    (11) type -> . CHAR_TYPE
+    (43) simple_assignment -> . ID EQUALS expression SEMICOLON
+    (30) array_declarationTab -> . type ID LBRACKET INTEGER RBRACKET SEMICOLON
+    (42) declaration_assignment -> . type ID EQUALS expression SEMICOLON
+    (41) array_assignment -> . ID LBRACKET expressionTab RBRACKET EQUALS expressionTab SEMICOLON
+    (29) const_declarationTab -> . CONST type ID EQUALS expressionTab SEMICOLON
 
-    ID              shift and go to state 88
+    RBRACE          reduce using rule 21 (statements -> statement .)
+    CONST           shift and go to state 3
+    ID              shift and go to state 4
+    READ            shift and go to state 10
+    WRITE           shift and go to state 11
+    FOR             shift and go to state 12
+    INT_TYPE        shift and go to state 13
+    FLOAT_TYPE      shift and go to state 14
+    BOOL_TYPE       shift and go to state 15
+    CHAR_TYPE       shift and go to state 16
 
-    BorneSup                       shift and go to state 87
+    statement                      shift and go to state 134
+    statements                     shift and go to state 136
+    type                           shift and go to state 2
+    simple_assignment              shift and go to state 5
+    array_declarationTab           shift and go to state 6
+    declaration_assignment         shift and go to state 7
+    array_assignment               shift and go to state 8
+    const_declarationTab           shift and go to state 9
 
-state 83
+state 135
 
-    (37) statement -> IF LPAREN expression RPAREN block ELSE IF . LPAREN expression RPAREN block ELSE block
+    (64) block -> LBRACE statements RBRACE .
 
-    LPAREN          shift and go to state 89
-
-
-state 84
-
-    (36) statement -> IF LPAREN expression RPAREN block ELSE block .
-
-    $end            reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
-    RBRACE          reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
-    CONST           reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
-    ID              reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
-    IF              reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
-    FOR             reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
-    INT_TYPE        reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
-    FLOAT_TYPE      reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
-    BOOL_TYPE       reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
-    CHAR_TYPE       reduce using rule 36 (statement -> IF LPAREN expression RPAREN block ELSE block .)
-
-
-state 85
-
-    (46) block -> LBRACE statements RBRACE .
-
-    ELSE            reduce using rule 46 (block -> LBRACE statements RBRACE .)
-    $end            reduce using rule 46 (block -> LBRACE statements RBRACE .)
-    RBRACE          reduce using rule 46 (block -> LBRACE statements RBRACE .)
-    CONST           reduce using rule 46 (block -> LBRACE statements RBRACE .)
-    ID              reduce using rule 46 (block -> LBRACE statements RBRACE .)
-    IF              reduce using rule 46 (block -> LBRACE statements RBRACE .)
-    FOR             reduce using rule 46 (block -> LBRACE statements RBRACE .)
-    INT_TYPE        reduce using rule 46 (block -> LBRACE statements RBRACE .)
-    FLOAT_TYPE      reduce using rule 46 (block -> LBRACE statements RBRACE .)
-    BOOL_TYPE       reduce using rule 46 (block -> LBRACE statements RBRACE .)
-    CHAR_TYPE       reduce using rule 46 (block -> LBRACE statements RBRACE .)
-
-
-state 86
-
-    (40) statements -> statements statement .
-
-    RBRACE          reduce using rule 40 (statements -> statements statement .)
-    CONST           reduce using rule 40 (statements -> statements statement .)
-    ID              reduce using rule 40 (statements -> statements statement .)
-    IF              reduce using rule 40 (statements -> statements statement .)
-    FOR             reduce using rule 40 (statements -> statements statement .)
-    INT_TYPE        reduce using rule 40 (statements -> statements statement .)
-    FLOAT_TYPE      reduce using rule 40 (statements -> statements statement .)
-    BOOL_TYPE       reduce using rule 40 (statements -> statements statement .)
-    CHAR_TYPE       reduce using rule 40 (statements -> statements statement .)
-
-
-state 87
-
-    (41) statement -> FOR LPAREN initialisation COLON step COLON BorneSup . RPAREN block
-
-    RPAREN          shift and go to state 90
+    $end            reduce using rule 64 (block -> LBRACE statements RBRACE .)
+    CONST           reduce using rule 64 (block -> LBRACE statements RBRACE .)
+    ID              reduce using rule 64 (block -> LBRACE statements RBRACE .)
+    READ            reduce using rule 64 (block -> LBRACE statements RBRACE .)
+    WRITE           reduce using rule 64 (block -> LBRACE statements RBRACE .)
+    FOR             reduce using rule 64 (block -> LBRACE statements RBRACE .)
+    INT_TYPE        reduce using rule 64 (block -> LBRACE statements RBRACE .)
+    FLOAT_TYPE      reduce using rule 64 (block -> LBRACE statements RBRACE .)
+    BOOL_TYPE       reduce using rule 64 (block -> LBRACE statements RBRACE .)
+    CHAR_TYPE       reduce using rule 64 (block -> LBRACE statements RBRACE .)
+    RBRACE          reduce using rule 64 (block -> LBRACE statements RBRACE .)
 
 
-state 88
+state 136
 
-    (45) BorneSup -> ID .
+    (22) statements -> statement statements .
 
-    RPAREN          reduce using rule 45 (BorneSup -> ID .)
-
-
-state 89
-
-    (37) statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN . expression RPAREN block ELSE block
-    (16) expression -> . expression PLUS term
-    (17) expression -> . expression MINUS term
-    (20) expression -> . term
-    (23) expression -> . expression OR expression
-    (24) expression -> . expression AND expression
-    (25) expression -> . expression EQ expression
-    (26) expression -> . expression NEQ expression
-    (27) expression -> . expression LT expression
-    (28) expression -> . expression GT expression
-    (29) expression -> . expression LTE expression
-    (30) expression -> . expression GTE expression
-    (31) expression -> . NOT expression
-    (18) term -> . term MULTIPLY factor
-    (19) term -> . term DIVIDE factor
-    (21) term -> . factor
-    (12) factor -> . INT
-    (13) factor -> . FLOAT
-    (14) factor -> . CHAR
-    (15) factor -> . BOOL
-    (22) factor -> . NUMBER
-    (34) factor -> . comparison
-    (35) factor -> . ID
-    (32) comparison -> . LPAREN expression RPAREN
-    (33) comparison -> . NUMBER
-
-    NOT             shift and go to state 25
-    INT             shift and go to state 27
-    FLOAT           shift and go to state 28
-    CHAR            shift and go to state 29
-    BOOL            shift and go to state 30
-    NUMBER          shift and go to state 31
-    ID              shift and go to state 22
-    LPAREN          shift and go to state 33
-
-    expression                     shift and go to state 91
-    term                           shift and go to state 24
-    factor                         shift and go to state 26
-    comparison                     shift and go to state 32
-
-state 90
-
-    (41) statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN . block
-    (46) block -> . LBRACE statements RBRACE
-
-    LBRACE          shift and go to state 73
-
-    block                          shift and go to state 92
-
-state 91
-
-    (37) statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression . RPAREN block ELSE block
-    (16) expression -> expression . PLUS term
-    (17) expression -> expression . MINUS term
-    (23) expression -> expression . OR expression
-    (24) expression -> expression . AND expression
-    (25) expression -> expression . EQ expression
-    (26) expression -> expression . NEQ expression
-    (27) expression -> expression . LT expression
-    (28) expression -> expression . GT expression
-    (29) expression -> expression . LTE expression
-    (30) expression -> expression . GTE expression
-
-    RPAREN          shift and go to state 93
-    PLUS            shift and go to state 41
-    MINUS           shift and go to state 42
-    OR              shift and go to state 43
-    AND             shift and go to state 44
-    EQ              shift and go to state 45
-    NEQ             shift and go to state 46
-    LT              shift and go to state 47
-    GT              shift and go to state 48
-    LTE             shift and go to state 49
-    GTE             shift and go to state 50
-
-
-state 92
-
-    (41) statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .
-
-    $end            reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
-    RBRACE          reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
-    CONST           reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
-    ID              reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
-    IF              reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
-    FOR             reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
-    INT_TYPE        reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
-    FLOAT_TYPE      reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
-    BOOL_TYPE       reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
-    CHAR_TYPE       reduce using rule 41 (statement -> FOR LPAREN initialisation COLON step COLON BorneSup RPAREN block .)
-
-
-state 93
-
-    (37) statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN . block ELSE block
-    (46) block -> . LBRACE statements RBRACE
-
-    LBRACE          shift and go to state 73
-
-    block                          shift and go to state 94
-
-state 94
-
-    (37) statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block . ELSE block
-
-    ELSE            shift and go to state 95
-
-
-state 95
-
-    (37) statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE . block
-    (46) block -> . LBRACE statements RBRACE
-
-    LBRACE          shift and go to state 73
-
-    block                          shift and go to state 96
-
-state 96
-
-    (37) statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .
-
-    $end            reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
-    RBRACE          reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
-    CONST           reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
-    ID              reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
-    IF              reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
-    FOR             reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
-    INT_TYPE        reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
-    FLOAT_TYPE      reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
-    BOOL_TYPE       reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
-    CHAR_TYPE       reduce using rule 37 (statement -> IF LPAREN expression RPAREN block ELSE IF LPAREN expression RPAREN block ELSE block .)
+    RBRACE          reduce using rule 22 (statements -> statement statements .)
 
 WARNING: 
 WARNING: Conflicts:
 WARNING: 
-WARNING: shift/reduce conflict for PLUS in state 53 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 53 resolved as shift
-WARNING: shift/reduce conflict for OR in state 53 resolved as shift
-WARNING: shift/reduce conflict for AND in state 53 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 53 resolved as shift
-WARNING: shift/reduce conflict for NEQ in state 53 resolved as shift
-WARNING: shift/reduce conflict for LT in state 53 resolved as shift
-WARNING: shift/reduce conflict for GT in state 53 resolved as shift
-WARNING: shift/reduce conflict for LTE in state 53 resolved as shift
-WARNING: shift/reduce conflict for GTE in state 53 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 61 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 61 resolved as shift
-WARNING: shift/reduce conflict for OR in state 61 resolved as shift
-WARNING: shift/reduce conflict for AND in state 61 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 61 resolved as shift
-WARNING: shift/reduce conflict for NEQ in state 61 resolved as shift
-WARNING: shift/reduce conflict for LT in state 61 resolved as shift
-WARNING: shift/reduce conflict for GT in state 61 resolved as shift
-WARNING: shift/reduce conflict for LTE in state 61 resolved as shift
-WARNING: shift/reduce conflict for GTE in state 61 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 62 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 62 resolved as shift
-WARNING: shift/reduce conflict for OR in state 62 resolved as shift
-WARNING: shift/reduce conflict for AND in state 62 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 62 resolved as shift
-WARNING: shift/reduce conflict for NEQ in state 62 resolved as shift
-WARNING: shift/reduce conflict for LT in state 62 resolved as shift
-WARNING: shift/reduce conflict for GT in state 62 resolved as shift
-WARNING: shift/reduce conflict for LTE in state 62 resolved as shift
-WARNING: shift/reduce conflict for GTE in state 62 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 63 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 63 resolved as shift
-WARNING: shift/reduce conflict for OR in state 63 resolved as shift
-WARNING: shift/reduce conflict for AND in state 63 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 63 resolved as shift
-WARNING: shift/reduce conflict for NEQ in state 63 resolved as shift
-WARNING: shift/reduce conflict for LT in state 63 resolved as shift
-WARNING: shift/reduce conflict for GT in state 63 resolved as shift
-WARNING: shift/reduce conflict for LTE in state 63 resolved as shift
-WARNING: shift/reduce conflict for GTE in state 63 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 64 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 64 resolved as shift
-WARNING: shift/reduce conflict for OR in state 64 resolved as shift
-WARNING: shift/reduce conflict for AND in state 64 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 64 resolved as shift
-WARNING: shift/reduce conflict for NEQ in state 64 resolved as shift
-WARNING: shift/reduce conflict for LT in state 64 resolved as shift
-WARNING: shift/reduce conflict for GT in state 64 resolved as shift
-WARNING: shift/reduce conflict for LTE in state 64 resolved as shift
-WARNING: shift/reduce conflict for GTE in state 64 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 65 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 65 resolved as shift
-WARNING: shift/reduce conflict for OR in state 65 resolved as shift
-WARNING: shift/reduce conflict for AND in state 65 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 65 resolved as shift
-WARNING: shift/reduce conflict for NEQ in state 65 resolved as shift
-WARNING: shift/reduce conflict for LT in state 65 resolved as shift
-WARNING: shift/reduce conflict for GT in state 65 resolved as shift
-WARNING: shift/reduce conflict for LTE in state 65 resolved as shift
-WARNING: shift/reduce conflict for GTE in state 65 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 66 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 66 resolved as shift
-WARNING: shift/reduce conflict for OR in state 66 resolved as shift
-WARNING: shift/reduce conflict for AND in state 66 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 66 resolved as shift
-WARNING: shift/reduce conflict for NEQ in state 66 resolved as shift
-WARNING: shift/reduce conflict for LT in state 66 resolved as shift
-WARNING: shift/reduce conflict for GT in state 66 resolved as shift
-WARNING: shift/reduce conflict for LTE in state 66 resolved as shift
-WARNING: shift/reduce conflict for GTE in state 66 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 67 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 67 resolved as shift
-WARNING: shift/reduce conflict for OR in state 67 resolved as shift
-WARNING: shift/reduce conflict for AND in state 67 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 67 resolved as shift
-WARNING: shift/reduce conflict for NEQ in state 67 resolved as shift
-WARNING: shift/reduce conflict for LT in state 67 resolved as shift
-WARNING: shift/reduce conflict for GT in state 67 resolved as shift
-WARNING: shift/reduce conflict for LTE in state 67 resolved as shift
-WARNING: shift/reduce conflict for GTE in state 67 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 68 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 68 resolved as shift
-WARNING: shift/reduce conflict for OR in state 68 resolved as shift
-WARNING: shift/reduce conflict for AND in state 68 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 68 resolved as shift
-WARNING: shift/reduce conflict for NEQ in state 68 resolved as shift
-WARNING: shift/reduce conflict for LT in state 68 resolved as shift
-WARNING: shift/reduce conflict for GT in state 68 resolved as shift
-WARNING: shift/reduce conflict for LTE in state 68 resolved as shift
-WARNING: shift/reduce conflict for GTE in state 68 resolved as shift
-WARNING: reduce/reduce conflict in state 31 resolved using rule (factor -> NUMBER)
-WARNING: rejected rule (comparison -> NUMBER) in state 31
-WARNING: Rule (comparison -> NUMBER) is never reduced
+WARNING: shift/reduce conflict for SEMICOLON in state 62 resolved as shift
+WARNING: shift/reduce conflict for SEMICOLON in state 90 resolved as shift
+WARNING: reduce/reduce conflict in state 19 resolved using rule (declaration -> ID)
+WARNING: rejected rule (declarationTab -> ID) in state 19
+WARNING: reduce/reduce conflict in state 61 resolved using rule (expressionTab -> ID)
+WARNING: rejected rule (factor -> ID) in state 61
+WARNING: reduce/reduce conflict in state 64 resolved using rule (factor -> FLOAT)
+WARNING: rejected rule (expressionTab -> FLOAT) in state 64
+WARNING: reduce/reduce conflict in state 65 resolved using rule (factor -> INTEGER)
+WARNING: rejected rule (expressionTab -> INTEGER) in state 65
+WARNING: reduce/reduce conflict in state 66 resolved using rule (factor -> CHAR)
+WARNING: rejected rule (expressionTab -> CHAR) in state 66
+WARNING: reduce/reduce conflict in state 73 resolved using rule (statement -> ID EQUALS expression SEMICOLON)
+WARNING: rejected rule (simple_assignment -> ID EQUALS expression SEMICOLON) in state 73
+WARNING: Rule (simple_assignment -> ID EQUALS expression SEMICOLON) is never reduced
