@@ -29,6 +29,7 @@ reserved = {
     'CHAR': 'CHAR_TYPE',
     'true': 'BOOL',
     'false': 'BOOL',
+    'CONST': 'CONST',
     'READ': 'READ',
     'WRITE': 'WRITE',
 }
@@ -178,7 +179,7 @@ def p_statement_declaration(t):
     scope = "global"  
     
     try:
-        if t[1] == 'const':
+        if t[1] == 'CONST':
             print(t[1])
             # Constant declaration
             var_type = t[2]
@@ -622,21 +623,21 @@ def display_symbol_table():
 # Examples of usage
 if __name__ == '__main__':
     expressions = [
-        # "const INTEGER n = 5  ;",
-        # "INTEGER n = (+5.63) ;",
+        "CONST INTEGER n = 5  ;",
+        # "INTEGER n = (+5.63) ;",#error
         # "INTEGER c = 43  ;",
         # "INTEGER d = 5  ;",
         # "CHAR d = '5'  ;",
-        "INTEGER Matrix[3];"    ,
-        "FLOAT Ab[1] ;",
-        "Matrix[3]=5;",
-        "Matrix[2]=5;",
-        "bool b = false ;",
-        "bool a = true  ;",
-        "bool c = true  ;",
-        "bool d = true  ;",
-        "bool e = true  ;",
-        "bool f = a && b || c && d || !e;",
+        # "INTEGER Matrix[3];"    ,
+        # "FLOAT Ab[1] ;",
+        # "Matrix[3]=5;",
+        # "Matrix[2]=5;",
+        # "bool b = false ;",
+        # "bool a = true  ;",
+        # "bool c = true  ;",
+        # "bool d = true  ;",
+        # "bool e = true  ;",
+        # "bool f = a && b || c && d || !e;",
         # "INTEGER x =Matrix[2];"
 
     ]
