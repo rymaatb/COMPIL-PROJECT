@@ -1053,6 +1053,7 @@ def D(t):
 
 
  #**********************************IF condition*********************************************************
+#**********************************IF condition*********************************************************
 def p_statementIf(t):
     '''statement : IFTHEN 
                  | IFTHENELSE'''
@@ -1062,63 +1063,130 @@ def p_statementIf(t):
         t[0] = ('statement', t[1])
 
 def p_IFTHENELSE(t):
-   # '''IFTHENELSE : IF LPAREN condition RIF1 RPAREN block RIF2 ELSE block RIF3'''
-    '''IFTHENELSE : IFTHEN ELSE block'''
-    if len(t) == 4:  # If there is an else block
-        t[0] = ('IFTHENELSE', t[1], t[3])
-        RIF3(t)
+    '''IFTHENELSE : IF LPAREN condition RPAREN block ELSE block'''
+    if len(t) == 6:  # If there is an else block
+        t[0] = ('IFTHENELSE', t[3], t[5])
+        RIF3(t)  # Process the ELSE block
 
-def p_IFTHEN(t):# If there is no else block
-    #IFTHEN --> IF LPAREN condition RIF1 RPAREN block RIF2
-    '''IFTHEN : conditionIF RPAREN block'''
+def p_IFTHEN(t):  # If there is no ELSE block
+    '''IFTHEN : IF LPAREN condition RPAREN block'''
     if len(t) == 4:
-        t[0] = ('IFTHEN', t[1], t[3])
-        RIF2(t)
+        t[0] = ('IFTHEN', t[2], t[3])  # Process the 'if' without 'else'
+        RIF2(t)  # Call RIF2 to handle the jump to the end
 
 def p_conditionIF(t):
-    #conditionIf --> IF LPAREN condition RIF1
     '''conditionIF : IF LPAREN condition'''
     if len(t) == 4:
         t[0] = t[3]
-        RIF1(t)
-
-    '''statement : IF LPAREN condition RPAREN block
-                   | IF LPAREN condition RPAREN block ELSE block'''
-    if len(t) == 6:  # If there is no else block
-        t[0] = ('statement', t[3], t[5])
-    elif len(t) == 8:  # If there is an else block
-        t[0] = ('statement', t[3], t[5], t[7])
+        RIF1(t)  # Handle the condition jump
 
 def p_condition(t):
-    '''condition : ID EQUALS ID
-                 | ID LT ID
-                 | ID GT ID
-                 | ID EQUALS factor
+    '''condition : ID EQ factor
+                 | ID NEQ factor
                  | ID LT factor
-                 | ID GT factor'''
-    t[0] = ('condition', t[2], t[1], t[3])  # ('operator', left, right)
-#***********Routine of IF ******************************
+                 | ID LTE factor
+                 | ID GT factor
+                 | ID GTE factor
+                 | factor EQ factor
+                 | factor NEQ factor
+                 | factor LT factor
+                 | factor LTE factor
+                 | factor GT factor
+                 | factor GTE factor'''
+    if len(t) == 4:  # Condition with ID and operator
+        t[0] = ('condition', t[2], t[1], t[3])  # ('operator', left, right)
+        label_true, label_false = R_condition(t[0])  # Use R_condition to generate quadruples
+        #quadruples.append(["LABEL", None, None, label_true])  # Label for true part
+        #increment_quad_counter(1)
+        #quadruples.append(["LABEL", None, None, label_false])  # Label for false part
+        #increment_quad_counter(1)
+    
+    elif len(t) == 3:  # Condition with two factors
+        t[0] = ('condition', t[1], t[2])  # ('operator', left, right)
+        label_true, label_false = R_condition(t[0])  # Use R_condition to generate quadruples
+        #quadruples.append(["LABEL", None, None, label_true])  # Label for true part
+        #increment_quad_counter(1)
+        #quadruples.append(["LABEL", None, None, label_false])  # Label for false part
+        #increment_quad_counter(1)
+
+#***********Routine of IF ****************************** 
 def RIF1(t):
-    global quadruples ,sauv_bz
+    global quadruples, sauv_bz
     conditionTemp = new_temp()
-    else_etiq = new_label('else')
-    quadruples.append(('BZ',else_etiq,conditionTemp,None))
+    else_etiq = new_label('else')  # Créer le label pour 'else'
+    quadruples.append(('BZ', conditionTemp, None, else_etiq))  # Si faux, sauter à 'else'
     sauv_bz = get_counter()
     increment_quad_counter(1)
+
 def RIF2(t):
     global quadruples
-    fin = new_label('fin')
-    quadruples.append(('BR',fin,None,None))
-    sauv_br = get_counter()
+    fin = new_label('fin')  # Créer un label pour la fin
+    quadruples.append(('BR', None, None, fin))  # Sauter à 'fin' après le bloc 'if'
+    sauv_br = get_counter()  # Sauvegarder le compteur pour la mise à jour
     increment_quad_counter(1)
-    #quadruples[sauv_bz,2] = get_counter()
+    
+    # Mettre à jour l'instruction BZ avec la bonne destination de saut
+    quadruples[sauv_bz][2] = get_counter()
+    
+
 def RIF3(t):
-    global quadruples , sauv_br
-    #quadruples[sauv_br,2] = get_counter()
+    global quadruples, sauv_br
+    if sauv_br is not None:
+        quadruples[sauv_br][2] = get_counter()  # Update the 'else' jump
+    
+def R_condition(condition):
+    """Génère les quadruplets pour l'évaluation de la condition sans branchement vers 'true'."""
+    global quadruples
+    
+    if len(condition) == 4 and condition[0] == 'condition':
+        op, left, right = condition[1], condition[2], condition[3]
+    else:
+        raise ValueError(f"Condition invalide: {condition}")
+
+    # Créer des variables temporaires pour les opérandes si ce sont des tuples
+    if isinstance(left, tuple):  
+        left_temp = new_temp()
+        quadruples.append([left_temp, left[0], left[1], left[2]])  
+        increment_quad_counter(1)
+        left = left_temp  
+
+    if isinstance(right, tuple):  
+        right_temp = new_temp()
+        quadruples.append([right_temp, right[0], right[1], right[2]])  
+        increment_quad_counter(1)
+        right = right_temp  
+
+    # Créer un label pour 'true'
+    label_true = new_label('true')  
+    # Créer un label pour la fin de la condition
+    label_end = new_label('endThen')
+
+    # Générer les instructions de saut basées sur l'opérateur de la condition
+    if op == '==':
+        quadruples.append(["BZ", left, right, label_end])  # Si égal, saute à la fin
+        increment_quad_counter(1)
+    elif op == '!=':
+        quadruples.append(["BNE", left, right, label_true])  # Si différent, saute à true
+        increment_quad_counter(1)
+    elif op == '<':
+        quadruples.append(["BLT", left, right, label_true])  # Si inférieur, saute à true
+        increment_quad_counter(1)
+    elif op == '<=':
+        quadruples.append(["BLE", left, right, label_true])  # Si inférieur ou égal, saute à true
+        increment_quad_counter(1)
+    elif op == '>':
+        quadruples.append(["BLE", left, right, label_end])  # Si supérieur, saute à la fin
+        increment_quad_counter(1)
+    elif op == '>=':
+        quadruples.append(["BLT", left, right, label_end])  # Si supérieur ou égal, saute à la fin
+        increment_quad_counter(1)
+
+    # Retourner les labels
+    return label_true, label_end
     
 # Build the parser
 parser = yacc.yacc()
-parserdebug = yacc.yacc(debug=True)
+parserdebug = yacc.yacc(debug=False)
 
 line_co =0
 def increment_line_counter():
@@ -1194,13 +1262,16 @@ if __name__ == '__main__':
   
     } DECLARATION{
     INTEGER a = 2  ;
-     INTEGER f
+    INTEGER f;
     } 
     INSTRUCTION{  
     f = 1 +3 ;
-    a=4;
-    %%FOR(i =3 : 1 : n){ m = b && a ; }
+    a = 4;
+    IF (a > 3) {
+        f = f + 1;
+    }
     }'''
+
     
     # prm = "VAR_GLOBAL{ CONST INTEGER G = 3; } DECLARATION{INTEGER a = 6; bool r,z = false,s = true;} INSTRUCTION{ IF(s == true){a = a + 2; IF(z==false){a = a*G; r=z&&s; } z = true;} }"
     # prm = "VAR_GLOBAL{  INTEGER a=3;   } DECLARATION{       INTEGER b ; INTEGER a = 2  ;  INTEGER f; } INSTRUCTION{  f = 1 +3 ; }"
