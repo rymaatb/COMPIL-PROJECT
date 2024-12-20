@@ -117,11 +117,15 @@ def p_instruction(t):
     t[0] = [t[3]]
 def p_declarations(t):
     '''declarations : declaration declarations
-                    | declaration'''
+                    | declaration
+                    | empty'''
     if len(t) == 2:
         t[0] = [t[1]]
     elif len(t) == 3:
         t[0] = [t[1]] + t[2]
+def p_empty(t):
+    '''empty :'''
+    t[0] = None
 # ****************************************START of var declartion****************************************
 # the expression will be TYPE multiple var; OR const id = value;
 def p_statement_declaration(t):
@@ -245,7 +249,8 @@ def p_factor_number(t):
 #  *********************TABLE*****************************
 def p_statements(t):
     '''statements : statement
-                  | statement statements '''
+                  | statement statements
+                  | empty '''
     if len(t) == 2 :
         t[0] = [t[1]]
     else:
@@ -1066,7 +1071,7 @@ if __name__ == '__main__':
 
     ]
 
-    prm = "VAR_GLOBAL{INTEGER w; bool m ; bool b = false; bool a = true; } DECLARATION{CHAR d = '5'; INTEGER i, n = 2,j = 4,k;} INSTRUCTION{ FOR(i=0 : 1 : n){ j= i + 1; FOR(k=1 : 2 : n){m = b && a ;}} }"
+    prm = "VAR_GLOBAL{ CONST INTEGER G = 3; } DECLARATION{} INSTRUCTION{G = 5;}"
      
 
     for stmt in expressions:
