@@ -1263,8 +1263,7 @@ INTEGER C,K, N = 9;
      
      %%Arthmitique
      N=C+K;
-     I=10+30;
-     K=10*30-10;
+
 
      %%TAb
      Matrix[2]=5;
@@ -1279,6 +1278,7 @@ INTEGER C,K, N = 9;
 
     }
      %%if
+    %%IF(C > 6){C = C + 2; IF(C == 10){C = 2;}}
      %%Read and write
     Age=20;
     WRITE( "voici la troisieme valeur du tableau ",Matrix[2]);
