@@ -981,7 +981,24 @@ def C(t):
     quadruples.append(('BG',fin ,var_iter, var_name))
     increment_quad_counter(1)
 
-#**********************************IF condition*********************************************************
+# Routine semantique D : Incrementation et branchement
+def D(t):
+    global  sauve_BG, step,var_iter
+    # Générer l'incrémentation
+    t0 = new_temp()
+    quadruples.append(('+', var_iter, step, t0))
+    increment_quad_counter(1)
+    quadruples.append(('=', t0, None, var_iter))
+    increment_quad_counter(1)
+    # Retourner au début de la boucle
+    statFor = new_label()
+    quadruples.append(('BR', statFor, None, None))
+    increment_quad_counter(1)
+
+    print(f"Routine D : Incrementation et branchement de '{var_iter}' avec step = {step}")
+
+
+ #**********************************IF condition*********************************************************
 def p_statementIf(t):
     '''statement : IF LPAREN condition RPAREN block
                    | IF LPAREN condition RPAREN block ELSE block'''
@@ -999,24 +1016,7 @@ def p_condition(t):
                  | ID GT factor'''
     t[0] = ('condition', t[2], t[1], t[3])  # ('operator', left, right)
        
-
-
-# Routine semantique D : Incrementation et branchement
-def D(t):
-    global  sauve_BG, step,var_iter
-    # Générer l'incrémentation
-    t0 = new_temp()
-    quadruples.append(('+', var_iter, step, t0))
-    increment_quad_counter(1)
-    quadruples.append(('=', t0, None, var_iter))
-    increment_quad_counter(1)
-    # Retourner au début de la boucle
-    statFor = new_label()
-    quadruples.append(('BR', statFor, None, None))
-    increment_quad_counter(1)
-
-    print(f"Routine D : Incrementation et branchement de '{var_iter}' avec step = {step}")
-     
+    
 # Build the parser
 parser = yacc.yacc()
 parserdebug = yacc.yacc(debug=True)
@@ -1091,7 +1091,7 @@ if __name__ == '__main__':
 
     prm = "VAR_GLOBAL{ CONST INTEGER G = 3; } DECLARATION{INTEGER a = 6; bool z = false;} INSTRUCTION{IF (a > 3){a = a + 2; IF(z=false){a = a*a;}}}"
      
-     
+
     for stmt in expressions:
         print(f"Parsing statement: {stmt}")
         #parse_statement(stmt)
