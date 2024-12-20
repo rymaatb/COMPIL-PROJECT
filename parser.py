@@ -1000,20 +1000,44 @@ def D(t):
 
  #**********************************IF condition*********************************************************
 def p_statementIf(t):
-    '''statement : IF LPAREN condition RPAREN block
-                   | IF LPAREN condition RPAREN block ELSE block'''
-    if len(t) == 6:  # If there is no else block
-        t[0] = ('statement', t[3], t[5])
-    elif len(t) == 8:  # If there is an else block
-        t[0] = ('statement', t[3], t[5], t[7])
+    '''statement : IFTHEN 
+                 | IFTHENELSE'''
+    if len(t) == 2:  # If there is no else block
+        t[0] = ('statement', t[1])
+    elif len(t) == 3:  # If there is an else block
+        t[0] = ('statement', t[1])
 
+def p_IFTHENELSE(t):
+   # '''IFTHENELSE : IF LPAREN condition RIF1 RPAREN block RIF2 ELSE block RIF3'''
+    '''IFTHENELSE : IFTHEN ELSE block'''
+    if len(t) == 4:  # If there is an else block
+        t[0] = ('IFTHENELSE', t[1], t[3])
+
+def p_IFTHEN(t):# If there is no else block
+    #IFTHEN --> IF LPAREN condition RIF1 RPAREN block RIF2
+    '''IFTHEN : conditionIF RPAREN block'''
+    if len(t) == 4:
+        t[0] = ('IFTHEN', t[1], t[3])
+
+def p_conditionIF(t):
+    #conditionIf --> IF LPAREN condition RIF1
+    '''conditionIF : IF LPAREN condition'''
+    if len(t) == 4:
+        t[0] = t[3]
 def p_condition(t):
-    '''condition : ID EQUALS ID
+    '''condition : ID EQ ID
+                 | ID NEQ ID
                  | ID LT ID
+                 | ID LTE ID
                  | ID GT ID
-                 | ID EQUALS factor
+                 | ID GTE ID 
+                 | ID EQ factor
+                 | ID NEQ factor
                  | ID LT factor
-                 | ID GT factor'''
+                 | ID LTE factor
+                 | ID GT factor
+                 | ID GTE factor
+                 | expression'''
     t[0] = ('condition', t[2], t[1], t[3])  # ('operator', left, right)
        
     
@@ -1089,7 +1113,7 @@ if __name__ == '__main__':
 
     ]
 
-    prm = "VAR_GLOBAL{ CONST INTEGER G = 3; } DECLARATION{INTEGER a = 6; bool z = false;} INSTRUCTION{IF (a > 3){a = a + 2; IF(z=false){a = a*a;}}}"
+    prm = "VAR_GLOBAL{ CONST INTEGER G = 3; } DECLARATION{INTEGER a = 6; bool z = false;} INSTRUCTION{IF (a > 3){a = a + 2; IF(z==false){a = a*a;}}}"
      
 
     for stmt in expressions:
