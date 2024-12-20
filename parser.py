@@ -105,6 +105,7 @@ class SemanticError(Exception):
 def p_PROGRAMME(t):
     '''PROGRAMME : varGlobal declaration_ instruction'''
     t[0] = [t[1]]+ [t[2]] + [t[3]]
+
 def p_varGlobal(t):
     '''varGlobal : VAR_GLOBAL LBRACE declarations RBRACE '''
     t[0] = [t[3]]
@@ -128,9 +129,12 @@ def p_declaration_(t):
     t[0] = [t[3]]
     input_list = t[3]
     check_for_any_value(input_list)   
+
 def p_instruction(t):
     '''instruction : INSTRUCTION LBRACE statements RBRACE'''
     t[0] = [t[3]]
+
+
 def p_declarations(t):
     '''declarations : declaration declarations
                     | declaration
@@ -139,9 +143,17 @@ def p_declarations(t):
         t[0] = [t[1]]
     elif len(t) == 3:
         t[0] = [t[1]] + t[2]
+
+
 def p_empty(t):
     '''empty :'''
     t[0] = None
+
+def p_error(t):
+    if t:
+        print(f"Syntax error at token '{t.type}' with value '{t.value}' on line {getattr(t, 'lineno', 'unknown')}")
+    else:
+        print("Syntax error at end of input")
 # ****************************************START of var declartion****************************************
 # the expression will be TYPE multiple var; OR const id = value;
 def p_statement_declaration(t):
@@ -763,8 +775,11 @@ def RA8(t):
 def p_error(t):
     if t:
         try:
+            print(t.type)
             if t.type == 'SEMICOLON':
                 raise SyntaxError(f"statment not properly declered on line {t.lineno}")
+            if t.type == 'LPAREN':
+                raise SyntaxError(f"Error: syntax error must be const type idf =value ; or type idf; at line '{get_line()}' .")
             elif t.type == 'PLUS':
                 print("Hint: Ensure there's an expression on both sides of the '+' operator.")
         except SyntaxError as e:
@@ -1063,11 +1078,13 @@ def parse_statement(statement):
     increment_line_counter()
     parser.parse(statement)
     return quadruples
+
 def parse_program(program):
     global quadruples, temp_count
     increment_line_counter()
     parser.parse(program) 
     return quadruples  
+
 def parser_statement_debug(program):
     global quadruples, temp_count
     increment_line_counter()
@@ -1118,7 +1135,13 @@ if __name__ == '__main__':
 
     ]
 
-    prm = "VAR_GLOBAL{       } DECLARATION{       INTEGER b ; INTEGER a = 2  ;  INTEGER f; } INSTRUCTION{  f = 1 +3 ; }"
+    prm = "VAR_GLOBAL{  INTEGER a=3;   } DECLARATION{       INTEGER b ; INTEGER a = 2  ;  INTEGER f; } INSTRUCTION{  f = 1 +3 ; }"
+    
+    
+    # exp of syntax 
+    # prm = "VAR_GLOBAL{  if(a=b)    } DECLARATION{       INTEGER b ; INTEGER a = 2  ;  INTEGER f; } INSTRUCTION{  f = 1 +3 ; }"
+    # prm = "VAR_GLOBAL{  ite    } DECLARATION{       INTEGER b ; INTEGER a = 2  ;  INTEGER f; } INSTRUCTION{  f = 1 +3 ; }"
+    
     # exp of logic error 
     # prm = "VAR_GLOBAL{   CONST INTEGER z=5;     } DECLARATION{       bool b = false ; INTEGER a = true  ; bool m = true ; bool d = false  ; bool e = true  ; bool f; } INSTRUCTION{  f = a && b ; }"
     #
