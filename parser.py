@@ -15,11 +15,11 @@ def new_temp():
     temp_count += 1
     return temp_name
 
-def new_label():
+def new_label(a):
     """Generate a new label."""
     global label_counter
     label_counter += 1
-    return f"L{label_counter}"
+    return f"{a}_L{label_counter}"
 def increment_quad_counter(value):
     global quad_counter  
     quad_counter += value
@@ -278,6 +278,7 @@ def p_simple_assignment(t):
 
     # Génère un quadruplet pour l'affectation
     quadruples.append(('ASSIGN', expr_value, '-', var_name))
+    increment_quad_counter(1)
 
     t[0] = var_name  # Retourne le nom de la variable affectée
 
@@ -299,6 +300,7 @@ def p_array_declarationTab(t):
            # Génération du quadruplet ADEC
     quadruplet = ("ADEC", var_name, size, None)  # Aucun résultat spécifique dans la 4e colonne
     quadruples.append(quadruplet)
+    increment_quad_counter(1)
      
 
 def p_declarationTab_listTab(t):
@@ -380,6 +382,7 @@ def p_array_assignment(t):
                 # Met à jour la valeur si tout est correct
                 entry[4][index] = value
                 quadruples.append(('=',value, None, f'{var_name}[{index}]' ))
+                increment_quad_counter(1)
 
                 
                 return
@@ -706,6 +709,7 @@ def RA4(t):
     check_variable_type(t[3])  # Vérifie que le facteur est déclaré et numérique
     temp_var = new_temp()
     quadruples.append(('*', t[1], t[3], temp_var))
+    increment_quad_counter(1)
     t[0] = temp_var  # Le résultat est dans une variable temporaire
 
 def RA5(t):
@@ -718,6 +722,7 @@ def RA6(t):
     check_variable_type(t[3])  # Vérifie que le facteur est déclaré et numérique
     temp_var = new_temp()
     quadruples.append(('+', t[1], t[3], temp_var))
+    increment_quad_counter(1)
     t[0] = temp_var  # Le résultat est dans une variable temporaire
 
 def RA7(t):
@@ -726,6 +731,7 @@ def RA7(t):
     check_variable_type(t[3])  # Vérifie que le facteur est déclaré et numérique
     temp_var = new_temp()
     quadruples.append(('-', t[1], t[3], temp_var))
+    increment_quad_counter(1)
     t[0] = temp_var  # Le résultat est dans une variable temporaire
 
 def RA8(t):
@@ -735,6 +741,7 @@ def RA8(t):
     check_notDivZERO(t[3])
     temp_var = new_temp()
     quadruples.append(('/', t[1], t[3], temp_var))
+    increment_quad_counter(1)
     t[0] = temp_var  # Le résultat est dans une variable temporaire
 
 # Fonction pour les erreurs syntaxiques
@@ -977,7 +984,7 @@ def C(t):
     # Sauvegarder l'étiquette de début de la boucle
     sauve_BG = get_counter
      # quadruplets
-    fin= new_label()
+    fin= new_label('fin')
     quadruples.append(('BG',fin ,var_iter, var_name))
     increment_quad_counter(1)
 
@@ -991,7 +998,7 @@ def D(t):
     quadruples.append(('=', t0, None, var_iter))
     increment_quad_counter(1)
     # Retourner au début de la boucle
-    statFor = new_label()
+    statFor = new_label('startFor')
     quadruples.append(('BR', statFor, None, None))
     increment_quad_counter(1)
 
@@ -1012,18 +1019,22 @@ def p_IFTHENELSE(t):
     '''IFTHENELSE : IFTHEN ELSE block'''
     if len(t) == 4:  # If there is an else block
         t[0] = ('IFTHENELSE', t[1], t[3])
+        RIF3(t)
 
 def p_IFTHEN(t):# If there is no else block
     #IFTHEN --> IF LPAREN condition RIF1 RPAREN block RIF2
     '''IFTHEN : conditionIF RPAREN block'''
     if len(t) == 4:
         t[0] = ('IFTHEN', t[1], t[3])
+        RIF2(t)
 
 def p_conditionIF(t):
     #conditionIf --> IF LPAREN condition RIF1
     '''conditionIF : IF LPAREN condition'''
     if len(t) == 4:
         t[0] = t[3]
+        RIF1(t)
+
 def p_condition(t):
     '''condition : ID EQ ID
                  | ID NEQ ID
@@ -1039,7 +1050,24 @@ def p_condition(t):
                  | ID GTE factor
                  | expression'''
     t[0] = ('condition', t[2], t[1], t[3])  # ('operator', left, right)
-       
+#***********Routine of IF ******************************
+def RIF1(t):
+    global quadruples ,sauv_bz
+    conditionTemp = new_temp()
+    else_etiq = new_label('else')
+    quadruples.append(('BZ',else_etiq,conditionTemp,None))
+    sauv_bz = get_counter()
+    increment_quad_counter(1)
+def RIF2(t):
+    global quadruples
+    fin = new_label('fin')
+    quadruples.append(('BR',fin,None,None))
+    sauv_br = get_counter()
+    increment_quad_counter(1)
+    #quadruples[sauv_bz,2] = get_counter()
+def RIF3(t):
+    global quadruples , sauv_br
+    #quadruples[sauv_br,2] = get_counter()
     
 # Build the parser
 parser = yacc.yacc()
@@ -1113,7 +1141,7 @@ if __name__ == '__main__':
 
     ]
 
-    prm = "VAR_GLOBAL{ CONST INTEGER G = 3; } DECLARATION{INTEGER a = 6; bool z = false;} INSTRUCTION{IF (a > 3){a = a + 2; IF(z==false){a = a*a;}}}"
+    prm = "VAR_GLOBAL{ CONST INTEGER G = 3; } DECLARATION{INTEGER a = 6; bool r,z = false,s = true;} INSTRUCTION{ IF(s == true){a = a + 2; IF(z==false){a = a*G; r=z&&s; } z = true;} }"
      
 
     for stmt in expressions:
