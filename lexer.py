@@ -104,9 +104,11 @@ def t_COMMENT(t):
     r'%%.*'
     pass
 
-# Ignore spaces and tabs
-t_ignore = ' \t'
 
+t_ignore = ' \t'
+def t_newline(t):
+    r'\n+'
+    t.lexer.lineno += len(t.value)
 # Handle errors
 def t_error(t):
     print(f"Illegal character '{t.value[0]}' at line {t.lineno}")

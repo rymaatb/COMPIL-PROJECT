@@ -73,7 +73,6 @@ def add_to_symbol_table(name, var_type, scope, value=None, additional_info=None)
     # Check for existing entry with the same name and scope
     try:
         if find_in_symbol_table(name, scope):
-            print("hejoif")
             # raise SyntaxError(f" at lign'{get_line()}' '{name}' already declared   .")
             print("")
         else:
@@ -106,15 +105,36 @@ class SemanticError(Exception):
 def p_PROGRAMME(t):
     '''PROGRAMME : varGlobal declaration_ instruction'''
     t[0] = [t[1]]+ [t[2]] + [t[3]]
+
 def p_varGlobal(t):
     '''varGlobal : VAR_GLOBAL LBRACE declarations RBRACE '''
     t[0] = [t[3]]
+    input_list = t[3]
+    check_for_any_value(input_list)
+
+def check_for_any_value(input_list):
+    try:
+        if any(
+            element is not None and 
+            (not isinstance(element, tuple) or any(val is not None for val in element))
+            for element in input_list
+        ):
+            raise SyntaxError(f"Error: syntax error must be const type idf =value ; or type idf; at line '{get_line()}' .")
+    except SyntaxError as e:
+        print(f"Error: {e}")
+        sys.exit(1) 
 def p_declaration_(t):
     '''declaration_ : DECLARATION LBRACE declarations RBRACE'''
+    t[0] = [t[3]] 
     t[0] = [t[3]]
+    input_list = t[3]
+    check_for_any_value(input_list)   
+
 def p_instruction(t):
     '''instruction : INSTRUCTION LBRACE statements RBRACE'''
     t[0] = [t[3]]
+
+
 def p_declarations(t):
     '''declarations : declaration declarations
                     | declaration
@@ -123,9 +143,17 @@ def p_declarations(t):
         t[0] = [t[1]]
     elif len(t) == 3:
         t[0] = [t[1]] + t[2]
+
+
 def p_empty(t):
     '''empty :'''
     t[0] = None
+
+def p_error(t):
+    if t:
+        print(f"Syntax error at token '{t.type}' with value '{t.value}' on line {getattr(t, 'lineno', 'unknown')}")
+    else:
+        print("Syntax error at end of input")
 # ****************************************START of var declartion****************************************
 # the expression will be TYPE multiple var; OR const id = value;
 def p_statement_declaration(t):
@@ -158,7 +186,7 @@ def p_statement_declaration(t):
                 if var_type == 'FLOAT' and isinstance(value, int):
                     value = float(value)
                 if var_type=='bool' and isinstance(value, str) and value.startswith("t"):
-                    print("") # si on a un temporaire on fait l'affectation son verifier 
+                    pass # si on a un temporaire on fait l'affectation son verifier 
                 elif value is not None and not R0_dec(var_type, value):
 
                     raise SyntaxError(f"Type mismatch: Cannot assign value '{value}' to variable '{var_name}' of type '{var_type}' at lign'{get_line()}.")
@@ -199,7 +227,7 @@ def p_statement_assignment(t):
     try:
         # error handling of constant
         if get_variable_AddInfo(t[1]) == 'constant':
-            raise SyntaxError(f"  can't assign '{t[3]}' to '{t[1]}' because '{t[1]}' is a constant   at lign'{get_line()}'.")
+            raise SyntaxError(f"  can't assign '{t[3]}' to '{t[1]}' because '{t[1]}' is a constant   at line '{get_line()}'.")
         else:
             var_name = t[1]
             update_symbol_table(var_name, t[3])
@@ -488,12 +516,16 @@ def p_factor_fl(t):
 #************************************************** Routine****************************
 
 def raise_semantic_error(var_name, message):
-    print(f"{var_name} {message}")
-    raise SyntaxError(f"Semantic Error: Variable '{var_name}' {message}")
+    try:
+        print(f"{var_name} {message}")
+        raise SemanticError(f"Semantic Error: Variable '{var_name}' {message} at '{get_line()}'")
+    except SemanticError as e:
+        print(f"Error: {e}")
+        sys.exit(1)  # Stops execution of the program on error
+
 
 def check_boolean(var_name):
     """Check that a variable is boolean and declared."""
-    print(var_name)
     if find_in_symbol_table(var_name,"global")==False:
         raise_semantic_error(var_name, "is not declared.")
     if  (findType_in_symbol_table(var_name))!="bool":
@@ -607,6 +639,8 @@ def p_statement_assignmentArth(t):
     add_to_symbol_table(t[2], t[1], "global", t[4])
 def p_declarationArth(t):
     '''statement :  ID EQUALS expression_arithmetique SEMICOLON'''
+    check_variable_type(t[1])
+    check_variable_type(t[1])
     print(f"Assigning {t[3]} to variable {t[1]} of type {t[1]}")
     # Example: Add variable to symbol table
     update_symbol_table(t[1], t[3])
@@ -661,11 +695,11 @@ def check_variable_declared(var_name):
     """Vérifie que la variable est déclarée dans la table des symboles."""
     try:
         if  isinstance(var_name, str) and var_name.startswith("t"):
-                        print("")
+            pass
         elif isinstance(var_name, int) or isinstance(var_name, float):
-            print("")
+            pass
         elif not find_in_symbol_table(var_name, "global"):
-            raise SemanticError(f"  '{var_name}' is not declared '{get_line()}'.")
+            raise SemanticError(f"  '{var_name}' is not declared at '{get_line()}'.")
     except SemanticError as e:
         print(f"Error: {e}")
         sys.exit(1)  # Stops execution of the program on error
@@ -674,9 +708,9 @@ def check_variable_type(var_name, expected_type=None):
     """Vérifie que la variable est de type numérique (int ou float)."""
     check_variable_declared(var_name)  # Vérifie si la variable est déclarée
     if  isinstance(var_name, str) and var_name.startswith("t"):
-                    print("")
+                    pass
     elif isinstance(var_name, int) or isinstance(var_name, float):
-        print("")
+        pass
     else:
         if expected_type:
             if findType_in_symbol_table(var_name) != expected_type:
@@ -747,9 +781,19 @@ def RA8(t):
 # Fonction pour les erreurs syntaxiques
 def p_error(t):
     if t:
-        print(f"Syntax error at token {t.type}, value {t.value}")
+        try:
+            print(t.type)
+            if t.type == 'SEMICOLON':
+                raise SyntaxError(f"statment not properly declered on line {t.lineno}")
+            if t.type == 'LPAREN':
+                raise SyntaxError(f"Error: syntax error must be const type idf =value ; or type idf; at line '{get_line()}' .")
+            elif t.type == 'PLUS':
+                print("Hint: Ensure there's an expression on both sides of the '+' operator.")
+        except SyntaxError as e:
+            print(f"Error: {e}")
+            sys.exit(1) 
     else:
-        print("Syntax error at end of input")
+        print("Syntax error: Unexpected end of input. Did you forget to complete your statement?")
 # *********************************************************Read and write *********************************************************
 
 # READ 
@@ -1035,20 +1079,20 @@ def p_conditionIF(t):
         t[0] = t[3]
         RIF1(t)
 
+    '''statement : IF LPAREN condition RPAREN block
+                   | IF LPAREN condition RPAREN block ELSE block'''
+    if len(t) == 6:  # If there is no else block
+        t[0] = ('statement', t[3], t[5])
+    elif len(t) == 8:  # If there is an else block
+        t[0] = ('statement', t[3], t[5], t[7])
+
 def p_condition(t):
-    '''condition : ID EQ ID
-                 | ID NEQ ID
+    '''condition : ID EQUALS ID
                  | ID LT ID
-                 | ID LTE ID
                  | ID GT ID
-                 | ID GTE ID 
-                 | ID EQ factor
-                 | ID NEQ factor
+                 | ID EQUALS factor
                  | ID LT factor
-                 | ID LTE factor
-                 | ID GT factor
-                 | ID GTE factor
-                 | expression'''
+                 | ID GT factor'''
     t[0] = ('condition', t[2], t[1], t[3])  # ('operator', left, right)
 #***********Routine of IF ******************************
 def RIF1(t):
@@ -1086,11 +1130,13 @@ def parse_statement(statement):
     increment_line_counter()
     parser.parse(statement)
     return quadruples
+
 def parse_program(program):
     global quadruples, temp_count
     increment_line_counter()
     parser.parse(program) 
     return quadruples  
+
 def parser_statement_debug(program):
     global quadruples, temp_count
     increment_line_counter()
@@ -1142,6 +1188,19 @@ if __name__ == '__main__':
     ]
 
     prm = "VAR_GLOBAL{ CONST INTEGER G = 3; } DECLARATION{INTEGER a = 6; bool r,z = false,s = true;} INSTRUCTION{ IF(s == true){a = a + 2; IF(z==false){a = a*G; r=z&&s; } z = true;} }"
+    prm = "VAR_GLOBAL{  INTEGER a=3;   } DECLARATION{       INTEGER b ; INTEGER a = 2  ;  INTEGER f; } INSTRUCTION{  f = 1 +3 ; }"
+    
+    
+    # exp of syntax 
+    # prm = "VAR_GLOBAL{  if(a=b)    } DECLARATION{       INTEGER b ; INTEGER a = 2  ;  INTEGER f; } INSTRUCTION{  f = 1 +3 ; }"
+    # prm = "VAR_GLOBAL{  ite    } DECLARATION{       INTEGER b ; INTEGER a = 2  ;  INTEGER f; } INSTRUCTION{  f = 1 +3 ; }"
+    
+    # exp of logic error 
+    # prm = "VAR_GLOBAL{   CONST INTEGER z=5;     } DECLARATION{       bool b = false ; INTEGER a = true  ; bool m = true ; bool d = false  ; bool e = true  ; bool f; } INSTRUCTION{  f = a && b ; }"
+    #
+    # exp of ARth error 
+    # prm = "VAR_GLOBAL{       } DECLARATION{       INTEGER b ; INTEGER a = 2  ;  CHAR f; } INSTRUCTION{  f = 1 + 3 ; }"
+    # prm = "VAR_GLOBAL{       } DECLARATION{       INTEGER b ; INTEGER a = 2  ;  INTEGER f; } INSTRUCTION{  f = 1 /0 ; }"
      
 
     for stmt in expressions:
