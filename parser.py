@@ -227,7 +227,7 @@ def p_statement_assignment(t):
     try:
         # error handling of constant
         if get_variable_AddInfo(t[1]) == 'constant':
-            raise SyntaxError(f"  can't assign '{t[3]}' to '{t[1]}' because '{t[1]}' is a constant   at line '{get_line()}'.")
+            raise SyntaxError(f"  can't assign '{t[3]}' to '{t[1]}' because '{t[1]}' is a constant   at line '{t.lineno}'.")
         else:
             var_name = t[1]
             update_symbol_table(var_name, t[3])
@@ -782,11 +782,14 @@ def RA8(t):
 def p_error(t):
     if t:
         try:
-            print(t.type)
             if t.type == 'SEMICOLON':
                 raise SyntaxError(f"statment not properly declered on line {t.lineno}")
+            if t.type == 'RBRACE':
+                raise SyntaxError(f"Semicolon missed  at line {t.lineno}")
+            if t.type == 'INT_TYPE':
+                raise SyntaxError(f"Semicolon missed  at line {t.lineno}")
             if t.type == 'LPAREN':
-                raise SyntaxError(f"Error: syntax error must be const type idf =value ; or type idf; at line '{get_line()}' .")
+                raise SyntaxError(f"Error: syntax error must be const type idf =value ; or type idf; at line '{p_error}' .")
             elif t.type == 'PLUS':
                 print("Hint: Ensure there's an expression on both sides of the '+' operator.")
         except SyntaxError as e:
@@ -1186,9 +1189,21 @@ if __name__ == '__main__':
         # "INTEGER n = (+5.63) ;",#error
 
     ]
-
-    prm = "VAR_GLOBAL{ CONST INTEGER G = 3; } DECLARATION{INTEGER a = 6; bool r,z = false,s = true;} INSTRUCTION{ IF(s == true){a = a + 2; IF(z==false){a = a*G; r=z&&s; } z = true;} }"
-    prm = "VAR_GLOBAL{  INTEGER a=3;   } DECLARATION{       INTEGER b ; INTEGER a = 2  ;  INTEGER f; } INSTRUCTION{  f = 1 +3 ; }"
+    prm = '''
+    VAR_GLOBAL{   
+  
+    } DECLARATION{
+    INTEGER a = 2  ;
+     INTEGER f
+    } 
+    INSTRUCTION{  
+    f = 1 +3 ;
+    a=4;
+    %%FOR(i =3 : 1 : n){ m = b && a ; }
+    }'''
+    
+    # prm = "VAR_GLOBAL{ CONST INTEGER G = 3; } DECLARATION{INTEGER a = 6; bool r,z = false,s = true;} INSTRUCTION{ IF(s == true){a = a + 2; IF(z==false){a = a*G; r=z&&s; } z = true;} }"
+    # prm = "VAR_GLOBAL{  INTEGER a=3;   } DECLARATION{       INTEGER b ; INTEGER a = 2  ;  INTEGER f; } INSTRUCTION{  f = 1 +3 ; }"
     
     
     # exp of syntax 
