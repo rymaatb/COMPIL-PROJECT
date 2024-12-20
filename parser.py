@@ -980,7 +980,25 @@ def C(t):
     fin= new_label()
     quadruples.append(('BG',fin ,var_iter, var_name))
     increment_quad_counter(1)
-    
+
+#**********************************IF condition*********************************************************
+def p_statementIf(t):
+    '''statement : IF LPAREN condition RPAREN block
+                   | IF LPAREN condition RPAREN block ELSE block'''
+    if len(t) == 6:  # If there is no else block
+        t[0] = ('statement', t[3], t[5])
+    elif len(t) == 8:  # If there is an else block
+        t[0] = ('statement', t[3], t[5], t[7])
+
+def p_condition(t):
+    '''condition : ID EQUALS ID
+                 | ID LT ID
+                 | ID GT ID
+                 | ID EQUALS factor
+                 | ID LT factor
+                 | ID GT factor'''
+    t[0] = ('condition', t[2], t[1], t[3])  # ('operator', left, right)
+       
 
 
 # Routine semantique D : Incrementation et branchement
@@ -1071,9 +1089,9 @@ if __name__ == '__main__':
 
     ]
 
-    prm = "VAR_GLOBAL{ CONST INTEGER G = 3; } DECLARATION{} INSTRUCTION{G = 5;}"
+    prm = "VAR_GLOBAL{ CONST INTEGER G = 3; } DECLARATION{INTEGER a = 6; bool z = false;} INSTRUCTION{IF (a > 3){a = a + 2; IF(z=false){a = a*a;}}}"
      
-
+     
     for stmt in expressions:
         print(f"Parsing statement: {stmt}")
         #parse_statement(stmt)
