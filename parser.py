@@ -191,8 +191,9 @@ def p_statement_declaration(t):
 
                     raise SyntaxError(f"Type mismatch: Cannot assign value '{value}' to variable '{var_name}' of type '{var_type}' at lign'{get_line()}.")
                 add_to_symbol_table(var_name, var_type, scope, value)
-                quadruples.append((('=',value, None,var_name )))
-                increment_quad_counter(1)
+                if value !=None:
+                    quadruples.append((('=',value, None,var_name )))
+                    increment_quad_counter(1)
     except SyntaxError as e:
         print(f"Error: {e}")
         sys.exit(1)  # Stops execution of the program on error
@@ -230,7 +231,11 @@ def p_statement_assignment(t):
             raise SyntaxError(f"  can't assign '{t[3]}' to '{t[1]}' because '{t[1]}' is a constant   at line '{t.lineno}'.")
         else:
             var_name = t[1]
-            update_symbol_table(var_name, t[3])
+            quadruples.append((('=',t[3], None,var_name )))
+            increment_quad_counter(1)
+            value = t[3]
+            if not (isinstance(value, str) and value.startswith("t")):
+                update_symbol_table(var_name, t[3])
     except SyntaxError as e:
         print(f"Error: {e}")
         sys.exit(1)  # Stops execution of the program on error
@@ -643,7 +648,10 @@ def p_declarationArth(t):
     check_variable_type(t[1])
     print(f"Assigning {t[3]} to variable {t[1]} of type {t[1]}")
     # Example: Add variable to symbol table
-    update_symbol_table(t[1], t[3])
+    quadruples.append(('=',t[3], None, t[1] ))
+    increment_quad_counter(1)
+    if not isinstance(t[3],str ):
+        update_symbol_table(t[1], t[3])
 
 def p_expression_plus(t):
     '''expression_arithmetique : expression_arithmetique PLUS term_arithmetique  
@@ -789,7 +797,17 @@ def p_error(t):
             if t.type == 'INT_TYPE':
                 raise SyntaxError(f"Semicolon missed  at line {t.lineno}")
             if t.type == 'LPAREN':
-                raise SyntaxError(f"Error: syntax error must be const type idf =value ; or type idf; at line '{p_error}' .")
+                raise SyntaxError(f"Error: syntax error must be const type idf =value ; or type idf; at line '{t.lineno}' .")
+            if t.type == 'INTEGER':
+                raise SyntaxError(f"Error: syntax error must be CONST type idf =value ; or type idf; at line '{t.lineno}' .")
+            if t.type == 'ID':
+                raise SyntaxError(f"Error: syntax error must be   idf =expression ;  IF statment or loop statement'{t.lineno}' .")
+            if t.type == 'OR':
+                raise SyntaxError(f"Error: syntax error must be   idf =expression ;  IF statment or loop statement'{t.lineno}' .")
+            if t.type == 'AND':
+                raise SyntaxError(f"Error: syntax error must be   idf =expression ;  IF statment or loop statement'{t.lineno}' .")
+            if t.type == 'NOT':
+                raise SyntaxError(f"Error: syntax error must be   idf =expression ;  IF statment or loop statement'{t.lineno}' .")
             elif t.type == 'PLUS':
                 print("Hint: Ensure there's an expression on both sides of the '+' operator.")
         except SyntaxError as e:
@@ -1259,18 +1277,33 @@ if __name__ == '__main__':
     ]
     prm = '''
     VAR_GLOBAL{   
-  
+    
     } DECLARATION{
-    INTEGER a = 2  ;
-    INTEGER f;
+    bool a;
+    bool b;
+    INTEGER j;
+    bool f;
+
     } 
     INSTRUCTION{  
-    f = 1 +3 ;
-    a = 4;
-    IF (a > 3) {
-        f = f + 1;
-    }
+    f = !a ;
+     j= 3+2;
+
     }'''
+    # prm = '''
+    # VAR_GLOBAL{   
+  
+    # } DECLARATION{
+    # INTEGER a = 2  ;
+    # INTEGER f;
+    # } 
+    # INSTRUCTION{  
+    # f = 1 +3 ;
+    # a = 4;
+    # IF (a > 3) {
+    #     f = f + 1;
+    # }
+    # }'''
 
     
     # prm = "VAR_GLOBAL{ CONST INTEGER G = 3; } DECLARATION{INTEGER a = 6; bool r,z = false,s = true;} INSTRUCTION{ IF(s == true){a = a + 2; IF(z==false){a = a*G; r=z&&s; } z = true;} }"
@@ -1307,3 +1340,4 @@ if __name__ == '__main__':
     for q in quadruples:
         print(q)
     print("-" * 40)
+
