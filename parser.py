@@ -2,116 +2,7 @@ import ply.lex as lex
 import ply.yacc as yacc
 import sys
 from tabulate import tabulate
-
-
-# List of tokens
-tokens = (
-    'VAR_GLOBAL', 'DECLARATION' ,  'CONST','INSTRUCTION',  # mots-clés
-    'ID', 'COMMENT','TRUE','FALSE',
-    'LBRACKET', 'RBRACKET',
-    'SEMICOLON', 'COMMA','LBRACE', 'RBRACE',
-    'NUMBER', 'PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'LPAREN', 'RPAREN',
-    'EQ', 'NEQ', 'LT', 'LTE', 'GT', 'GTE', 'AND', 'OR', 'NOT',
-    'EQUALS', 'INTEGER','BOOL', 'FLOAT', 'CHAR','STRING', 'INT_TYPE', 'FLOAT_TYPE', 'BOOL_TYPE', 'CHAR_TYPE',  'COLON',  
-    'IF', 'ELSE', 'FOR',  # Mots-clés du premier code
-    'READ', 'WRITE' # entrees et sorties
-
-    
-)
-
-
-# Reserved keywords
-reserved = {
-    'IF': 'IF',
-    'ELSE': 'ELSE',
-    'FOR': 'FOR',
-    'INTEGER': 'INT_TYPE',
-    'FLOAT': 'FLOAT_TYPE',
-    'bool': 'BOOL_TYPE',
-    'CHAR': 'CHAR_TYPE',
-    'true': 'BOOL',
-    'false': 'BOOL',
-    'CONST': 'CONST',
-    'READ': 'READ',
-    'WRITE': 'WRITE',
-}
-
-# Regular expressions
-# Expressions régulières pour les mots-clés
-t_VAR_GLOBAL = r'VAR_GLOBAL'
-t_DECLARATION = r'DECLARATION'
-t_INSTRUCTION = r'INSTRUCTION'
-
-t_LBRACE = r'\{'
-t_RBRACE = r'\}'
-t_COLON = r':'
-t_SEMICOLON = r';'
-t_COMMA = r','
-t_LBRACKET = r'\['
-t_RBRACKET = r'\]'
-t_LPAREN = r'\('
-t_RPAREN = r'\)'
-t_EQUALS = r'='
-t_EQ = r'=='
-t_NEQ = r'!='
-t_LT = r'<'
-t_LTE = r'<='
-t_GT = r'>'
-t_GTE = r'>='
-t_AND = r'&&'
-t_OR = r'\|\|'
-t_NOT = r'!'
-
-# Identifier and constants
-def t_ID(t):
-    r'[A-Za-z_][a-zA-Z0-9_]*'  # Permet les lettres, chiffres et underscores
-    t.type = reserved.get(t.value, 'ID')  # Vérifie si l'identifiant est un mot-clé
-    if t.value == 'true':
-        t.value = True
-    elif t.value == 'false':
-        t.value = False
-    return t
-
-
-def t_FLOAT(t):
-    r'[+-]?\d+\.\d+'
-    t.value = float(t.value)
-    
-    return t
-
-def t_INTEGER(t):
-    r'-?\d+'  # Cela permet de capturer les entiers avec un signe négatif optionnel
-    t.value = int(t.value)
-    return t
-
-
-def t_CHAR(t):
-    r"\'(.)\'" 
-    t.value = t.value[1]
-    return t
-
-def t_STRING(t):
-    r'\".*?\"'  # Matches anything between double quotes
-    t.value = list(t.value[1:-1])  # Convert the string (without quotes) to a list of characters
-    return t
-
-
-# Ignore comments
-def t_COMMENT(t):
-    r'%%.*'
-    pass
-
-# Ignore spaces and tabs
-t_ignore = ' \t'
-
-# Handle errors
-def t_error(t):
-    print(f"Illegal character '{t.value[0]}' at line {t.lineno}")
-    sys.exit(1)
-    t.lexer.skip(1)
-
-# Build the lexer
-lexer = lex.lex()
+from lexer import tokens
 # *********************************************Quadruplets *********************************
 quadruples = []
 temp_count = 0
@@ -124,11 +15,11 @@ def new_temp():
     temp_count += 1
     return temp_name
 
-def new_label():
+def new_label(a):
     """Generate a new label."""
     global label_counter
     label_counter += 1
-    return f"L{label_counter}"
+    return f"{a}_L{label_counter}"
 def increment_quad_counter(value):
     global quad_counter  
     quad_counter += value
@@ -162,16 +53,43 @@ def get_variable_value(name ):
     # If variable not found
     print(f"Warning: Variable '{name}'.")
     return None
+# for constant
+def get_variable_AddInfo(name ):
+    try:
+        for entry in symbol_table:
+        # Check if the name and scope match
+            if entry[0] == name :
+            # Return the value (which is at index 4 in the entry)
+                return entry[5]
+        
+        raise SyntaxError(f"  '{name}' not found   at lign'{get_line()}'.")
+
+    # If variable not found
+    except SyntaxError as e:
+        print(f"Error: {e}")
+        sys.exit(1)  # Stops execution of the program on error
 
 def add_to_symbol_table(name, var_type, scope, value=None, additional_info=None):
     # Check for existing entry with the same name and scope
-    if find_in_symbol_table(name, scope):
-       print("")
-        # print(f"Warning: Variable '{name}' already declared in scope '{scope}'.")
-    else:
-        memory_address = hex(id(name))  # Generate a unique "memory address" using id
-        entry = [name, var_type, scope, memory_address, value, additional_info]
-        symbol_table.append(entry)
+    try:
+        if find_in_symbol_table(name, scope):
+            # raise SyntaxError(f" at lign'{get_line()}' '{name}' already declared   .")
+            print("")
+        else:
+            memory_address = hex(id(name))  # Generate a unique "memory address" using id
+            entry = [name, var_type, scope, memory_address, value, additional_info]
+            symbol_table.append(entry)
+    except SyntaxError as e:
+        print(f"Error: {e}")
+        sys.exit(1) 
+# def add_to_symbol_table(name, var_type, scope, value=None, additional_info=None):
+#     # Check for existing entry with the same name and scope
+#     if find_in_symbol_table(name, scope):
+#        print(f"Warning: Variable '{name}' already declared in scope '{scope}'.")
+#     else:
+#         memory_address = hex(id(name))  # Generate a unique "memory address" using id
+#         entry = [name, var_type, scope, memory_address, value, additional_info]
+#         symbol_table.append(entry)
 
 # a function to update the symbol table
 def update_symbol_table(name, value):
@@ -180,16 +98,71 @@ def update_symbol_table(name, value):
             entry[4] = value  # entry[4] is the 'Value' field
             break
         
+class SemanticError(Exception):
+    """Custom exception for semantic errors."""
+    pass
+# ****************************************general structure****************************************
+def p_PROGRAMME(t):
+    '''PROGRAMME : varGlobal declaration_ instruction'''
+    t[0] = [t[1]]+ [t[2]] + [t[3]]
+
+def p_varGlobal(t):
+    '''varGlobal : VAR_GLOBAL LBRACE declarations RBRACE '''
+    t[0] = [t[3]]
+    input_list = t[3]
+    check_for_any_value(input_list)
+
+def check_for_any_value(input_list):
+    try:
+        if any(
+            element is not None and 
+            (not isinstance(element, tuple) or any(val is not None for val in element))
+            for element in input_list
+        ):
+            raise SyntaxError(f"Error: syntax error must be const type idf =value ; or type idf; at line '{get_line()}' .")
+    except SyntaxError as e:
+        print(f"Error: {e}")
+        sys.exit(1) 
+def p_declaration_(t):
+    '''declaration_ : DECLARATION LBRACE declarations RBRACE'''
+    t[0] = [t[3]] 
+    t[0] = [t[3]]
+    input_list = t[3]
+    check_for_any_value(input_list)   
+
+def p_instruction(t):
+    '''instruction : INSTRUCTION LBRACE statements RBRACE'''
+    t[0] = [t[3]]
+
+
+def p_declarations(t):
+    '''declarations : declaration declarations
+                    | declaration
+                    | empty'''
+    if len(t) == 2:
+        t[0] = [t[1]]
+    elif len(t) == 3:
+        t[0] = [t[1]] + t[2]
+
+
+def p_empty(t):
+    '''empty :'''
+    t[0] = None
+
+def p_error(t):
+    if t:
+        print(f"Syntax error at token '{t.type}' with value '{t.value}' on line {getattr(t, 'lineno', 'unknown')}")
+    else:
+        print("Syntax error at end of input")
 # ****************************************START of var declartion****************************************
 # the expression will be TYPE multiple var; OR const id = value;
 def p_statement_declaration(t):
-    '''statement : type declaration_list SEMICOLON
-                 | CONST type ID EQUALS expression SEMICOLON'''
+    '''declaration : type declaration_list SEMICOLON
+                   | CONST type ID EQUALS expression SEMICOLON'''
     scope = "global"  
     global quadruples
     try:
         if t[1] == 'CONST':
-            print(t[1])
             # Constant declaration
             var_type = t[2]
             var_name = t[3]
@@ -200,30 +173,30 @@ def p_statement_declaration(t):
                 
             # Type checking
             if not R0_dec(var_type, value):
-                raise SyntaxError(f"Type mismatch: Cannot assign value '{value}' to constant of type '{var_type}' at line {get_line()}.")
 
+                raise SyntaxError(f" Type mismatch: Cannot assign value '{value}' to constant of type '{var_type}' at lign'{get_line()}'.")
             add_to_symbol_table(var_name, var_type, scope, value, "constant")
             quadruples.append((('=',value, None,var_name )))
             increment_quad_counter(1)
         else:
-            # Déclaration de variables multiples
+            # Multiple variable declarations
             var_type = t[1]
             for var_name, value in t[2]:
                 # Convert integer to float if the type is FLOAT
                 if var_type == 'FLOAT' and isinstance(value, int):
                     value = float(value)
                 if var_type=='bool' and isinstance(value, str) and value.startswith("t"):
-                    print(t[1])
-                    print("gi") # si on a un temporaire on fait l'affectation son verifier 
+                    pass # si on a un temporaire on fait l'affectation son verifier 
                 elif value is not None and not R0_dec(var_type, value):
 
                     raise SyntaxError(f"Type mismatch: Cannot assign value '{value}' to variable '{var_name}' of type '{var_type}' at lign'{get_line()}.")
                 add_to_symbol_table(var_name, var_type, scope, value)
-                quadruples.append((('=',value, None,var_name )))
-                increment_quad_counter(1)
+                if value !=None:
+                    quadruples.append((('=',value, None,var_name )))
+                    increment_quad_counter(1)
     except SyntaxError as e:
-        print(f"Erreur : {e}")
-        sys.exit(1)  # Arrête l'exécution en cas d'erreur
+        print(f"Error: {e}")
+        sys.exit(1)  # Stops execution of the program on error
 
 # int a, b = value, c;
 def p_declaration_list(t):
@@ -243,6 +216,7 @@ def p_declaration(t):
     if len(t) == 2:
         t[0] = (t[1], None)  # Variable without initialization
 
+
     else:
         t[0] = (t[1], t[3])  # Variable with initialization
 
@@ -250,46 +224,22 @@ def p_declaration(t):
 
 # updating variable , ID= exp(arth or logic or comparison);
 def p_statement_assignment(t):
-    '''statement : ID EQUALS expression SEMICOLON'''
-    
-    var_name = t[1]  # Le nom de la variable
-    expression_value = t[3]  # La valeur ou l'expression du côté droit
-
-    # Cas 1: L'expression est un simple identifiant (variable)
-    if not isinstance(expression_value, tuple):
-        # Si l'expression droite est une variable simple (non un accès tableau), on l'affecte directement
-        update_symbol_table(var_name, expression_value)
-        print(f"Variable '{var_name}' affectée avec valeur : {expression_value}")
-
-        # Génération du quadruplet pour une variable simple
-        quadruple = ('=', expression_value, None, var_name)  # Ici on garde la forme du quadruplet pour une variable simple
-        quadruples.append(quadruple)
-        print(f"Quadruplet généré : {quadruple}")
-
-    # Cas 2: L'expression est un accès à une case de tableau
-    elif isinstance(expression_value, tuple) and expression_value[0] == 'ARRAY_ACCESS': 
-        # Vérifie si l'expression droite est un accès tableau
-        array_name, index = expression_value[1], expression_value[2]
-        source = f"{array_name}[{index}]"
-
-        # Obtenir la valeur réelle de la case tableau
-        for entry in symbol_table:
-            if entry[0] == array_name and isinstance(entry[4], list):  # Vérifie que c'est bien un tableau
-                if isinstance(index, int) and 0 <= index < len(entry[4]):
-                    expression_value = entry[4][index]  # Récupère la valeur réelle
-                    break
+    'statement : ID EQUALS expression SEMICOLON'
+    try:
+        # error handling of constant
+        if get_variable_AddInfo(t[1]) == 'constant':
+            raise SyntaxError(f"  can't assign '{t[3]}' to '{t[1]}' because '{t[1]}' is a constant   at line '{t.lineno}'.")
         else:
-            raise SyntaxError(f"Index '{index}' out of bounds for array '{array_name}' at line {get_line()}.")
+            var_name = t[1]
+            quadruples.append((('=',t[3], None,var_name )))
+            increment_quad_counter(1)
+            value = t[3]
+            if not (isinstance(value, str) and value.startswith("t")):
+                update_symbol_table(var_name, t[3])
+    except SyntaxError as e:
+        print(f"Error: {e}")
+        sys.exit(1)  # Stops execution of the program on error
 
-        print(f"Accès tableau détecté : {source} avec valeur réelle : {expression_value}")
-
-        # Mise à jour de la table des symboles avec la valeur obtenue de l'accès au tableau
-        update_symbol_table(var_name, expression_value)
-        print(f"Variable '{var_name}' affectée avec valeur de tableau : {expression_value}")
-         # Génération du quadruplet pour un accès à une case de tableau
-        quadruple = ('=', source, 'NONE', var_name)  # Ici on garde la forme du quadruplet pour l'accès au tableau
-        quadruples.append(quadruple)
-        print(f"Quadruplet généré : {quadruple}")
 
 
 
@@ -332,7 +282,8 @@ def p_factor_number(t):
 #  *********************TABLE*****************************
 def p_statements(t):
     '''statements : statement
-                  | statement statements '''
+                  | statement statements
+                  | empty '''
     if len(t) == 2 :
         t[0] = [t[1]]
     else:
@@ -340,8 +291,10 @@ def p_statements(t):
 
 def p_statement(t):
     '''statement : simple_assignment
-                 | array_declarationTab
                  | array_assignment
+                 '''
+def p_declaration_t(t):
+    '''declaration : array_declarationTab
                  | type declarationTab_listTab SEMICOLON
                  | const_declarationTab'''
 
@@ -358,6 +311,7 @@ def p_simple_assignment(t):
 
     # Génère un quadruplet pour l'affectation
     quadruples.append(('ASSIGN', expr_value, '-', var_name))
+    increment_quad_counter(1)
 
     t[0] = var_name  # Retourne le nom de la variable affectée
 
@@ -379,6 +333,7 @@ def p_array_declarationTab(t):
            # Génération du quadruplet ADEC
     quadruplet = ("ADEC", var_name, size, None)  # Aucun résultat spécifique dans la 4e colonne
     quadruples.append(quadruplet)
+    increment_quad_counter(1)
      
 
 def p_declarationTab_listTab(t):
@@ -460,6 +415,7 @@ def p_array_assignment(t):
                 # Met à jour la valeur si tout est correct
                 entry[4][index] = value
                 quadruples.append(('=',value, None, f'{var_name}[{index}]' ))
+                increment_quad_counter(1)
 
                 
                 return
@@ -565,8 +521,13 @@ def p_factor_fl(t):
 #************************************************** Routine****************************
 
 def raise_semantic_error(var_name, message):
-    print(f"{var_name} {message}")
-    raise SyntaxError(f"Semantic Error: Variable '{var_name}' {message}")
+    try:
+        print(f"{var_name} {message}")
+        raise SemanticError(f"Semantic Error: Variable '{var_name}' {message} at '{get_line()}'")
+    except SemanticError as e:
+        print(f"Error: {e}")
+        sys.exit(1)  # Stops execution of the program on error
+
 
 def check_boolean(var_name):
     """Check that a variable is boolean and declared."""
@@ -657,7 +618,203 @@ def R7(t):
 def R8(t):
         EL['name']=TL['name']
         EL['type']=TL['type']
+        
+#************************Arithmetic*********************************
+# our grammar
+# E → E + T
+# E → E - T
+# E → T
+# T → T * F
+# T → T / F
+# T → F
+# F → ( E )
+# F → num
+# ************************* Grammaire et Routines Sémantiques *************************
+# E → E + T (R6)     : Addition de deux termes et génération d'un quadruplet
+# E → T (R5)         : Expression réduite à un terme
+# T → T * F (R4)     : Multiplication d'un terme par un facteur et génération d'un quadruplet
+# T → F (R3)         : Terme réduit à un facteur
+# F → id (R1)        : Facteur est un identifiant (récupération de sa valeur/type)
+# F → (E) (R2)       : Parenthèses autour d'une expression pour changer la priorité
+# ************************************************************************************
+def p_statement_assignmentArth(t):
+    '''statement : type ID EQUALS expression_arithmetique SEMICOLON'''
+    print(f"Assigning {t[4]} to variable {t[2]} of type {t[1]}")
+    # Example: Add variable to symbol table
+    add_to_symbol_table(t[2], t[1], "global", t[4])
+def p_declarationArth(t):
+    '''statement :  ID EQUALS expression_arithmetique SEMICOLON'''
+    check_variable_type(t[1])
+    check_variable_type(t[1])
+    print(f"Assigning {t[3]} to variable {t[1]} of type {t[1]}")
+    # Example: Add variable to symbol table
+    quadruples.append(('=',t[3], None, t[1] ))
+    increment_quad_counter(1)
+    if not isinstance(t[3],str ):
+        update_symbol_table(t[1], t[3])
 
+def p_expression_plus(t):
+    '''expression_arithmetique : expression_arithmetique PLUS term_arithmetique  
+    '''
+    RA6(t)
+
+def p_expression_minus(t):
+    'expression_arithmetique : expression_arithmetique MINUS term_arithmetique'
+    RA7(t)
+
+def p_expression_term(t):
+    'expression_arithmetique : term_arithmetique'
+    RA5(t)
+
+def p_term_multiply(t):
+    'term_arithmetique : term_arithmetique MULTIPLY term_arithmetique'
+    RA4(t)
+
+
+def p_term_divide(t):
+    'term_arithmetique : term_arithmetique DIVIDE factor_arithmetique'
+    RA8(t)
+
+def p_term_factor(t):
+    'term_arithmetique : factor_arithmetique'
+    RA3(t)
+
+def p_factor_id(t):
+    '''factor_arithmetique : ID
+                        | INTEGER
+                        | FLOAT
+                        '''
+    RA1(t)
+
+def p_factor_parens(t):
+    'factor_arithmetique : LPAREN expression_arithmetique RPAREN'
+    RA2(t)
+
+# *************************** Routines Sémantiques pour Arithmétique ***************************
+
+def check_numeric(var_name):
+    """Vérifie que la variable est déclarée et est de type numérique (int ou float)."""
+    if not find_in_symbol_table(var_name, "global"):
+        raise_semantic_error(var_name, "is not declared.")
+    if findType_in_symbol_table(var_name) not in ["INTEGER", "FLOAT"]:
+        raise_semantic_error(var_name, "must be of type int or float.")
+
+def check_variable_declared(var_name):
+    """Vérifie que la variable est déclarée dans la table des symboles."""
+    try:
+        if  isinstance(var_name, str) and var_name.startswith("t"):
+            pass
+        elif isinstance(var_name, int) or isinstance(var_name, float):
+            pass
+        elif not find_in_symbol_table(var_name, "global"):
+            raise SemanticError(f"  '{var_name}' is not declared at '{get_line()}'.")
+    except SemanticError as e:
+        print(f"Error: {e}")
+        sys.exit(1)  # Stops execution of the program on error
+
+def check_variable_type(var_name, expected_type=None):
+    """Vérifie que la variable est de type numérique (int ou float)."""
+    check_variable_declared(var_name)  # Vérifie si la variable est déclarée
+    if  isinstance(var_name, str) and var_name.startswith("t"):
+                    pass
+    elif isinstance(var_name, int) or isinstance(var_name, float):
+        pass
+    else:
+        if expected_type:
+            if findType_in_symbol_table(var_name) != expected_type:
+                raise_semantic_error(var_name, f"must be of type  {expected_type}.")
+        elif findType_in_symbol_table(var_name) not in ["INTEGER", "FLOAT"]:
+            raise_semantic_error(var_name, "must be of type int or float.")
+
+def check_notDivZERO(var_name):
+    if isinstance(var_name, int):
+        if var_name ==0:
+                        raise_semantic_error(var_name, "can't divide by zero .")
+
+    
+def RA1(t):
+    #"""F → id : Facteur est un identifiant."""
+    check_variable_type(t[1])  # Vérifie que la variable est déclarée et numérique
+    t[0] = t[1]  # Retourne l'identifiant comme facteur
+
+def RA2(t):
+    #"""F → ( E ) : Parenthèses autour de l'expression."""
+    t[0] = t[2]  # Retourne l'expression parenthésée
+
+def RA3(t):
+    #"""T → F : Terme réduit à un facteur."""
+    t[0] = t[1]  # Retourne le facteur comme terme
+
+def RA4(t):
+    # """T → T * F : Multiplication entre termes."""
+    check_variable_type(t[1])  # Vérifie que le terme est déclaré et numérique
+    check_variable_type(t[3])  # Vérifie que le facteur est déclaré et numérique
+    temp_var = new_temp()
+    quadruples.append(('*', t[1], t[3], temp_var))
+    increment_quad_counter(1)
+    t[0] = temp_var  # Le résultat est dans une variable temporaire
+
+def RA5(t):
+    #"""E → T : Expression réduite à un terme."""
+    t[0] = t[1]  # Retourne le terme comme expression
+
+def RA6(t):
+    # """E → E + T : Addition entre expressions."""
+    check_variable_type(t[1])  # Vérifie que le terme est déclaré et numérique
+    check_variable_type(t[3])  # Vérifie que le facteur est déclaré et numérique
+    temp_var = new_temp()
+    quadruples.append(('+', t[1], t[3], temp_var))
+    increment_quad_counter(1)
+    t[0] = temp_var  # Le résultat est dans une variable temporaire
+
+def RA7(t):
+    #"""E → E - T : Soustraction entre expressions."""
+    check_variable_type(t[1])  # Vérifie que le terme est déclaré et numérique
+    check_variable_type(t[3])  # Vérifie que le facteur est déclaré et numérique
+    temp_var = new_temp()
+    quadruples.append(('-', t[1], t[3], temp_var))
+    increment_quad_counter(1)
+    t[0] = temp_var  # Le résultat est dans une variable temporaire
+
+def RA8(t):
+    #"""T → T / F : Division entre termes."""
+    check_variable_type(t[1])  # Vérifie que le terme est déclaré et numérique
+    check_variable_type(t[3])  # Vérifie que le facteur est déclaré et numérique
+    check_notDivZERO(t[3])
+    temp_var = new_temp()
+    quadruples.append(('/', t[1], t[3], temp_var))
+    increment_quad_counter(1)
+    t[0] = temp_var  # Le résultat est dans une variable temporaire
+
+# Fonction pour les erreurs syntaxiques
+def p_error(t):
+    if t:
+        try:
+            if t.type == 'SEMICOLON':
+                raise SyntaxError(f"statment not properly declered on line {t.lineno}")
+            if t.type == 'RBRACE':
+                raise SyntaxError(f"Semicolon missed  at line {t.lineno}")
+            if t.type == 'INT_TYPE':
+                raise SyntaxError(f"Semicolon missed  at line {t.lineno}")
+            if t.type == 'LPAREN':
+                raise SyntaxError(f"Error: syntax error must be const type idf =value ; or type idf; at line '{t.lineno}' .")
+            if t.type == 'INTEGER':
+                raise SyntaxError(f"Error: syntax error must be CONST type idf =value ; or type idf; at line '{t.lineno}' .")
+            if t.type == 'ID':
+                raise SyntaxError(f"Error: syntax error must be   idf =expression ;  IF statment or loop statement'{t.lineno}' .")
+            if t.type == 'OR':
+                raise SyntaxError(f"Error: syntax error must be   idf =expression ;  IF statment or loop statement'{t.lineno}' .")
+            if t.type == 'AND':
+                raise SyntaxError(f"Error: syntax error must be   idf =expression ;  IF statment or loop statement'{t.lineno}' .")
+            if t.type == 'NOT':
+                raise SyntaxError(f"Error: syntax error must be   idf =expression ;  IF statment or loop statement'{t.lineno}' .")
+            elif t.type == 'PLUS':
+                print("Hint: Ensure there's an expression on both sides of the '+' operator.")
+        except SyntaxError as e:
+            print(f"Error: {e}")
+            sys.exit(1) 
+    else:
+        print("Syntax error: Unexpected end of input. Did you forget to complete your statement?")
 # *********************************************************Read and write *********************************************************
 
 # READ 
@@ -751,33 +908,41 @@ def p_write_content_multiple(t):
     'write_content : write_content COMMA write_item'
     t[0] = t[1] + [t[3]]
 
-
-
 def p_write_item(t):
     '''write_item : ID
-                  | ID LBRACKET INTEGER RBRACKET
-                  | STRING'''  # Added STRING as a valid write_item
-    if len(t) == 2:  # Handle variable or string
-        if isinstance(t[1], list):  # If it's a string
-            t[0] = ''.join(t[1])  # Convert the character array back to a string for representation
+                  | ID LBRACKET INTEGER RBRACKET'''
+    var_name = t[1]
+
+    if len(t) == 2:  # Simple variable (not an array)
+        value = get_variable_value(var_name)
+        if value is not None:
+            t[0] = value
         else:
-            # Check if the variable is declared
-            if t[1] not in symbol_table:
-                print(f"Error: Variable '{t[1]}' is not declared.")  # Notify the error
-                t[0] = None  # You can set it to None or raise an exception if you prefer
+            print(f"Error: Variable '{var_name}' not declared.")
+    else:  # Array access: ID[INTEGER]
+        index = t[3]
+        value = get_array_value(var_name, index)
+        
+        if value is not None:
+            t[0] = value
+
+# def get_variable_value(var_name):
+#     for entry in symbol_table:
+#         if entry[0] == var_name:
+#             # Check if it's an array
+#             if isinstance(entry[4], list):
+#                 return None  # Indicates an error
+#             return entry[4]  # Return the scalar value
+#     return None  # Indicates variable not found
+
+def get_array_value(var_name, index):
+    for entry in symbol_table:
+        if entry[0] == var_name and isinstance(entry[4], list):
+            if 0 <= index < len(entry[4]):
+                return entry[4][index]
             else:
-                t[0] = t[1]  # For declared variables, just store the ID
-    elif len(t) == 5:  # Array access: ID[INTEGER]
-        # Check if the variable is declared
-        if t[1] not in symbol_table:
-            print(f"Error: Variable '{t[1]}' is not declared.")  # Notify the error
-            t[0] = None  # You can set it to None or raise an exception
-        else:
-            t[0] = f"{t[1]}[{t[3]}]"  # Represent as "ID[index]"
-
-
-
-
+                return None  # Indicates index out of bounds
+    return None  # Indicates array not found
 
 
 #**********************************************************START of for loop*********************************************************************
@@ -884,11 +1049,9 @@ def C(t):
     # Sauvegarder l'étiquette de début de la boucle
     sauve_BG = get_counter
      # quadruplets
-    fin= new_label()
+    fin= new_label('fin')
     quadruples.append(('BG',fin ,var_iter, var_name))
     increment_quad_counter(1)
-    
-
 
 # Routine semantique D : Incrementation et branchement
 def D(t):
@@ -900,14 +1063,148 @@ def D(t):
     quadruples.append(('=', t0, None, var_iter))
     increment_quad_counter(1)
     # Retourner au début de la boucle
-    statFor = new_label()
+    statFor = new_label('startFor')
     quadruples.append(('BR', statFor, None, None))
     increment_quad_counter(1)
 
     print(f"Routine D : Incrementation et branchement de '{var_iter}' avec step = {step}")
-     
+
+
+ #**********************************IF condition*********************************************************
+#**********************************IF condition*********************************************************
+def p_statementIf(t):
+    '''statement : IFTHEN 
+                 | IFTHENELSE'''
+    if len(t) == 2:  # If there is no else block
+        t[0] = ('statement', t[1])
+    elif len(t) == 3:  # If there is an else block
+        t[0] = ('statement', t[1])
+
+def p_IFTHENELSE(t):
+    '''IFTHENELSE : IF LPAREN condition RPAREN block ELSE block'''
+    if len(t) == 6:  # If there is an else block
+        t[0] = ('IFTHENELSE', t[3], t[5])
+        RIF3(t)  # Process the ELSE block
+
+def p_IFTHEN(t):  # If there is no ELSE block
+    '''IFTHEN : IF LPAREN condition RPAREN block'''
+    if len(t) == 4:
+        t[0] = ('IFTHEN', t[2], t[3])  # Process the 'if' without 'else'
+        RIF2(t)  # Call RIF2 to handle the jump to the end
+
+def p_conditionIF(t):
+    '''conditionIF : IF LPAREN condition'''
+    if len(t) == 4:
+        t[0] = t[3]
+        RIF1(t)  # Handle the condition jump
+
+def p_condition(t):
+    '''condition : ID EQ factor
+                 | ID NEQ factor
+                 | ID LT factor
+                 | ID LTE factor
+                 | ID GT factor
+                 | ID GTE factor
+                 | factor EQ factor
+                 | factor NEQ factor
+                 | factor LT factor
+                 | factor LTE factor
+                 | factor GT factor
+                 | factor GTE factor'''
+    if len(t) == 4:  # Condition with ID and operator
+        t[0] = ('condition', t[2], t[1], t[3])  # ('operator', left, right)
+        label_true, label_false = R_condition(t[0])  # Use R_condition to generate quadruples
+        #quadruples.append(["LABEL", None, None, label_true])  # Label for true part
+        #increment_quad_counter(1)
+        #quadruples.append(["LABEL", None, None, label_false])  # Label for false part
+        #increment_quad_counter(1)
+    
+    elif len(t) == 3:  # Condition with two factors
+        t[0] = ('condition', t[1], t[2])  # ('operator', left, right)
+        label_true, label_false = R_condition(t[0])  # Use R_condition to generate quadruples
+        #quadruples.append(["LABEL", None, None, label_true])  # Label for true part
+        #increment_quad_counter(1)
+        #quadruples.append(["LABEL", None, None, label_false])  # Label for false part
+        #increment_quad_counter(1)
+
+#***********Routine of IF ****************************** 
+def RIF1(t):
+    global quadruples, sauv_bz
+    conditionTemp = new_temp()
+    else_etiq = new_label('else')  # Créer le label pour 'else'
+    quadruples.append(('BZ', conditionTemp, None, else_etiq))  # Si faux, sauter à 'else'
+    sauv_bz = get_counter()
+    increment_quad_counter(1)
+
+def RIF2(t):
+    global quadruples
+    fin = new_label('fin')  # Créer un label pour la fin
+    quadruples.append(('BR', None, None, fin))  # Sauter à 'fin' après le bloc 'if'
+    sauv_br = get_counter()  # Sauvegarder le compteur pour la mise à jour
+    increment_quad_counter(1)
+    
+    # Mettre à jour l'instruction BZ avec la bonne destination de saut
+    quadruples[sauv_bz][2] = get_counter()
+    
+
+def RIF3(t):
+    global quadruples, sauv_br
+    if sauv_br is not None:
+        quadruples[sauv_br][2] = get_counter()  # Update the 'else' jump
+    
+def R_condition(condition):
+    """Génère les quadruplets pour l'évaluation de la condition sans branchement vers 'true'."""
+    global quadruples
+    
+    if len(condition) == 4 and condition[0] == 'condition':
+        op, left, right = condition[1], condition[2], condition[3]
+    else:
+        raise ValueError(f"Condition invalide: {condition}")
+
+    # Créer des variables temporaires pour les opérandes si ce sont des tuples
+    if isinstance(left, tuple):  
+        left_temp = new_temp()
+        quadruples.append([left_temp, left[0], left[1], left[2]])  
+        increment_quad_counter(1)
+        left = left_temp  
+
+    if isinstance(right, tuple):  
+        right_temp = new_temp()
+        quadruples.append([right_temp, right[0], right[1], right[2]])  
+        increment_quad_counter(1)
+        right = right_temp  
+
+    # Créer un label pour 'true'
+    label_true = new_label('true')  
+    # Créer un label pour la fin de la condition
+    label_end = new_label('endThen')
+
+    # Générer les instructions de saut basées sur l'opérateur de la condition
+    if op == '==':
+        quadruples.append(["BZ", left, right, label_end])  # Si égal, saute à la fin
+        increment_quad_counter(1)
+    elif op == '!=':
+        quadruples.append(["BNE", left, right, label_true])  # Si différent, saute à true
+        increment_quad_counter(1)
+    elif op == '<':
+        quadruples.append(["BLT", left, right, label_true])  # Si inférieur, saute à true
+        increment_quad_counter(1)
+    elif op == '<=':
+        quadruples.append(["BLE", left, right, label_true])  # Si inférieur ou égal, saute à true
+        increment_quad_counter(1)
+    elif op == '>':
+        quadruples.append(["BLE", left, right, label_end])  # Si supérieur, saute à la fin
+        increment_quad_counter(1)
+    elif op == '>=':
+        quadruples.append(["BLT", left, right, label_end])  # Si supérieur ou égal, saute à la fin
+        increment_quad_counter(1)
+
+    # Retourner les labels
+    return label_true, label_end
+    
 # Build the parser
 parser = yacc.yacc()
+parserdebug = yacc.yacc(debug=False)
 
 line_co =0
 def increment_line_counter():
@@ -918,12 +1215,22 @@ def get_line():
     return line_co  
 # Test the parser
 def parse_statement(statement):
-    global quadruples, temp_count
-    quadruples = []  
+    global quadruples, temp_count 
     increment_line_counter()
     parser.parse(statement)
     return quadruples
-    
+
+def parse_program(program):
+    global quadruples, temp_count
+    increment_line_counter()
+    parser.parse(program) 
+    return quadruples  
+
+def parser_statement_debug(program):
+    global quadruples, temp_count
+    increment_line_counter()
+    parserdebug.parse(program,debug=True)
+    return quadruples 
 
 # display symbol table as matrix
 def display_symbol_table():
@@ -933,36 +1240,91 @@ def display_symbol_table():
 # Examples of usage
 if __name__ == '__main__':
     expressions = [
-        # "CONST INTEGER n = 5  ;",
-        # "INTEGER n = (+5.63) ;",#error
+
         # "INTEGER c = 43  ;",
-        # "INTEGER c = 5  ;",
+        # " INTEGER c = 15 ;",
         # "CHAR d = '5'  ;",
-        "INTEGER Matrix[3];"    ,
+        # "INTEGER Matrix[3];"    ,
         # "FLOAT Ab[1] ;",
         # "Matrix[3]=5;",
-        "Matrix[2]=5;",
-        "Matrix[1]=3;",
-        "WRITE( \"voici la troisieme valeur du tableau \",Matrix[2]);",
-        "WRITE(Matrix[1]);",
-        "READ(Matrix[1]);",
-        "WRITE(undefined);",
-        "INTEGER x =Matrix[2];",
-        "INTEGER y =Matrix[1];",
-        "bool b = false ;",
-        "bool a = true  ;",
-        "bool c = true ;",
-        "bool d = false  ;",
-        "bool d = false  ;",
-        "bool e = true  ;",
-        "bool f = a && b || c && d || !e;",
-        "INTEGER i, n = 9;",
-        "FOR(i =3 : 1 : n){ m = b && a ; }"
+        # "Matrix[2]=5;",
+        # "Matrix[1]=3;",
+        # "INTEGER x =Matrix[2];",
+        # "INTEGER y =Matrix[1];",
+        # "bool b = false ;",
+        # "bool a = true  ;",
+        # "bool m = true ;",
+        # "bool d = false  ;",
+        # "bool e = true  ;",
+        # "bool f = a && b ||a&&!e ;",
+        # "INTEGER i, n = 9;",
+        # "FOR(i =3 : 1 : n){ m = b && a ; }",
+        #"INTEGER k = 5;",                   # Déclaration et affectation d'une variable
+        #"INTEGER l = 3;",                   # Déclaration et affectation d'une autre variable
+        #"INTEGER p = 2 + 3;",               # Expression avec addition
+        #" p = 1 * 3;",               # Expression avec addition
+        # "l= k * p;",               # Expression avec multiplication
+        #"INTEGER z = k + l * p;",           # Expression avec priorité des opérateurs (multiplication avant addition)
+        # "INTEGER o = (k + l) * z;",         # Expression avec parenthèses
+        # "INTEGER g = (k + l) * (p - z);",   # Expression plus complexe avec parenthèses
+        # "INTEGER h = 8 / 0;",               # Expression avec division
+        # "INTEGER r = k - l + z;",           # Expression avec addition et soustraction
+        # "INTEGER j = (a + b) / (c - d);"    # Expression avec des parenthèses dans la division
+        # "CONST INTEGER r = 5  ;",
+        # "  r = 5  ;",#error
+        # "INTEGER n = (+5.63) ;",#error
 
     ]
+    prm = '''
+    VAR_GLOBAL{   
+    
+    } DECLARATION{
+    bool a;
+    bool b;
+    INTEGER j;
+    bool f;
+
+    } 
+    INSTRUCTION{  
+    f = !a ;
+     j= 3+2;
+
+    }'''
+    # prm = '''
+    # VAR_GLOBAL{   
+  
+    # } DECLARATION{
+    # INTEGER a = 2  ;
+    # INTEGER f;
+    # } 
+    # INSTRUCTION{  
+    # f = 1 +3 ;
+    # a = 4;
+    # IF (a > 3) {
+    #     f = f + 1;
+    # }
+    # }'''
+
+    
+    # prm = "VAR_GLOBAL{ CONST INTEGER G = 3; } DECLARATION{INTEGER a = 6; bool r,z = false,s = true;} INSTRUCTION{ IF(s == true){a = a + 2; IF(z==false){a = a*G; r=z&&s; } z = true;} }"
+    # prm = "VAR_GLOBAL{  INTEGER a=3;   } DECLARATION{       INTEGER b ; INTEGER a = 2  ;  INTEGER f; } INSTRUCTION{  f = 1 +3 ; }"
+    
+    
+    # exp of syntax 
+    # prm = "VAR_GLOBAL{  if(a=b)    } DECLARATION{       INTEGER b ; INTEGER a = 2  ;  INTEGER f; } INSTRUCTION{  f = 1 +3 ; }"
+    # prm = "VAR_GLOBAL{  ite    } DECLARATION{       INTEGER b ; INTEGER a = 2  ;  INTEGER f; } INSTRUCTION{  f = 1 +3 ; }"
+    
+    # exp of logic error 
+    # prm = "VAR_GLOBAL{   CONST INTEGER z=5;     } DECLARATION{       bool b = false ; INTEGER a = true  ; bool m = true ; bool d = false  ; bool e = true  ; bool f; } INSTRUCTION{  f = a && b ; }"
+    #
+    # exp of ARth error 
+    # prm = "VAR_GLOBAL{       } DECLARATION{       INTEGER b ; INTEGER a = 2  ;  CHAR f; } INSTRUCTION{  f = 1 + 3 ; }"
+    # prm = "VAR_GLOBAL{       } DECLARATION{       INTEGER b ; INTEGER a = 2  ;  INTEGER f; } INSTRUCTION{  f = 1 /0 ; }"
+     
+
     for stmt in expressions:
         print(f"Parsing statement: {stmt}")
-        parse_statement(stmt)
+        #parse_statement(stmt)
         print("\nSymbol Table:")
         display_symbol_table()
         print("-" * 40)
@@ -970,3 +1332,12 @@ if __name__ == '__main__':
         for q in quadruples:
             print(q)
         print("-" * 30)
+
+    #parser_statement_debug(prm)
+    parse_program(prm)
+    display_symbol_table()
+    print("-" * 40)
+    for q in quadruples:
+        print(q)
+    print("-" * 40)
+
