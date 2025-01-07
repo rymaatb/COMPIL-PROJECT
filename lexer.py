@@ -27,10 +27,10 @@ reserved = {
     'FOR': 'FOR',
     'INTEGER': 'INT_TYPE',
     'FLOAT': 'FLOAT_TYPE',
-    'bool': 'BOOL_TYPE',
+    'BOOL': 'BOOL_TYPE',
     'CHAR': 'CHAR_TYPE',
-    'true': 'BOOL',
-    'false': 'BOOL',
+    'TRUE': 'BOOL',
+    'FALSE': 'BOOL',
     'CONST': 'CONST',
     'READ': 'READ',
     'WRITE': 'WRITE',
@@ -71,11 +71,17 @@ t_NOT = r'!'
 
 # Identifier and constants
 def t_ID(t):
-    r'[A-Za-z_][a-zA-Z0-9_]*'  # Permet les lettres, chiffres et underscores
-    t.type = reserved.get(t.value, 'ID')  # Vérifie si l'identifiant est un mot-clé
-    if t.value == 'true':
+    r'[A-Z][a-zA-Z0-9_]*'  # Permet les lettres, chiffres et underscores
+    if t.value in reserved:
+        t.type = reserved.get(t.value, 'ID')  # Vérifie si l'identifiant est un mot-clé
+        return t
+    if len(t.value) > 8:
+        print(f"Erreur : l'identifiant '{t.value}' dépasse 8 caractères.")
+        sys.exit(1)
+        t.lexer.skip(1)
+    if t.value == 'TRUE':
         t.value = True
-    elif t.value == 'false':
+    elif t.value == 'FALSE':
         t.value = False
     return t
 
